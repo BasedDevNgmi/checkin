@@ -67,3 +67,4 @@ A mobile-first PWA for a psychological daily check-in exercise (Dutch). Built wi
 - `npm run dev` – development
 - `npm run build` – production build
 - `npm run start` – run production build
+# checkin
