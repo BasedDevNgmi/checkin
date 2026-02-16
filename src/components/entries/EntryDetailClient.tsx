@@ -29,7 +29,7 @@ export function EntryDetailClient({ id }: EntryDetailClientProps) {
         <p className="mb-4 text-[var(--text-muted)]">Check-in niet gevonden.</p>
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-1 text-[#8ea0ff] transition hover:text-[#b1bdff]"
+          className="inline-flex items-center gap-1 text-[var(--accent-soft)] transition hover:opacity-80"
         >
           <ArrowLeft className="h-4 w-4" /> Terug naar tijdlijn
         </Link>

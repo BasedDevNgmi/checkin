@@ -62,7 +62,7 @@ export function LandingPage() {
         <div className="mt-10 flex flex-col items-center gap-4">
           <Link
             href="/login"
-            className="inline-flex items-center justify-center rounded-[14px] bg-gradient-to-b from-[#6f63ff] to-[#5a4fff] px-6 py-3.5 text-sm font-medium text-white shadow-[var(--shadow-zen)] transition hover:from-[#6659ff] hover:to-[#5248ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5546ff] focus-visible:ring-offset-2"
+            className="inline-flex items-center justify-center rounded-[14px] bg-gradient-to-b from-[var(--accent-soft)] to-[var(--accent)] px-6 py-3.5 text-sm font-medium text-white shadow-[var(--shadow-zen)] transition hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2"
           >
             Start met inchecken
           </Link>

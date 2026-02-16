@@ -29,7 +29,7 @@ export function EnergyChart({
             className="flex-1 flex flex-col items-center gap-2 min-w-0"
           >
             <div
-              className="w-full max-w-[40px] rounded-t-lg bg-gradient-to-t from-[#5a4fff] to-[#8c86ff] transition-all duration-500"
+              className="w-full max-w-[40px] rounded-t-lg bg-gradient-to-t from-[var(--accent)] to-[var(--accent-soft)] transition-all duration-500"
               style={{
                 height: point.value != null ? `${(point.value / max) * 100}%` : "4px",
                 minHeight: point.value != null ? "8px" : "4px",

@@ -45,6 +45,8 @@
   --text-soft: #647089;
   --interactive-hover: rgb(255 255 255 / 0.7);
   --interactive-active: rgb(255 255 255 / 0.86);
+  --accent: #5a4fff;
+  --accent-soft: #8ea0ff;
   --focus-ring: #5546ff;
   --focus-shadow: rgb(85 70 255 / 0.24);
   --radius-card: 1.5rem;
@@ -67,6 +69,8 @@
   --color-text-soft: var(--text-soft);
   --color-interactive-hover: var(--interactive-hover);
   --color-interactive-active: var(--interactive-active);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
   --font-sans: "Satoshi", "Avenir Next", "Inter", ui-sans-serif, system-ui, sans-serif;
   --shadow-zen: var(--shadow-zen);
   --color-surface-glass: var(--surface-glass);
@@ -88,6 +92,8 @@
   --text-soft: #bbc8ef;
   --interactive-hover: rgb(79 98 141 / 0.58);
   --interactive-active: rgb(96 117 167 / 0.7);
+  --accent: #8b82ff;
+  --accent-soft: #a8a0ff;
   --focus-ring: #8b82ff;
   --focus-shadow: rgb(139 130 255 / 0.34);
   --page-gradient: radial-gradient(

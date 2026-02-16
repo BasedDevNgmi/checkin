@@ -29,6 +29,15 @@ function setStorage(rows: CheckInRow[]): void {
   }
 }
 
+/** Replace all local check-ins (e.g. after backup import). */
+export function setCheckInsLocal(rows: CheckInRow[]): void {
+  const sorted = [...rows].sort(
+    (a, b) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
+  setStorage(sorted);
+}
+
 export function getCheckInsLocal(): Promise<CheckInRow[]> {
   const rows = getStorage();
   rows.sort(

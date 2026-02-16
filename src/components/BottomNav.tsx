@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { BarChart3, BookOpen, PlusCircle, User } from "lucide-react";
 
 const tabs = [
-  { href: "/dashboard", label: "Overzicht", icon: BookOpen },
+  { href: "/dashboard", label: "Dagboek", icon: BookOpen },
   { href: "/analytics", label: "Inzichten", icon: BarChart3 },
   { href: "/checkin", label: "Check-in", icon: PlusCircle },
   { href: "/profile", label: "Instellingen", icon: User },
@@ -31,7 +31,7 @@ export function BottomNav() {
               href={href}
               className={`flex min-w-0 flex-1 max-w-[88px] min-h-[48px] flex-col items-center justify-center gap-1 rounded-xl px-2 py-2.5 text-[11px] font-medium transition active:scale-[0.98] ${
                 isActive
-                  ? "bg-[var(--interactive-active)] text-[#8ea0ff]"
+                  ? "bg-[var(--interactive-active)] text-[var(--accent-soft)]"
                   : "text-[var(--text-soft)] hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)]"
               }`}
               aria-current={isActive ? "page" : undefined}

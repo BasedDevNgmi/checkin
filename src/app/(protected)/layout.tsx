@@ -19,7 +19,7 @@ export default async function ProtectedLayout({
           <Link
             href="/dashboard"
             className="flex items-center rounded-xl py-2 pr-2 -my-2 transition hover:opacity-90 active:opacity-80"
-            aria-label="Overzicht"
+            aria-label="Dagboek"
           >
             <BrandLogo />
           </Link>

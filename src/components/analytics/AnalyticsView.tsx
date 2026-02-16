@@ -21,10 +21,10 @@ function dayKey(date: Date) {
 
 function getEnergyTone(value: number | null) {
   if (value == null) return "bg-[var(--interactive-hover)]";
-  if (value >= 75) return "bg-[#5a4fff]";
-  if (value >= 50) return "bg-[#827cff]";
-  if (value >= 25) return "bg-[#b0adff]";
-  return "bg-[#d7d5ff]";
+  if (value >= 75) return "bg-[var(--accent)]";
+  if (value >= 50) return "bg-[var(--accent)]/80";
+  if (value >= 25) return "bg-[var(--accent)]/50";
+  return "bg-[var(--accent)]/30";
 }
 
 function startOfDay(date: Date) {
@@ -237,7 +237,7 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
                   className="flex items-center justify-between rounded-xl border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] px-3 py-2"
                 >
                   <span className="text-sm text-[var(--text-primary)]">{item.emotion}</span>
-                  <span className="text-sm font-semibold text-[#8ea0ff]">{item.avg}%</span>
+                  <span className="text-sm font-semibold text-[var(--accent-soft)]">{item.avg}%</span>
                 </li>
               ))}
             </ul>
@@ -251,17 +251,17 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
           <div className="mt-4 space-y-3 text-sm text-[var(--text-primary)]">
             <p>
               Beste weekdag:{" "}
-              <span className="font-semibold text-[#8ea0ff]">
+              <span className="font-semibold text-[var(--accent-soft)]">
                 {weekdayInsight ? `${weekdayInsight.day} (${weekdayInsight.avg}%)` : "—"}
               </span>
             </p>
             <p>
               Check-ins deze periode:{" "}
-              <span className="font-semibold text-[#8ea0ff]">{completedDays}</span>
+              <span className="font-semibold text-[var(--accent-soft)]">{completedDays}</span>
             </p>
             <p>
               Consistentie:{" "}
-              <span className="font-semibold text-[#8ea0ff]">
+              <span className="font-semibold text-[var(--accent-soft)]">
                 {Math.round((completedDays / period) * 100)}%
               </span>
             </p>

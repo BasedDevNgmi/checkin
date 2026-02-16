@@ -56,7 +56,7 @@ export function OnboardingScreen() {
         <button
           type="submit"
           disabled={submitting}
-          className="rounded-[14px] bg-gradient-to-b from-[#6f63ff] to-[#5a4fff] px-4 py-2 text-sm font-medium text-white"
+          className="rounded-[14px] bg-gradient-to-b from-[var(--accent-soft)] to-[var(--accent)] px-4 py-2 text-sm font-medium text-white"
         >
           {submitting ? "Opslaan…" : "Start met inchecken"}
         </button>

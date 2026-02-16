@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -7,7 +8,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { isLocalStorageMode } from "@/lib/storage-mode";
 
-export default function LoginPage() {
+function LoginContent() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState<"password" | "magic" | "signup" | null>(null);
@@ -40,7 +41,7 @@ export default function LoginPage() {
           <p className="text-[var(--text-muted)] mb-4">Local storage mode – geen login nodig.</p>
           <Link
             href="/dashboard"
-            className="inline-block rounded-[14px] bg-gradient-to-b from-[#6f63ff] to-[#5a4fff] px-6 py-3 text-sm font-medium text-white shadow-[var(--shadow-zen)] transition hover:from-[#6659ff] hover:to-[#5248ff]"
+            className="inline-block rounded-[14px] bg-gradient-to-b from-[var(--accent-soft)] to-[var(--accent)] px-6 py-3 text-sm font-medium text-white shadow-[var(--shadow-zen)] transition hover:opacity-95"
           >
             Naar dashboard
           </Link>
@@ -183,7 +184,7 @@ export default function LoginPage() {
               type="submit"
               onClick={handlePasswordLogin}
               disabled={loading !== null}
-              className="w-full rounded-[14px] bg-gradient-to-b from-[#6f63ff] to-[#5a4fff] text-white py-3 font-medium shadow-[var(--shadow-zen)] hover:from-[#6659ff] hover:to-[#5248ff] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] focus:ring-offset-2 disabled:opacity-60 transition"
+              className="w-full rounded-[14px] bg-gradient-to-b from-[var(--accent-soft)] to-[var(--accent)] text-white py-3 font-medium shadow-[var(--shadow-zen)] hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] focus:ring-offset-2 disabled:opacity-60 transition"
             >
               {loading === "password" ? "Even geduld…" : "Inloggen met wachtwoord"}
             </button>
@@ -215,5 +216,19 @@ export default function LoginPage() {
         </p>
       </motion.div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center p-6">
+          <p className="text-sm text-[var(--text-soft)]">Laden…</p>
+        </div>
+      }
+    >
+      <LoginContent />
+    </Suspense>
   );
 }

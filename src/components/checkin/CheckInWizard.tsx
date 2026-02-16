@@ -192,7 +192,7 @@ export function CheckInWizard({ onSubmit }: CheckInWizardProps) {
                 aria-hidden
               >
                 <div
-                  className="absolute bottom-1 left-1 right-1 rounded-md bg-[#8ea0ff] transition-all duration-200"
+                  className="absolute bottom-1 left-1 right-1 rounded-md bg-[var(--accent-soft)] transition-all duration-200"
                   style={{ height: `${pct}%` }}
                 />
               </div>
@@ -209,7 +209,7 @@ export function CheckInWizard({ onSubmit }: CheckInWizardProps) {
               className="mt-4 w-full accent-violet-500"
               aria-label="Energie niveau"
             />
-            <p className="mt-2 text-center text-xl font-semibold text-[#8ea0ff]">
+            <p className="mt-2 text-center text-xl font-semibold text-[var(--accent-soft)]">
               {state.energyLevel}%
             </p>
           </div>
@@ -331,7 +331,7 @@ export function CheckInWizard({ onSubmit }: CheckInWizardProps) {
         aria-label="Voortgang check-in"
       >
         <motion.div
-          className="h-full rounded-full bg-[#7f90ff]"
+          className="h-full rounded-full bg-[var(--accent-soft)]"
           initial={false}
           animate={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
           transition={{ duration: 0.3 }}

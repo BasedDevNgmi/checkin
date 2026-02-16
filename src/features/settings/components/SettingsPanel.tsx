@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import type { BackupPayload, UserPreferences } from "@/core/storage/models";
+import type { CheckInRow } from "@/types/checkin";
 
 interface SettingsPanelProps {
   preferences: UserPreferences | null;
@@ -11,6 +12,8 @@ interface SettingsPanelProps {
   onExport: () => Promise<BackupPayload>;
   onImport: (payload: BackupPayload) => Promise<void>;
   isValidBackupPayload: (data: unknown) => data is BackupPayload;
+  listCheckIns?: () => Promise<CheckInRow[]>;
+  restoreCheckIns?: (rows: CheckInRow[]) => Promise<void>;
 }
 
 export function SettingsPanel({
@@ -19,6 +22,8 @@ export function SettingsPanel({
   onExport,
   onImport,
   isValidBackupPayload,
+  listCheckIns,
+  restoreCheckIns,
 }: SettingsPanelProps) {
   const [name, setName] = useState(preferences?.name ?? "");
   const [timezone, setTimezone] = useState(
@@ -59,12 +64,17 @@ export function SettingsPanel({
   }
 
   async function handleExport() {
-    const payload = await onExport();
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const base = await onExport();
+    const checkins =
+      listCheckIns != null ? await listCheckIns() : [];
+    const payload: BackupPayload = { ...base, checkins };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {
+      type: "application/json",
+    });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = `mind-journal-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    anchor.download = `inchecken-backup-${new Date().toISOString().slice(0, 10)}.json`;
     anchor.click();
     URL.revokeObjectURL(url);
     setStatus("Backup geëxporteerd.");
@@ -79,6 +89,9 @@ export function SettingsPanel({
       if (!isValidBackupPayload(payload)) {
         setStatus("Ongeldig backupbestand.");
         return;
+      }
+      if (restoreCheckIns != null && payload.checkins?.length > 0) {
+        await restoreCheckIns(payload.checkins);
       }
       await onImport(payload);
       setStatus("Backup geïmporteerd.");
@@ -146,7 +159,7 @@ export function SettingsPanel({
         <button
           type="button"
           onClick={saveSettings}
-          className="rounded-[14px] bg-gradient-to-b from-[#6f63ff] to-[#5a4fff] px-4 py-2 text-sm font-medium text-white"
+          className="rounded-[14px] bg-gradient-to-b from-[var(--accent-soft)] to-[var(--accent)] px-4 py-2 text-sm font-medium text-white"
         >
           Instellingen opslaan
         </button>

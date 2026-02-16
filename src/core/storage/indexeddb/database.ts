@@ -1,17 +1,11 @@
-import type {
-  JournalEntry,
-  MoodCheckIn,
-  UserPreferences,
-} from "@/core/storage/models";
+import type { UserPreferences } from "@/core/storage/models";
 
-const DB_NAME = "mind-journal-db";
+const DB_NAME = "inchecken-db";
 const DB_VERSION = 1;
 
-type StoreName = "moodCheckIns" | "journalEntries" | "preferences";
+type StoreName = "preferences";
 
-interface MindJournalDbSchema {
-  moodCheckIns: MoodCheckIn;
-  journalEntries: JournalEntry;
+interface IncheckenDbSchema {
   preferences: UserPreferences;
 }
 
@@ -21,12 +15,6 @@ function openDb(): Promise<IDBDatabase> {
 
     request.onupgradeneeded = () => {
       const db = request.result;
-      if (!db.objectStoreNames.contains("moodCheckIns")) {
-        db.createObjectStore("moodCheckIns", { keyPath: "id" });
-      }
-      if (!db.objectStoreNames.contains("journalEntries")) {
-        db.createObjectStore("journalEntries", { keyPath: "id" });
-      }
       if (!db.objectStoreNames.contains("preferences")) {
         db.createObjectStore("preferences", { keyPath: "id" });
       }
@@ -64,9 +52,11 @@ function requestToPromise<T>(request: IDBRequest<T>): Promise<T> {
 
 export async function listStore<T extends StoreName>(
   storeName: T
-): Promise<MindJournalDbSchema[T][]> {
+): Promise<IncheckenDbSchema[T][]> {
   return withStore(storeName, "readonly", async (store) => {
-    const all = await requestToPromise(store.getAll() as IDBRequest<MindJournalDbSchema[T][]>);
+    const all = await requestToPromise(
+      store.getAll() as IDBRequest<IncheckenDbSchema[T][]>
+    );
     return all;
   });
 }
@@ -74,10 +64,10 @@ export async function listStore<T extends StoreName>(
 export async function getStoreItem<T extends StoreName>(
   storeName: T,
   id: string
-): Promise<MindJournalDbSchema[T] | null> {
+): Promise<IncheckenDbSchema[T] | null> {
   return withStore(storeName, "readonly", async (store) => {
     const item = await requestToPromise(
-      store.get(id) as IDBRequest<MindJournalDbSchema[T] | undefined>
+      store.get(id) as IDBRequest<IncheckenDbSchema[T] | undefined>
     );
     return item ?? null;
   });
@@ -85,7 +75,7 @@ export async function getStoreItem<T extends StoreName>(
 
 export async function putStoreItem<T extends StoreName>(
   storeName: T,
-  item: MindJournalDbSchema[T]
+  item: IncheckenDbSchema[T]
 ): Promise<void> {
   return withStore(storeName, "readwrite", async (store) => {
     await requestToPromise(store.put(item));
@@ -94,7 +84,7 @@ export async function putStoreItem<T extends StoreName>(
 
 export async function putStoreItems<T extends StoreName>(
   storeName: T,
-  items: MindJournalDbSchema[T][]
+  items: IncheckenDbSchema[T][]
 ): Promise<void> {
   return withStore(storeName, "readwrite", async (store) => {
     for (const item of items) {
@@ -115,9 +105,7 @@ export async function deleteStoreItem<T extends StoreName>(
 export async function clearStores(): Promise<void> {
   const db = await openDb();
   await new Promise<void>((resolve, reject) => {
-    const tx = db.transaction(["moodCheckIns", "journalEntries", "preferences"], "readwrite");
-    tx.objectStore("moodCheckIns").clear();
-    tx.objectStore("journalEntries").clear();
+    const tx = db.transaction(["preferences"], "readwrite");
     tx.objectStore("preferences").clear();
     tx.oncomplete = () => resolve();
     tx.onerror = () => reject(tx.error);

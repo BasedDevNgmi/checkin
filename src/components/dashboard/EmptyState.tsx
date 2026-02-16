@@ -9,7 +9,7 @@ export function EmptyState() {
       </p>
       <Link
         href="/checkin"
-        className="mt-6 inline-flex rounded-[14px] bg-gradient-to-b from-[#6f63ff] to-[#5a4fff] px-5 py-2.5 text-sm font-medium text-white shadow-[var(--shadow-zen)] transition hover:from-[#6659ff] hover:to-[#5248ff]"
+        className="mt-6 inline-flex rounded-[14px] bg-gradient-to-b from-[var(--accent-soft)] to-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white shadow-[var(--shadow-zen)] transition hover:opacity-95"
       >
         Beantwoord de 5 vragen
       </Link>

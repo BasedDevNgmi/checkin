@@ -2,6 +2,7 @@
 
 import { useMindJournal } from "@/features/app/useMindJournal";
 import { SettingsPanel } from "@/features/settings/components/SettingsPanel";
+import { listCheckIns, restoreCheckIns } from "@/lib/checkin";
 
 export function ProfileScreen() {
   const {
@@ -20,6 +21,8 @@ export function ProfileScreen() {
         onExport={exportBackup}
         onImport={importBackup}
         isValidBackupPayload={validateBackupPayload}
+        listCheckIns={listCheckIns}
+        restoreCheckIns={restoreCheckIns}
       />
     </div>
   );

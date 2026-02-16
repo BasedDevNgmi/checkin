@@ -5,15 +5,30 @@ import { Timeline } from "@/components/dashboard/Timeline";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { FAB } from "@/components/FAB";
 import { useCheckins } from "@/lib/useCheckins";
+import { useMindJournal } from "@/features/app/useMindJournal";
 import Link from "next/link";
 
 export function DashboardLocal() {
   const { checkins: rows, loading } = useCheckins();
+  const { preferences } = useMindJournal();
   const todayKey = new Date().toISOString().slice(0, 10);
   const hasTodayEntry = rows.some((row) => row.created_at.slice(0, 10) === todayKey);
 
   return (
     <div className="space-y-8 py-4">
+      {preferences == null ? (
+        <section className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] p-4 shadow-[var(--shadow-zen)] backdrop-blur-xl">
+          <p className="text-sm text-[var(--text-muted)]">
+            Rond je profiel af voor herinneringen en persoonlijke instellingen.
+          </p>
+          <Link
+            href="/onboarding"
+            className="mt-2 inline-block text-sm font-medium text-[var(--text-primary)] underline decoration-[var(--text-soft)] underline-offset-2 transition hover:decoration-[var(--text-primary)]"
+          >
+            Naar onboarding
+          </Link>
+        </section>
+      ) : null}
       {hasTodayEntry ? (
         <div className="flex flex-wrap items-center justify-between gap-2 py-2">
           <p className="text-sm text-[var(--text-muted)]">
@@ -38,7 +53,7 @@ export function DashboardLocal() {
             <div className="flex flex-wrap items-center gap-3">
               <Link
                 href="/checkin"
-                className="rounded-[14px] bg-gradient-to-b from-[#6f63ff] to-[#5a4fff] px-5 py-2.5 text-sm font-medium text-white shadow-[var(--shadow-zen)] transition hover:from-[#6659ff] hover:to-[#5248ff]"
+                className="rounded-[14px] bg-gradient-to-b from-[var(--accent-soft)] to-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white shadow-[var(--shadow-zen)] transition hover:opacity-95"
               >
                 Nieuwe check-in
               </Link>

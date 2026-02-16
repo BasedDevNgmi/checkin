@@ -7,8 +7,7 @@ describe("validateBackupPayload", () => {
       validateBackupPayload({
         version: 1,
         exportedAt: "2026-02-15T10:00:00.000Z",
-        moodCheckIns: [],
-        journalEntries: [],
+        checkins: [],
         userPreferences: null,
       })
     ).toBe(true);
@@ -19,8 +18,7 @@ describe("validateBackupPayload", () => {
       validateBackupPayload({
         version: 2,
         exportedAt: "2026-02-15T10:00:00.000Z",
-        moodCheckIns: [],
-        journalEntries: [],
+        checkins: [],
         userPreferences: null,
       })
     ).toBe(false);

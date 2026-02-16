@@ -5,7 +5,11 @@ import {
   addPendingCheckIn,
   syncPendingCheckIns,
 } from "./offline";
-import { saveCheckInLocal, getCheckInsLocal } from "./checkin-local";
+import {
+  saveCheckInLocal,
+  getCheckInsLocal,
+  setCheckInsLocal,
+} from "./checkin-local";
 import { isLocalStorageMode as isLocalStorageModeFromStorage } from "./storage-mode";
 
 export type SaveResult =
@@ -71,4 +75,28 @@ export async function saveCheckIn(data: CheckInFormState): Promise<SaveResult> {
 
 export async function syncCheckIns(): Promise<{ synced: number; failed: number }> {
   return syncPendingCheckIns();
+}
+
+/** Restore check-ins (e.g. after backup import). Local: replaces storage. Supabase: upserts with current user. */
+export async function restoreCheckIns(rows: CheckInRow[]): Promise<void> {
+  if (typeof window !== "undefined" && isLocalStorageMode()) {
+    setCheckInsLocal(rows);
+    return;
+  }
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user || rows.length === 0) return;
+  const toUpsert = rows.map((r) => ({
+    id: r.id,
+    user_id: user.id,
+    created_at: r.created_at,
+    thoughts: r.thoughts,
+    emotions: r.emotions ?? [],
+    body_parts: r.body_parts ?? [],
+    energy_level: r.energy_level,
+    behavior_meta: r.behavior_meta ?? {},
+  }));
+  await supabase.from("checkins").upsert(toUpsert, { onConflict: "id" });
 }

@@ -11,6 +11,11 @@ export const motion = {
   smooth: 220,
 } as const;
 
+export const accent = {
+  default: "var(--accent)",
+  soft: "var(--accent-soft)",
+} as const;
+
 export const moodPalette = {
   low: "#7e83c9",
   neutral: "#8ea0ff",
