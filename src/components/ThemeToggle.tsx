@@ -33,13 +33,14 @@ function applyTheme(preference: ThemePreference) {
 }
 
 export function ThemeToggle() {
-  const [preference, setPreference] = useState<ThemePreference>(() => {
-    if (typeof window === "undefined") return "system";
+  const [preference, setPreference] = useState<ThemePreference>("system");
+
+  useEffect(() => {
     const stored = window.localStorage.getItem(STORAGE_KEY);
-    return stored === "light" || stored === "dark" || stored === "system"
-      ? stored
-      : "system";
-  });
+    if (stored === "light" || stored === "dark" || stored === "system") {
+      setPreference(stored);
+    }
+  }, []);
 
   useEffect(() => {
     applyTheme(preference);

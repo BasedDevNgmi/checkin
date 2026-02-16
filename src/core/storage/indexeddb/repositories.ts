@@ -8,7 +8,6 @@ import {
   clearStores,
   getStoreItem,
   putStoreItem,
-  putStoreItems,
 } from "@/core/storage/indexeddb/database";
 
 function nowIso(): string {

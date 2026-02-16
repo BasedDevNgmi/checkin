@@ -23,12 +23,11 @@ export default async function ProtectedLayout({
           >
             <BrandLogo />
           </Link>
-          <div className="flex items-center gap-2 sm:gap-3">
-            <ThemeToggle />
+          <div className="flex items-center gap-3 sm:gap-4">
             <nav className="hidden md:flex md:items-center md:gap-1" aria-label="Header navigatie">
               <Link
                 href="/checkin"
-                className="rounded-xl px-3 py-2.5 text-sm font-medium text-[var(--text-muted)] transition hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)]"
+                className="rounded-[14px] bg-gradient-to-b from-[var(--accent-soft)] to-[var(--accent)] px-4 py-2.5 text-sm font-medium text-white shadow-[var(--shadow-zen)] transition hover:opacity-95 active:opacity-90"
               >
                 Check-in
               </Link>
@@ -45,6 +44,8 @@ export default async function ProtectedLayout({
                 Instellingen
               </Link>
             </nav>
+            <div className="h-6 w-px hidden md:block bg-[var(--surface-border)]" aria-hidden />
+            <ThemeToggle />
           </div>
         </div>
       </header>
