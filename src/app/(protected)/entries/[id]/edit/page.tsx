@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { CheckInWizard } from "@/components/checkin/CheckInWizard";
 import { getCheckIn, updateCheckIn } from "@/lib/checkin";
+import { useCheckinsContext } from "@/lib/CheckinsContext";
 import type { CheckInFormState, CheckInRow } from "@/types/checkin";
 
 function rowToFormState(row: CheckInRow): CheckInFormState {
@@ -19,6 +20,7 @@ function rowToFormState(row: CheckInRow): CheckInFormState {
 
 export default function EditEntryPage() {
   const params = useParams();
+  const { refresh } = useCheckinsContext();
   const id = typeof params.id === "string" ? params.id : "";
   const [initialData, setInitialData] = useState<CheckInFormState | null>(null);
   const [loading, setLoading] = useState(true);
@@ -80,6 +82,7 @@ export default function EditEntryPage() {
         onSubmit={handleSubmit}
         initialData={initialData}
         successRedirect={`/entries/${id}`}
+        onSuccess={refresh}
       />
     </div>
   );

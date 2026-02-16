@@ -4,12 +4,16 @@ import { BottomNav } from "@/components/BottomNav";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { BrandLogo } from "@/components/BrandLogo";
 import { ReminderScheduler } from "@/features/settings/components/ReminderScheduler";
+import { CheckinsProvider } from "@/lib/CheckinsContext";
+import { listCheckInsServer } from "@/lib/checkin-server";
 
 export default async function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const initialCheckins = await listCheckInsServer();
+
   return (
     <div className="min-h-screen">
       <ReminderScheduler />
@@ -52,7 +56,9 @@ export default async function ProtectedLayout({
           </div>
         </div>
       </header>
-      <main className="mx-auto max-w-5xl px-4 py-5 pb-[calc(7.25rem+env(safe-area-inset-bottom,0px))] sm:px-6 sm:py-6 md:pb-10">{children}</main>
+      <CheckinsProvider initialCheckins={initialCheckins}>
+        <main className="mx-auto max-w-5xl px-4 py-5 pb-[calc(7.25rem+env(safe-area-inset-bottom,0px))] sm:px-6 sm:py-6 md:pb-10">{children}</main>
+      </CheckinsProvider>
       <BottomNav />
     </div>
   );

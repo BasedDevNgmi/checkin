@@ -57,12 +57,15 @@ interface CheckInWizardProps {
   >;
   initialData?: CheckInFormState;
   successRedirect?: string;
+  /** Called after successful submit so consumers can refresh lists (e.g. check-ins context). */
+  onSuccess?: () => void | Promise<void>;
 }
 
 export function CheckInWizard({
   onSubmit,
   initialData,
   successRedirect,
+  onSuccess,
 }: CheckInWizardProps) {
   const router = useRouter();
   const reduceMotion = useReducedMotion();
@@ -113,18 +116,22 @@ export function CheckInWizard({
         setMessage(
           "Opgeslagen; wordt gesynchroniseerd wanneer je weer online bent."
         );
-        setTimeout(() => {
-          router.push("/dashboard");
-          router.refresh();
-        }, 2500);
+        void Promise.resolve(onSuccess?.()).then(() => {
+          setTimeout(() => {
+            router.push("/dashboard");
+            router.refresh();
+          }, 2500);
+        });
       } else if (result.ok) {
         setMessage(
           successRedirect ? "Bewerking opgeslagen" : "Check-in opgeslagen"
         );
-        setTimeout(() => {
-          router.push(successRedirect ?? "/dashboard");
-          router.refresh();
-        }, 1500);
+        void Promise.resolve(onSuccess?.()).then(() => {
+          setTimeout(() => {
+            router.push(successRedirect ?? "/dashboard");
+            router.refresh();
+          }, 1500);
+        });
       } else if (result.ok === false && result.error) {
         setMessage(result.error);
       }

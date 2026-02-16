@@ -4,7 +4,7 @@ import { EnergySummary } from "@/components/dashboard/EnergySummary";
 import { Timeline } from "@/components/dashboard/Timeline";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { FAB } from "@/components/FAB";
-import { useCheckins } from "@/lib/useCheckins";
+import { useCheckinsContext } from "@/lib/CheckinsContext";
 import { useMindJournal } from "@/features/app/useMindJournal";
 import Link from "next/link";
 
@@ -16,7 +16,7 @@ function getGreeting() {
 }
 
 export function DashboardLocal() {
-  const { checkins: rows, loading } = useCheckins();
+  const { checkins: rows, loading } = useCheckinsContext();
   const { preferences } = useMindJournal();
   const todayKey = new Date().toISOString().slice(0, 10);
   const hasTodayEntry = rows.some((row) => row.created_at.slice(0, 10) === todayKey);

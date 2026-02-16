@@ -1,10 +1,10 @@
 "use client";
 
-import { useCheckins } from "@/lib/useCheckins";
+import { useCheckinsContext } from "@/lib/CheckinsContext";
 import { AnalyticsView } from "@/components/analytics/AnalyticsView";
 
 export function AnalyticsScreen() {
-  const { checkins, loading } = useCheckins();
+  const { checkins, loading } = useCheckinsContext();
 
   if (loading) {
     return (

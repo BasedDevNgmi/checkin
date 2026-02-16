@@ -3,9 +3,12 @@
 import Link from "next/link";
 import { CheckInWizard } from "@/components/checkin/CheckInWizard";
 import { saveCheckIn } from "@/lib/checkin";
+import { useCheckinsContext } from "@/lib/CheckinsContext";
 import { ChevronLeft } from "lucide-react";
 
 export function CheckinScreen() {
+  const { refresh } = useCheckinsContext();
+
   return (
     <div className="py-5 pb-24 sm:py-6">
       <div className="mb-6 flex items-center">
@@ -18,7 +21,7 @@ export function CheckinScreen() {
           Overzicht
         </Link>
       </div>
-      <CheckInWizard onSubmit={saveCheckIn} />
+      <CheckInWizard onSubmit={saveCheckIn} onSuccess={refresh} />
     </div>
   );
 }
