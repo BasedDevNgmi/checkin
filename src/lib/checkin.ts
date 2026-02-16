@@ -1,29 +1,15 @@
 import { createClient } from "@/lib/supabase/client";
-import type { CheckInFormState, CheckInRow } from "@/types/checkin";
+import type { CheckInFormState, CheckInRow, SaveResult } from "@/types/checkin";
 import {
   isOnline,
   addPendingCheckIn,
   syncPendingCheckIns,
 } from "./offline";
-import {
-  saveCheckInLocal,
-  getCheckInsLocal,
-  setCheckInsLocal,
-} from "./checkin-local";
-import { isLocalStorageMode as isLocalStorageModeFromStorage } from "./storage-mode";
 
-export type SaveResult =
-  | { ok: true }
-  | { ok: false; offline: true }
-  | { ok: false; error: string };
+export type { SaveResult };
 
-export const isLocalStorageMode = isLocalStorageModeFromStorage;
-
-/** List checkins for the current user. Uses Supabase when authenticated, else local storage. */
+/** List checkins for the current user (Supabase). */
 export async function listCheckIns(): Promise<CheckInRow[]> {
-  if (typeof window !== "undefined" && isLocalStorageMode()) {
-    return getCheckInsLocal();
-  }
   const supabase = createClient();
   const {
     data: { user },
@@ -38,11 +24,24 @@ export async function listCheckIns(): Promise<CheckInRow[]> {
   return (data ?? []) as CheckInRow[];
 }
 
-export async function saveCheckIn(data: CheckInFormState): Promise<SaveResult> {
-  if (typeof window !== "undefined" && isLocalStorageMode()) {
-    return saveCheckInLocal(data);
-  }
+/** Get a single check-in by id (Supabase). */
+export async function getCheckIn(id: string): Promise<CheckInRow | null> {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+  const { data, error } = await supabase
+    .from("checkins")
+    .select("*")
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .single();
+  if (error || !data) return null;
+  return data as CheckInRow;
+}
 
+export async function saveCheckIn(data: CheckInFormState): Promise<SaveResult> {
   if (!isOnline()) {
     await addPendingCheckIn(data);
     return { ok: false, offline: true };
@@ -73,16 +72,59 @@ export async function saveCheckIn(data: CheckInFormState): Promise<SaveResult> {
   return { ok: true };
 }
 
+/** Update an existing check-in by id. */
+export async function updateCheckIn(
+  id: string,
+  data: CheckInFormState
+): Promise<SaveResult> {
+  if (!isOnline()) {
+    return { ok: false, error: "Offline; wijzigingen later opslaan." };
+  }
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "Niet ingelogd" };
+  const { error } = await supabase
+    .from("checkins")
+    .update({
+      thoughts: data.thoughts || null,
+      emotions: data.emotions,
+      body_parts: data.bodyParts,
+      energy_level: data.energyLevel,
+      behavior_meta: data.behaviorMeta,
+    })
+    .eq("id", id)
+    .eq("user_id", user.id);
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
+/** Delete a check-in by id. */
+export async function deleteCheckIn(id: string): Promise<SaveResult> {
+  if (!isOnline()) {
+    return { ok: false, error: "Offline; verwijderen wanneer je weer online bent." };
+  }
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "Niet ingelogd" };
+  const { error } = await supabase
+    .from("checkins")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
 export async function syncCheckIns(): Promise<{ synced: number; failed: number }> {
   return syncPendingCheckIns();
 }
 
-/** Restore check-ins (e.g. after backup import). Local: replaces storage. Supabase: upserts with current user. */
+/** Restore check-ins (e.g. after backup import) into Supabase. */
 export async function restoreCheckIns(rows: CheckInRow[]): Promise<void> {
-  if (typeof window !== "undefined" && isLocalStorageMode()) {
-    setCheckInsLocal(rows);
-    return;
-  }
   const supabase = createClient();
   const {
     data: { user },

@@ -3,17 +3,19 @@
 import Link from "next/link";
 import { CheckInWizard } from "@/components/checkin/CheckInWizard";
 import { saveCheckIn } from "@/lib/checkin";
+import { ChevronLeft } from "lucide-react";
 
 export function CheckinScreen() {
   return (
-    <div className="space-y-4 py-4 pb-24">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-[var(--text-primary)]">Check-in</h1>
+    <div className="py-5 pb-24 sm:py-6">
+      <div className="mb-6 flex items-center">
         <Link
           href="/dashboard"
-          className="rounded-[12px] border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] px-3 py-2 text-xs"
+          className="-m-2 flex min-h-[44px] items-center gap-1 rounded-[12px] px-2 py-2 text-[15px] font-medium text-[var(--text-muted)] transition hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)]"
+          aria-label="Terug naar overzicht"
         >
-          Terug naar overzicht
+          <ChevronLeft className="h-5 w-5" />
+          Overzicht
         </Link>
       </div>
       <CheckInWizard onSubmit={saveCheckIn} />

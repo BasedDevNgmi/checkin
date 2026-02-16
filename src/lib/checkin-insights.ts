@@ -1,11 +1,7 @@
+import { toDayKey } from "@/core/lib/date";
 import type { CheckInRow } from "@/types/checkin";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
-
-function toDayKey(dateLike: string | Date): string {
-  const date = typeof dateLike === "string" ? new Date(dateLike) : new Date(dateLike);
-  return date.toISOString().slice(0, 10);
-}
 
 export function getSortedCheckins(checkins: CheckInRow[]): CheckInRow[] {
   return [...checkins].sort(

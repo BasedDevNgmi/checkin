@@ -149,7 +149,7 @@ export function SettingsPanel({
         <button
           type="button"
           onClick={requestReminderPermission}
-          className="rounded-[12px] border border-[var(--surface-border)] px-3 py-2 text-xs"
+          className="rounded-[14px] border border-[var(--surface-border)] px-3 py-2.5 text-sm min-h-[44px]"
         >
           Sta meldingen toe
         </button>

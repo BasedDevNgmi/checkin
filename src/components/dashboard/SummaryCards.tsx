@@ -19,30 +19,30 @@ export function SummaryCards({ checkins }: SummaryCardsProps) {
   const recent = checkins.slice(0, 7);
 
   return (
-    <div className="rounded-2xl bg-white/80 shadow-md shadow-slate-200/50 border border-white/60 p-5">
-      <h3 className="text-lg font-semibold text-slate-800 mb-4">
+    <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] p-5 shadow-[var(--shadow-zen)] backdrop-blur-xl">
+      <h3 className="mb-4 text-lg font-semibold text-[var(--text-primary)]">
         Recente check-ins
       </h3>
       <div className="space-y-4">
         {recent.length === 0 ? (
-          <p className="text-slate-500 text-sm">Nog geen check-ins.</p>
+          <p className="text-sm text-[var(--text-soft)]">Nog geen check-ins.</p>
         ) : (
           recent.map((c) => (
             <div
               key={c.id}
-              className="border-b border-slate-100 last:border-0 pb-4 last:pb-0"
+              className="border-b border-[var(--surface-border)] last:border-0 pb-4 last:pb-0"
             >
-              <p className="text-xs text-slate-400 mb-1">
+              <p className="mb-1 text-xs text-[var(--text-soft)]">
                 {formatDate(c.created_at)}
                 {c.energy_level != null && ` · ${c.energy_level}% energie`}
               </p>
               {c.thoughts && (
-                <p className="text-slate-700 text-sm line-clamp-2">
+                <p className="text-sm line-clamp-2 text-[var(--text-primary)]">
                   {c.thoughts}
                 </p>
               )}
               {c.emotions?.length > 0 && (
-                <p className="text-slate-500 text-xs mt-1">
+                <p className="mt-1 text-xs text-[var(--text-muted)]">
                   {c.emotions.join(", ")}
                 </p>
               )}

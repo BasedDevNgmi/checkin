@@ -12,11 +12,11 @@ const FIVE_QUESTIONS = [
 export function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="flex items-center justify-between px-4 py-4 sm:px-6 sm:py-5 pt-[max(1rem,env(safe-area-inset-top,0px))]">
+      <header className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--surface-border)]/50 bg-[var(--surface-glass)]/80 backdrop-blur-2xl px-4 sm:px-6 pt-[max(1rem,env(safe-area-inset-top,0px))] pb-3 sm:pb-4">
         <BrandLogo />
         <Link
           href="/login"
-          className="rounded-xl py-2.5 px-3 text-sm font-medium text-[var(--text-muted)] transition hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)]"
+          className="rounded-[10px] min-h-[36px] inline-flex items-center px-3.5 py-2 text-[15px] font-medium text-[var(--text-muted)] transition hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)]"
         >
           Log in
         </Link>

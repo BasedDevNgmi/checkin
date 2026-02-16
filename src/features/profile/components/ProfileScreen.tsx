@@ -3,7 +3,7 @@
 import { useMindJournal } from "@/features/app/useMindJournal";
 import { SettingsPanel } from "@/features/settings/components/SettingsPanel";
 import { SignOutButton } from "@/components/SignOutButton";
-import { listCheckIns, restoreCheckIns, isLocalStorageMode } from "@/lib/checkin";
+import { listCheckIns, restoreCheckIns } from "@/lib/checkin";
 
 export function ProfileScreen() {
   const {
@@ -15,7 +15,7 @@ export function ProfileScreen() {
   } = useMindJournal();
 
   return (
-    <div className="py-4 pb-24 space-y-6">
+    <div className="space-y-6 py-5 pb-24 sm:py-6">
       <SettingsPanel
         preferences={preferences}
         onSavePreferences={savePreferences}
@@ -32,13 +32,7 @@ export function ProfileScreen() {
         <h2 id="account-heading" className="text-xl font-semibold text-[var(--text-primary)] mb-4">
           Account
         </h2>
-        {isLocalStorageMode() ? (
-          <p className="text-sm text-[var(--text-muted)]">
-            Local storage mode – geen account. Je gegevens staan alleen op dit apparaat.
-          </p>
-        ) : (
-          <SignOutButton />
-        )}
+        <SignOutButton />
       </section>
     </div>
   );

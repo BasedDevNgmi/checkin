@@ -1,9 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { getRepositoryBundle } from "@/core/storage";
+import { getRepositoryBundle, validateBackupPayload } from "@/core/storage";
 import type { BackupPayload, UserPreferences } from "@/core/storage/models";
-import { validateBackupPayload } from "@/core/storage/indexeddb/repositories";
 
 export function useMindJournal() {
   const [preferences, setPreferences] = useState<UserPreferences | null>(null);

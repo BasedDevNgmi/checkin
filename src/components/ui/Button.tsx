@@ -8,14 +8,14 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ variant = "primary", className = "", children, ...props }, ref) => {
     const base =
-      "inline-flex items-center justify-center rounded-[14px] font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:opacity-60 disabled:cursor-not-allowed";
+      "inline-flex items-center justify-center rounded-[14px] font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] disabled:opacity-60 disabled:cursor-not-allowed";
     const variants = {
       primary:
-        "bg-gradient-to-b from-[var(--accent-soft)] to-[var(--accent)] text-white shadow-[var(--shadow-zen)] hover:opacity-95 py-3 px-5",
+        "bg-gradient-to-b from-[var(--accent-soft)] to-[var(--accent)] text-white shadow-[var(--shadow-zen)] hover:opacity-95 min-h-[44px] py-3 px-5",
       secondary:
-        "border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] text-slate-700 backdrop-blur-md hover:bg-white/90 py-3 px-5",
+        "border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] text-[var(--text-primary)] backdrop-blur-md hover:bg-[var(--interactive-hover)] min-h-[44px] py-3 px-5",
       ghost:
-        "text-slate-600 hover:bg-white/60 py-2 px-4",
+        "text-[var(--text-primary)] hover:bg-[var(--interactive-hover)] min-h-[44px] py-2.5 px-4",
     };
     return (
       <button

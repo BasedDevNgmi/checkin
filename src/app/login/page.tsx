@@ -6,8 +6,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { isLocalStorageMode } from "@/lib/storage-mode";
-
 function LoginContent() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,37 +16,11 @@ function LoginContent() {
   const supabase = createClient();
 
   useEffect(() => {
-    if (isLocalStorageMode()) {
-      router.replace("/dashboard");
-    }
-  }, [router]);
-
-  useEffect(() => {
     const error = searchParams.get("error");
     if (error === "auth") {
       setMessage({ type: "error", text: "Inloggen mislukt of link verlopen. Probeer opnieuw." });
     }
   }, [searchParams]);
-
-  if (isLocalStorageMode()) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6">
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-sm rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] p-6 shadow-[var(--shadow-zen)] backdrop-blur-xl text-center"
-        >
-          <p className="text-[var(--text-muted)] mb-4">Local storage mode – geen login nodig.</p>
-          <Link
-            href="/dashboard"
-            className="inline-block rounded-[14px] bg-gradient-to-b from-[var(--accent-soft)] to-[var(--accent)] px-6 py-3 text-sm font-medium text-white shadow-[var(--shadow-zen)] transition hover:opacity-95"
-          >
-            Naar dashboard
-          </Link>
-        </motion.div>
-      </div>
-    );
-  }
 
   async function handlePasswordLogin(e: React.FormEvent) {
     e.preventDefault();

@@ -38,8 +38,8 @@ export function BodyMapSVG({ selectedParts, onTogglePart }: BodyMapSVGProps) {
           <path
             key={id}
             d={path}
-            fill={isSelected ? "rgba(139, 92, 246, 0.5)" : "rgba(148, 163, 184, 0.25)"}
-            stroke={isSelected ? "rgb(139, 92, 246)" : "rgba(148, 163, 184, 0.5)"}
+            fill={isSelected ? "rgba(90, 79, 255, 0.4)" : "rgba(148, 163, 184, 0.2)"}
+            stroke={isSelected ? "var(--accent)" : "rgba(148, 163, 184, 0.5)"}
             strokeWidth={4}
             className="cursor-pointer transition-colors duration-200"
             style={{ pointerEvents: "all" }}

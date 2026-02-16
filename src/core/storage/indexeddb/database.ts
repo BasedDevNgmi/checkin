@@ -34,11 +34,22 @@ function withStore<T extends StoreName, TResult>(
     new Promise<TResult>((resolve, reject) => {
       const tx = db.transaction(storeName, mode);
       const store = tx.objectStore(storeName);
+      const cleanup = () => {
+        db.close();
+      };
+      tx.onerror = () => {
+        cleanup();
+        reject(tx.error);
+      };
       action(store)
-        .then(resolve)
-        .catch(reject);
-      tx.oncomplete = () => db.close();
-      tx.onerror = () => reject(tx.error);
+        .then((result) => {
+          cleanup();
+          resolve(result);
+        })
+        .catch((err) => {
+          cleanup();
+          reject(err);
+        });
     })
   );
 }
@@ -47,17 +58,6 @@ function requestToPromise<T>(request: IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
-  });
-}
-
-export async function listStore<T extends StoreName>(
-  storeName: T
-): Promise<IncheckenDbSchema[T][]> {
-  return withStore(storeName, "readonly", async (store) => {
-    const all = await requestToPromise(
-      store.getAll() as IDBRequest<IncheckenDbSchema[T][]>
-    );
-    return all;
   });
 }
 
@@ -82,33 +82,16 @@ export async function putStoreItem<T extends StoreName>(
   });
 }
 
-export async function putStoreItems<T extends StoreName>(
-  storeName: T,
-  items: IncheckenDbSchema[T][]
-): Promise<void> {
-  return withStore(storeName, "readwrite", async (store) => {
-    for (const item of items) {
-      await requestToPromise(store.put(item));
-    }
-  });
-}
-
-export async function deleteStoreItem<T extends StoreName>(
-  storeName: T,
-  id: string
-): Promise<void> {
-  return withStore(storeName, "readwrite", async (store) => {
-    await requestToPromise(store.delete(id));
-  });
-}
-
 export async function clearStores(): Promise<void> {
   const db = await openDb();
-  await new Promise<void>((resolve, reject) => {
-    const tx = db.transaction(["preferences"], "readwrite");
-    tx.objectStore("preferences").clear();
-    tx.oncomplete = () => resolve();
-    tx.onerror = () => reject(tx.error);
-  });
-  db.close();
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const tx = db.transaction(["preferences"], "readwrite");
+      tx.objectStore("preferences").clear();
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  } finally {
+    db.close();
+  }
 }

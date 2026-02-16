@@ -45,7 +45,7 @@ export function GedachtenStep({ value, onChange }: GedachtenStepProps) {
                 onChange={(e) => onChange(e.target.value)}
                 placeholder="Wat gaat er door je hoofd?"
                 rows={3}
-                className="h-full w-full resize-none rounded-xl border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] px-2 py-1 text-center text-sm text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus:outline-none focus:ring-2 focus:ring-violet-200"
+                className="h-full w-full resize-none rounded-xl border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] px-2 py-1 text-center text-sm text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] focus:ring-offset-2 focus:ring-offset-[var(--background)]"
                 aria-label="Gedachten"
               />
             </div>

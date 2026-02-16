@@ -7,19 +7,19 @@ export function AnalyticsScreen() {
   const { checkins, loading } = useCheckins();
 
   if (loading) {
-    return <p className="py-4 text-sm text-[var(--text-soft)]">Laden…</p>;
+    return (
+      <div className="space-y-6 py-5 pb-24 sm:py-6">
+        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] p-6 shadow-[var(--shadow-zen)] backdrop-blur-xl">
+          <div className="h-6 w-48 animate-pulse rounded-lg bg-[var(--surface-glass-strong)]" />
+          <div className="mt-2 h-4 w-72 animate-pulse rounded bg-[var(--surface-glass-strong)]" />
+        </div>
+        <p className="text-sm text-[var(--text-soft)]">Inzichten laden…</p>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-8 py-4 pb-24">
-      <section className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] p-6 shadow-[var(--shadow-zen)] backdrop-blur-xl">
-        <h1 className="text-2xl font-semibold text-[var(--text-primary)]">
-          Jouw check-in inzichten
-        </h1>
-        <p className="mt-1.5 text-sm text-[var(--text-muted)]">
-          Ritme, energie en patronen.
-        </p>
-      </section>
+    <div className="space-y-6 py-5 pb-24 sm:py-6">
       <AnalyticsView checkins={checkins} />
     </div>
   );

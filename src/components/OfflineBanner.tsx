@@ -2,21 +2,20 @@
 
 import { useState, useEffect } from "react";
 import { WifiOff } from "lucide-react";
-import { syncCheckIns, isLocalStorageMode } from "@/lib/checkin";
+import { syncCheckIns } from "@/lib/checkin";
 
 export function OfflineBanner() {
-  const [isOnline, setIsOnline] = useState(() =>
-    typeof navigator === "undefined" ? true : navigator.onLine
-  );
+  const [showBanner, setShowBanner] = useState<boolean | null>(null);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    const isOnline = navigator.onLine;
+    setShowBanner(!isOnline);
 
     const handleOnline = () => {
-      setIsOnline(true);
+      setShowBanner(false);
       void syncCheckIns();
     };
-    const handleOffline = () => setIsOnline(false);
+    const handleOffline = () => setShowBanner(true);
 
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
@@ -26,11 +25,11 @@ export function OfflineBanner() {
     };
   }, []);
 
-  if (isLocalStorageMode() || isOnline) return null;
+  if (showBanner !== true) return null;
 
   return (
     <div
-      className="flex items-center justify-center gap-2 bg-amber-100 text-amber-900 py-2 px-4 text-sm font-medium"
+      className="flex items-center justify-center gap-2 border-b border-[var(--surface-border)] bg-[var(--surface-glass-strong)] py-2 px-4 text-sm font-medium text-[var(--text-primary)] backdrop-blur-xl"
       role="status"
       aria-live="polite"
     >

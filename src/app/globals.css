@@ -34,7 +34,7 @@
 }
 
 :root {
-  --background: #f4f6ff;
+  --background: #e4e8ee;
   --foreground: #1e2333;
   --surface-glass: rgb(255 255 255 / 0.62);
   --surface-glass-strong: rgb(255 255 255 / 0.78);
@@ -50,15 +50,19 @@
   --focus-ring: #5546ff;
   --focus-shadow: rgb(85 70 255 / 0.24);
   --radius-card: 1.5rem;
+  --radius-control: 0.875rem; /* 14px – buttons, inputs, chips (Apple-style) */
+  --tap-min-height: 44px; /* minimum touch target */
   --space-section: 2rem;
+  --space-page-y: 1.25rem; /* py-5 */
+  --space-card: 1.25rem; /* p-5 */
   --page-gradient: radial-gradient(
       80rem 50rem at 20% -10%,
-      rgb(201 233 255 / 0.62),
+      rgb(160 175 195 / 0.35),
       transparent 55%
     ),
-    radial-gradient(70rem 44rem at 95% 0%, rgb(232 211 255 / 0.56), transparent 50%),
-    linear-gradient(140deg, #eef3ff 0%, #f9f6ff 48%, #f7fbff 100%);
-  --shadow-zen: 0 12px 32px -20px rgb(49 70 122 / 0.22), 0 8px 20px -16px rgb(61 44 122 / 0.22);
+    radial-gradient(70rem 44rem at 95% 0%, rgb(165 180 175 / 0.2), transparent 50%),
+    linear-gradient(160deg, #e8ecf0 0%, #e2e6ec 50%, #dce2ea 100%);
+  --shadow-zen: 0 12px 32px -20px rgb(45 60 80 / 0.2), 0 8px 20px -16px rgb(40 55 75 / 0.18);
 }
 
 @theme inline {
@@ -77,11 +81,14 @@
   --color-surface-glass-strong: var(--surface-glass-strong);
   --color-surface-border: var(--surface-border);
   --radius-card: var(--radius-card);
+  --radius-control: var(--radius-control);
   --space-section: var(--space-section);
+  --space-page-y: var(--space-page-y);
+  --space-card: var(--space-card);
 }
 
 :root[data-theme="dark"] {
-  --background: #101826;
+  --background: #0d1117;
   --foreground: #f2f6ff;
   --surface-glass: rgb(29 41 67 / 0.88);
   --surface-glass-strong: rgb(36 51 82 / 0.95);
@@ -98,11 +105,11 @@
   --focus-shadow: rgb(139 130 255 / 0.34);
   --page-gradient: radial-gradient(
       62rem 38rem at 8% -10%,
-      rgb(66 103 168 / 0.35),
+      rgb(45 60 80 / 0.4),
       transparent 58%
     ),
-    radial-gradient(56rem 34rem at 100% -2%, rgb(94 68 134 / 0.3), transparent 56%),
-    linear-gradient(160deg, #111c2d 0%, #18253a 52%, #141f31 100%);
+    radial-gradient(56rem 34rem at 100% -2%, rgb(35 50 65 / 0.3), transparent 56%),
+    linear-gradient(165deg, #0d1117 0%, #131920 45%, #0f1419 100%);
   --shadow-zen: 0 24px 44px -28px rgb(2 6 23 / 0.86), 0 14px 28px -22px rgb(15 23 42 / 0.8);
 }
 

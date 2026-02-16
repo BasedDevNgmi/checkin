@@ -40,10 +40,10 @@ export function EnergieStep({ value, onChange }: EnergieStepProps) {
           style={{ boxShadow: "inset 0 2px 8px rgba(0,0,0,0.06)" }}
         >
           <motion.div
-            className="absolute bottom-0 left-0 right-0 rounded-b-xl bg-gradient-to-t from-violet-500 to-violet-400 transition-shadow"
+            className="absolute bottom-0 left-0 right-0 rounded-b-xl bg-gradient-to-t from-[var(--accent)] to-[var(--accent-soft)] transition-shadow"
             style={{
               height: heightPercent,
-              boxShadow: "0 -2px 12px rgba(139, 92, 246, 0.3)",
+              boxShadow: "0 -2px 12px rgba(90, 79, 255, 0.25)",
             }}
           />
         </div>
@@ -54,11 +54,11 @@ export function EnergieStep({ value, onChange }: EnergieStepProps) {
             max={100}
             value={value}
             onChange={handleInput}
-            className="w-full h-3 accent-violet-500 cursor-pointer"
+            className="w-full h-3 cursor-pointer accent-[var(--accent)]"
             aria-label="Energie niveau 0 tot 100 procent"
           />
         </div>
-        <p className="text-lg font-semibold text-[#8ea0ff]">{value}%</p>
+        <p className="text-lg font-semibold text-[var(--accent)]">{value}%</p>
       </div>
     </motion.div>
   );

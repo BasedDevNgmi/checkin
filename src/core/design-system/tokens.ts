@@ -18,6 +18,6 @@ export const accent = {
 
 export const moodPalette = {
   low: "#7e83c9",
-  neutral: "#8ea0ff",
-  high: "#5a4fff",
+  neutral: "var(--accent-soft)",
+  high: "var(--accent)",
 } as const;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { validateBackupPayload } from "@/core/storage/indexeddb/repositories";
+import { validateBackupPayload } from "@/core/storage/validate-backup";
 
 describe("validateBackupPayload", () => {
   it("accepts valid payload shape", () => {

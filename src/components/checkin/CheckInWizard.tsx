@@ -2,21 +2,45 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
 import { BodyMapSVG } from "./BodyMapSVG";
 import type { BodyPartId, CheckInFormState } from "@/types/checkin";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { EMOTION_OPTIONS } from "@/types/checkin";
 
 const STEPS = [
-  { id: 0, title: "Denken", duration: "30 sec" },
-  { id: 1, title: "Emoties", duration: "30 sec" },
-  { id: 2, title: "Lijf", duration: "30 sec" },
-  { id: 3, title: "Energie", duration: "30 sec" },
-  { id: 4, title: "Gedrag", duration: "30 sec" },
-];
+  {
+    id: 0,
+    title: "Wat gaat er door je hoofd?",
+    subtitle: "Schrijf kort je gedachten — in woorden of zinnen.",
+    key: "denken",
+  },
+  {
+    id: 1,
+    title: "Welke emoties zijn er nu?",
+    subtitle: "Kies een of meerdere die bij je passen.",
+    key: "emoties",
+  },
+  {
+    id: 2,
+    title: "Wat voel je in je lichaam?",
+    subtitle: "Tik op de plekken waar je iets merkt. Optioneel: schrijf erbij wat je voelt.",
+    key: "lijf",
+  },
+  {
+    id: 3,
+    title: "Hoe staat je batterij?",
+    subtitle: "Sleep de schuif naar je energie van nu (0–100%).",
+    key: "energie",
+  },
+  {
+    id: 4,
+    title: "Bewust of automatisch?",
+    subtitle: "Wat deed je net? Doe je dit omdat je het belangrijk vindt?",
+    key: "gedrag",
+  },
+] as const;
 
 const initialState: CheckInFormState = {
   thoughts: "",
@@ -27,18 +51,30 @@ const initialState: CheckInFormState = {
 };
 
 interface CheckInWizardProps {
-  onSubmit: (data: CheckInFormState) => Promise<{ ok: true } | { ok: false; offline?: boolean; error?: string }>;
+  onSubmit: (data: CheckInFormState) => Promise<
+    | { ok: true }
+    | { ok: false; offline?: boolean; error?: string }
+  >;
+  initialData?: CheckInFormState;
+  successRedirect?: string;
 }
 
-export function CheckInWizard({ onSubmit }: CheckInWizardProps) {
+export function CheckInWizard({
+  onSubmit,
+  initialData,
+  successRedirect,
+}: CheckInWizardProps) {
   const router = useRouter();
+  const reduceMotion = useReducedMotion();
   const [step, setStep] = useState(0);
-  const [state, setState] = useState<CheckInFormState>(initialState);
+  const [state, setState] = useState<CheckInFormState>(initialData ?? initialState);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
   const isFirst = step === 0;
   const isLast = step === STEPS.length - 1;
+  const current = STEPS[step];
+  const progress = ((step + 1) / STEPS.length) * 100;
 
   function toggleEmotion(id: string) {
     setState((s) => ({
@@ -82,9 +118,11 @@ export function CheckInWizard({ onSubmit }: CheckInWizardProps) {
           router.refresh();
         }, 2500);
       } else if (result.ok) {
-        setMessage("Check-in opgeslagen");
+        setMessage(
+          successRedirect ? "Bewerking opgeslagen" : "Check-in opgeslagen"
+        );
         setTimeout(() => {
-          router.push("/dashboard");
+          router.push(successRedirect ?? "/dashboard");
           router.refresh();
         }, 1500);
       } else if (result.ok === false && result.error) {
@@ -95,37 +133,37 @@ export function CheckInWizard({ onSubmit }: CheckInWizardProps) {
     }
   }
 
-  function renderStep() {
+  const controlClass = (selected: boolean) =>
+    selected
+      ? "border-[var(--accent)] bg-[var(--interactive-active)] text-[var(--text-primary)]"
+      : "border-[var(--surface-border)] bg-[var(--surface-glass-strong)] text-[var(--text-muted)] hover:bg-[var(--interactive-hover)]";
+
+  function renderStepContent() {
     if (step === 0) {
       return (
-        <section className="space-y-4">
-          <p className="text-sm text-[var(--text-muted)]">
-            Begin bij het denken, wat gaat er op dit moment door je hoofd? Schrijf dit op in de gedachtewolk, dit mag in volzinnen, het mag ook in woorden (30 seconden).
-          </p>
-          <div className="relative mx-auto max-w-md">
-            <div className="relative rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] p-5 shadow-[var(--shadow-zen)]">
-              <span className="absolute -top-0.5 left-8 h-6 w-8 rounded-full border-2 border-[var(--surface-border)] bg-[var(--surface-glass-strong)]" aria-hidden />
-              <span className="absolute -top-0.5 right-12 h-5 w-6 rounded-full border-2 border-[var(--surface-border)] bg-[var(--surface-glass-strong)]" aria-hidden />
-              <textarea
-                value={state.thoughts}
-                onChange={(e) => setState((s) => ({ ...s, thoughts: e.target.value }))}
-                placeholder="Bijv. Ik voel drukte in mijn hoofd, maar ook opluchting..."
-                className="relative z-10 min-h-32 w-full resize-y rounded-2xl border-0 bg-transparent p-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus:ring-0"
-                aria-label="Gedachtewolk"
-              />
-            </div>
+        <div className="space-y-5">
+          <div className="rounded-[12px] border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] p-4">
+            <textarea
+              value={state.thoughts}
+              onChange={(e) =>
+                setState((s) => ({ ...s, thoughts: e.target.value }))
+              }
+              placeholder="Bijv. drukte in mijn hoofd, maar ook opluchting…"
+              rows={4}
+              className="min-h-[120px] w-full resize-none border-0 bg-transparent text-[15px] leading-relaxed text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus:outline-none focus:ring-0"
+              aria-label="Gedachten"
+            />
           </div>
-          <p className="text-xs text-[var(--text-soft)]">Neem ongeveer 30 seconden</p>
-        </section>
+          <p className="text-[13px] text-[var(--text-soft)]">
+            Ongeveer 30 seconden
+          </p>
+        </div>
       );
     }
 
     if (step === 1) {
       return (
-        <section className="space-y-4">
-          <p className="text-sm text-[var(--text-muted)]">
-            Sta nu stil bij je emoties, welke emoties zijn nu aanwezig? Een goed startpunt kunnen de basisemoties zijn: blij, bang, bedroefd, boos. Het kan zijn dat je meerdere emoties tegelijk voelt, het kan zijn dat je je neutraal voelt; ook dat is prima (30 seconden).
-          </p>
+        <div className="space-y-5">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {EMOTION_OPTIONS.map(({ id, label, emoji }) => {
               const selected = state.emotions.includes(id);
@@ -134,256 +172,267 @@ export function CheckInWizard({ onSubmit }: CheckInWizardProps) {
                   key={id}
                   type="button"
                   onClick={() => toggleEmotion(id)}
-                  className={`rounded-[var(--radius-card)] border px-3 py-3 text-left transition ${
+                  className={`flex min-h-[88px] flex-col items-center justify-center gap-1.5 rounded-[12px] border-2 px-3 py-4 text-left transition focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] focus:ring-offset-2 focus:ring-offset-[var(--background)] ${controlClass(
                     selected
-                      ? "border-violet-400 bg-violet-100/80 text-violet-900 dark:bg-violet-300/20 dark:text-violet-100"
-                      : "border-[var(--surface-border)] bg-[var(--surface-glass-strong)] text-[var(--text-primary)] hover:bg-[var(--interactive-hover)]"
-                  }`}
+                  )}`}
                   aria-pressed={selected}
+                  aria-label={label}
                 >
-                  <span className="block text-lg">{emoji}</span>
-                  <span className="mt-1 block text-sm font-medium">{label}</span>
+                  <span className="text-2xl" role="img" aria-hidden>
+                    {emoji}
+                  </span>
+                  <span className="text-[15px] font-medium">{label}</span>
                 </button>
               );
             })}
           </div>
-          <p className="text-xs text-[var(--text-soft)]">Neem ongeveer 30 seconden</p>
-        </section>
+          <p className="text-[13px] text-[var(--text-soft)]">
+            Ongeveer 30 seconden
+          </p>
+        </div>
       );
     }
 
     if (step === 2) {
       return (
-        <section className="space-y-4">
-          <p className="text-sm text-[var(--text-muted)]">
-            Vervolgens richt je je aandacht op je lijf, wat is daar te voelen? Mocht je bepaalde sensaties opmerken, kun je dat deel van je lijf omcirkelen en erbij schrijven wat je voelt (30 seconden).
-          </p>
-          <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] p-3">
-            <BodyMapSVG selectedParts={state.bodyParts} onTogglePart={toggleBodyPart} />
+        <div className="space-y-5">
+          <div className="flex justify-center py-2">
+            <BodyMapSVG
+              selectedParts={state.bodyParts}
+              onTogglePart={toggleBodyPart}
+            />
           </div>
-          <textarea
-            value={state.behaviorMeta.body_sensations ?? ""}
-            onChange={(e) =>
-              setState((s) => ({
-                ...s,
-                behaviorMeta: { ...s.behaviorMeta, body_sensations: e.target.value },
-              }))
-            }
-            placeholder="Bijv. druk op borst, warme schouders, onrust in buik..."
-            className="min-h-24 w-full resize-y rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] p-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-soft)]"
-            aria-label="Lichaamssensaties notitie"
-          />
-          <p className="text-xs text-[var(--text-soft)]">Neem ongeveer 30 seconden</p>
-        </section>
+          <div className="rounded-[12px] border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] p-4">
+            <textarea
+              value={state.behaviorMeta.body_sensations ?? ""}
+              onChange={(e) =>
+                setState((s) => ({
+                  ...s,
+                  behaviorMeta: {
+                    ...s.behaviorMeta,
+                    body_sensations: e.target.value,
+                  },
+                }))
+              }
+              placeholder="Bijv. druk op borst, warme schouders…"
+              rows={2}
+              className="w-full resize-none border-0 bg-transparent text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus:outline-none"
+              aria-label="Lichaamssensaties"
+            />
+          </div>
+          <p className="text-[13px] text-[var(--text-soft)]">
+            Ongeveer 30 seconden
+          </p>
+        </div>
       );
     }
 
     if (step === 3) {
       const pct = state.energyLevel;
       return (
-        <section className="space-y-4">
-          <p className="text-sm text-[var(--text-muted)]">
-            Vervolgens verschuif je je aandacht naar je energie, hoe staat het ervoor met de batterij (30 seconden).
-          </p>
-          <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] p-4">
-            <div className="mx-auto flex max-w-[200px] flex-col items-center gap-3">
+        <div className="space-y-6">
+          <div className="flex flex-col items-center gap-4">
+            <div
+              className="relative h-40 w-24 flex-shrink-0 overflow-hidden rounded-[14px] border-2 border-[var(--surface-border)] bg-[var(--surface-glass)]"
+              style={{ boxShadow: "inset 0 2px 12px rgba(0,0,0,0.06)" }}
+              aria-hidden
+            >
               <div
-                className="relative h-14 w-24 rounded-lg border-2 border-[var(--text-muted)] bg-[var(--surface-glass)] p-1"
-                aria-hidden
-              >
-                <div
-                  className="absolute bottom-1 left-1 right-1 rounded-md bg-[var(--accent-soft)] transition-all duration-200"
-                  style={{ height: `${pct}%` }}
-                />
-              </div>
-              <span className="text-sm font-medium text-[var(--text-muted)]">Batterij</span>
+                className="absolute bottom-0 left-0 right-0 rounded-b-[12px] bg-gradient-to-t from-[var(--accent)] to-[var(--accent-soft)] transition-all duration-200"
+                style={{ height: `${pct}%` }}
+              />
             </div>
-            <input
-              type="range"
-              min={0}
-              max={100}
-              value={state.energyLevel}
-              onChange={(e) =>
-                setState((s) => ({ ...s, energyLevel: Number(e.target.value) }))
-              }
-              className="mt-4 w-full accent-violet-500"
-              aria-label="Energie niveau"
-            />
-            <p className="mt-2 text-center text-xl font-semibold text-[var(--accent-soft)]">
-              {state.energyLevel}%
+            <p className="text-[22px] font-semibold tabular-nums text-[var(--accent)]">
+              {pct}%
             </p>
           </div>
-          <p className="text-xs text-[var(--text-soft)]">Neem ongeveer 30 seconden</p>
-        </section>
+          <input
+            type="range"
+            min={0}
+            max={100}
+            value={state.energyLevel}
+            onChange={(e) =>
+              setState((s) => ({ ...s, energyLevel: Number(e.target.value) }))
+            }
+            className="h-3 w-full max-w-xs cursor-pointer accent-[var(--accent)]"
+            aria-label="Energieniveau 0 tot 100 procent"
+          />
+          <p className="text-[13px] text-[var(--text-soft)]">
+            Ongeveer 30 seconden
+          </p>
+        </div>
       );
     }
 
+    // Step 4: Gedrag
     return (
-      <section className="space-y-4">
-        <p className="text-sm text-[var(--text-muted)]">
-          Tenslotte sta je stil bij je gedrag, wat was je net aan het doen? Deed je dit bewust, of op de automatische piloot? Doe je dit omdat je het belangrijk vindt? Wil je hiermee doorgaan of wil je je gedrag wellicht iets bijstellen (30 seconden)?
+      <div className="space-y-6">
+        <div className="rounded-[12px] border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] p-4">
+          <textarea
+            value={state.behaviorMeta.activity_now ?? ""}
+            onChange={(e) =>
+              setState((s) => ({
+                ...s,
+                behaviorMeta: { ...s.behaviorMeta, activity_now: e.target.value },
+              }))
+            }
+            placeholder="Wat was je net aan het doen?"
+            rows={2}
+            className="w-full resize-none border-0 bg-transparent text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus:outline-none"
+            aria-label="Activiteit"
+          />
+        </div>
+
+        <div>
+          <p className="mb-2 text-[15px] font-medium text-[var(--text-muted)]">
+            Bewust of automatisch?
+          </p>
+          <div className="flex gap-3">
+            {(["Bewust", "Autonoom"] as const).map((opt) => {
+              const selected = state.behaviorMeta.bewust_autonoom === opt;
+              return (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() =>
+                    setState((s) => ({
+                      ...s,
+                      behaviorMeta: { ...s.behaviorMeta, bewust_autonoom: opt },
+                    }))
+                  }
+                  className={`flex-1 min-h-[48px] rounded-[12px] border-2 px-4 py-3 text-[15px] font-medium transition focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] focus:ring-offset-2 focus:ring-offset-[var(--background)] ${controlClass(
+                    selected
+                  )}`}
+                  aria-pressed={selected}
+                >
+                  {opt}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div>
+          <p className="mb-2 text-[15px] font-medium text-[var(--text-muted)]">
+            Doe je dit omdat je het belangrijk vindt?
+          </p>
+          <div className="flex gap-3">
+            {([true, false] as const).map((val) => {
+              const selected = state.behaviorMeta.waarden_check === val;
+              return (
+                <button
+                  key={String(val)}
+                  type="button"
+                  onClick={() =>
+                    setState((s) => ({
+                      ...s,
+                      behaviorMeta: { ...s.behaviorMeta, waarden_check: val },
+                    }))
+                  }
+                  className={`flex-1 min-h-[48px] rounded-[12px] border-2 px-4 py-3 text-[15px] font-medium transition focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] focus:ring-offset-2 focus:ring-offset-[var(--background)] ${controlClass(
+                    selected
+                  )}`}
+                  aria-pressed={selected}
+                >
+                  {val ? "Ja" : "Nee"}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="rounded-[12px] border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] p-4">
+          <textarea
+            value={state.behaviorMeta.values_reason ?? ""}
+            onChange={(e) =>
+              setState((s) => ({
+                ...s,
+                behaviorMeta: {
+                  ...s.behaviorMeta,
+                  values_reason: e.target.value,
+                },
+              }))
+            }
+            placeholder="Waarom wel of niet? (optioneel)"
+            rows={2}
+            className="w-full resize-none border-0 bg-transparent text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus:outline-none"
+            aria-label="Waarden reflectie"
+          />
+        </div>
+        <div className="rounded-[12px] border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] p-4">
+          <textarea
+            value={state.behaviorMeta.behavior_next ?? ""}
+            onChange={(e) =>
+              setState((s) => ({
+                ...s,
+                behaviorMeta: {
+                  ...s.behaviorMeta,
+                  behavior_next: e.target.value,
+                },
+              }))
+            }
+            placeholder="Wil je hiermee doorgaan of iets bijstellen? (optioneel)"
+            rows={2}
+            className="w-full resize-none border-0 bg-transparent text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus:outline-none"
+            aria-label="Gedrag vervolg"
+          />
+        </div>
+        <p className="text-[13px] text-[var(--text-soft)]">
+          Ongeveer 30 seconden
         </p>
-        <textarea
-          value={state.behaviorMeta.activity_now ?? ""}
-          onChange={(e) =>
-            setState((s) => ({
-              ...s,
-              behaviorMeta: { ...s.behaviorMeta, activity_now: e.target.value },
-            }))
-          }
-          placeholder="Wat was je net aan het doen?"
-          className="min-h-20 w-full resize-y rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] p-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-soft)]"
-          aria-label="Activiteit notitie"
-        />
-        <div className="grid grid-cols-2 gap-3">
-          {(["Bewust", "Autonoom"] as const).map((opt) => {
-            const selected = state.behaviorMeta.bewust_autonoom === opt;
-            return (
-              <button
-                key={opt}
-                type="button"
-                onClick={() =>
-                  setState((s) => ({
-                    ...s,
-                    behaviorMeta: { ...s.behaviorMeta, bewust_autonoom: opt },
-                  }))
-                }
-                className={`rounded-[var(--radius-card)] border px-3 py-3 text-sm font-medium transition ${
-                  selected
-                    ? "border-violet-400 bg-violet-100/80 text-violet-900 dark:bg-violet-300/20 dark:text-violet-100"
-                    : "border-[var(--surface-border)] bg-[var(--surface-glass-strong)] text-[var(--text-primary)] hover:bg-[var(--interactive-hover)]"
-                }`}
-                aria-pressed={selected}
-              >
-                {opt}
-              </button>
-            );
-          })}
-        </div>
-        <p className="text-sm text-[var(--text-muted)]">Doe je dit omdat je het belangrijk vindt?</p>
-        <div className="flex gap-2">
-          {([true, false] as const).map((val) => {
-            const selected = state.behaviorMeta.waarden_check === val;
-            return (
-              <button
-                key={String(val)}
-                type="button"
-                onClick={() =>
-                  setState((s) => ({
-                    ...s,
-                    behaviorMeta: { ...s.behaviorMeta, waarden_check: val },
-                  }))
-                }
-                className={`rounded-[var(--radius-card)] border px-3 py-2 text-sm font-medium transition ${
-                  selected
-                    ? "border-violet-400 bg-violet-100/80 text-violet-900 dark:bg-violet-300/20 dark:text-violet-100"
-                    : "border-[var(--surface-border)] bg-[var(--surface-glass-strong)] text-[var(--text-primary)] hover:bg-[var(--interactive-hover)]"
-                }`}
-                aria-pressed={selected}
-              >
-                {val ? "Ja" : "Nee"}
-              </button>
-            );
-          })}
-        </div>
-        <textarea
-          value={state.behaviorMeta.values_reason ?? ""}
-          onChange={(e) =>
-            setState((s) => ({
-              ...s,
-              behaviorMeta: { ...s.behaviorMeta, values_reason: e.target.value },
-            }))
-          }
-          placeholder="Waarom wel of niet?"
-          className="min-h-20 w-full resize-y rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] p-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-soft)]"
-          aria-label="Waarden reflectie"
-        />
-        <textarea
-          value={state.behaviorMeta.behavior_next ?? ""}
-          onChange={(e) =>
-            setState((s) => ({
-              ...s,
-              behaviorMeta: { ...s.behaviorMeta, behavior_next: e.target.value },
-            }))
-          }
-          placeholder="Wil je hiermee doorgaan of je gedrag iets bijstellen?"
-          className="min-h-20 w-full resize-y rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] p-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-soft)]"
-          aria-label="Gedrag vervolg"
-        />
-        <p className="text-xs text-[var(--text-soft)]">Neem ongeveer 30 seconden</p>
-      </section>
+      </div>
     );
   }
 
   return (
-    <Card className="mx-auto max-w-2xl p-6 sm:p-8">
-      <div className="mb-5">
-        <h1 className="text-2xl font-semibold text-[var(--text-primary)]">
-          De 5 vragen
-        </h1>
-      </div>
-      <div
-        className="mb-5 h-1 w-full overflow-hidden rounded-full bg-[var(--interactive-hover)]"
-        role="progressbar"
-        aria-valuenow={step + 1}
-        aria-valuemin={1}
-        aria-valuemax={STEPS.length}
-        aria-label="Voortgang check-in"
-      >
-        <motion.div
-          className="h-full rounded-full bg-[var(--accent-soft)]"
-          initial={false}
-          animate={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
-          transition={{ duration: 0.3 }}
-        />
-      </div>
-      <div className="mb-6 flex items-center justify-between">
-        <button
-          type="button"
-          onClick={handlePrev}
-          disabled={isFirst}
-          className="flex items-center gap-1 text-[var(--text-muted)] transition hover:text-[var(--text-primary)] disabled:pointer-events-none disabled:opacity-40"
-          aria-label="Vorige stap"
+    <div className="mx-auto max-w-lg">
+      {/* Progress — Apple-style thin bar + label */}
+      <div className="mb-6">
+        <div
+          className="h-1 w-full overflow-hidden rounded-full bg-[var(--interactive-hover)]"
+          role="progressbar"
+          aria-valuenow={step + 1}
+          aria-valuemin={1}
+          aria-valuemax={STEPS.length}
+          aria-label={`Stap ${step + 1} van ${STEPS.length}`}
         >
-          <ChevronLeft className="h-5 w-5" />
-          Vorige
-        </button>
-        <span className="text-center text-sm text-[var(--text-muted)]">
-          Stap {step + 1} / {STEPS.length} · {STEPS[step].duration}
-        </span>
-        <button
-          type="button"
-          onClick={handleNext}
-          disabled={isLast}
-          className="flex items-center gap-1 text-[var(--text-muted)] transition hover:text-[var(--text-primary)] disabled:pointer-events-none disabled:opacity-40"
-          aria-label="Volgende stap"
-        >
-          Volgende
-          <ChevronRight className="h-5 w-5" />
-        </button>
+          <motion.div
+            className="h-full rounded-full bg-[var(--accent)]"
+            initial={false}
+            animate={{ width: `${progress}%` }}
+            transition={reduceMotion ? { duration: 0 } : { duration: 0.3, ease: "easeOut" }}
+          />
+        </div>
+        <p className="mt-2 text-[13px] text-[var(--text-soft)]">
+          {step + 1} van {STEPS.length}
+        </p>
       </div>
 
+      {/* Step content */}
       <AnimatePresence mode="wait">
         <motion.div
           key={step}
-          initial={{ opacity: 0, y: 10 }}
+          initial={reduceMotion ? false : { opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.2 }}
-          className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] p-5 sm:p-6"
+          exit={reduceMotion ? {} : { opacity: 0, y: -8 }}
+          transition={reduceMotion ? {} : { duration: 0.25, ease: "easeOut" }}
+          className="min-h-[280px]"
         >
-          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.1em] text-[var(--text-soft)]">
-            Stap {step + 1}: {STEPS[step].title}
+          <h2 className="text-[22px] font-semibold leading-tight tracking-[-0.02em] text-[var(--text-primary)]">
+            {current.title}
+          </h2>
+          <p className="mt-2 text-[15px] text-[var(--text-muted)]">
+            {current.subtitle}
           </p>
-          {renderStep()}
+          <div className="mt-6">{renderStepContent()}</div>
         </motion.div>
       </AnimatePresence>
 
       {message && (
         <p
-          className={`mt-4 text-sm ${
+          className={`mt-4 text-[15px] ${
             message.includes("Opgeslagen") || message === "Check-in opgeslagen"
-              ? "text-emerald-600"
+              ? "text-[var(--accent)]"
               : "text-rose-600"
           }`}
         >
@@ -391,24 +440,33 @@ export function CheckInWizard({ onSubmit }: CheckInWizardProps) {
         </p>
       )}
 
-      <div className="mt-8 flex items-center justify-between gap-3">
-        <p className="text-xs text-[var(--text-soft)]">
-          Tip: houd het kort. Je kunt later altijd meer aanvullen.
-        </p>
+      {/* Bottom navigation — Apple-style: Back + primary action */}
+      <div className="mt-10 flex items-center justify-between gap-4 border-t border-[var(--surface-border)]/60 pt-6">
+        <button
+          type="button"
+          onClick={handlePrev}
+          disabled={isFirst}
+          className="flex min-h-[44px] items-center gap-1 rounded-[12px] px-3 py-2.5 text-[15px] font-medium text-[var(--text-muted)] transition hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)] disabled:pointer-events-none disabled:opacity-40"
+          aria-label="Vorige stap"
+        >
+          <ChevronLeft className="h-5 w-5" />
+          Terug
+        </button>
         {isLast ? (
           <Button
             onClick={handleFinish}
             disabled={isSubmitting}
             variant="primary"
+            className="min-h-[44px]"
           >
-            {isSubmitting ? "Opslaan…" : "Check-in afronden"}
+            {isSubmitting ? "Opslaan…" : "Afronden"}
           </Button>
         ) : (
-          <Button onClick={handleNext} variant="primary">
-            Volgende stap
+          <Button onClick={handleNext} variant="primary" className="min-h-[44px]">
+            Volgende
           </Button>
         )}
       </div>
-    </Card>
+    </div>
   );
 }

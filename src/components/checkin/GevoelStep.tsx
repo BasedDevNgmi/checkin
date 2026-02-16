@@ -30,9 +30,9 @@ export function GevoelStep({ selected, onToggle }: GevoelStepProps) {
               type="button"
               onClick={() => onToggle(id)}
               whileTap={{ scale: 0.96 }}
-              className={`flex flex-col items-center justify-center gap-1.5 rounded-2xl border-2 py-4 px-3 transition focus:outline-none focus:ring-2 focus:ring-violet-300 focus:ring-offset-2 ${
+              className={`flex flex-col items-center justify-center gap-1.5 rounded-2xl border-2 py-4 px-3 transition focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] focus:ring-offset-2 focus:ring-offset-[var(--background)] ${
                 isSelected
-                  ? "border-violet-400 bg-violet-100/80 text-violet-900 shadow-md shadow-violet-200/50 dark:bg-violet-300/20 dark:text-violet-100"
+                  ? "border-[var(--accent)] bg-[var(--interactive-active)] text-[var(--text-primary)] shadow-[var(--shadow-zen)]"
                   : "border-[var(--surface-border)] bg-[var(--surface-glass-strong)] text-[var(--text-muted)] hover:bg-[var(--interactive-hover)]"
               }`}
               aria-pressed={isSelected}

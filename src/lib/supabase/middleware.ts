@@ -1,17 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { isLocalStorageMode } from "@/lib/storage-mode";
 
 export async function updateSession(request: NextRequest) {
-  if (isLocalStorageMode()) {
-    if (request.nextUrl.pathname === "/") {
-      const url = request.nextUrl.clone();
-      url.pathname = "/dashboard";
-      return NextResponse.redirect(url);
-    }
-    return NextResponse.next({ request });
-  }
-
   const supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(

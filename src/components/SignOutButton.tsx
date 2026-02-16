@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { isLocalStorageMode } from "@/lib/checkin";
 import { LogOut, Loader2 } from "lucide-react";
 
 const CONFIRM_MESSAGE = "Weet je het zeker? Je wordt uitgelogd.";
@@ -16,11 +15,6 @@ export function SignOutButton() {
   const [showConfirm, setShowConfirm] = useState(false);
 
   async function performSignOut() {
-    if (isLocalStorageMode()) {
-      router.push("/dashboard");
-      router.refresh();
-      return;
-    }
     setIsLoading(true);
     try {
       const supabase = createClient();
@@ -59,7 +53,7 @@ export function SignOutButton() {
         disabled={isLoading}
         aria-busy={isLoading}
         title="Uitloggen"
-        className="flex items-center gap-1.5 rounded-[14px] border border-[var(--surface-border-strong)] bg-[var(--surface-glass-strong)] px-3 py-2 text-sm text-[var(--text-primary)] transition hover:bg-[var(--interactive-active)] disabled:opacity-70 disabled:pointer-events-none"
+        className="flex items-center gap-1.5 rounded-[14px] border border-[var(--surface-border-strong)] bg-[var(--surface-glass-strong)] px-3 py-2.5 text-sm text-[var(--text-primary)] min-h-[44px] transition hover:bg-[var(--interactive-active)] disabled:opacity-70 disabled:pointer-events-none"
       >
         {isLoading ? (
           <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
@@ -85,14 +79,14 @@ export function SignOutButton() {
             <button
               type="button"
               onClick={handleCancel}
-              className="rounded-[12px] border border-[var(--surface-border)] px-3 py-2 text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--interactive-hover)]"
+              className="rounded-[14px] border border-[var(--surface-border)] px-3 py-2.5 text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--interactive-hover)] min-h-[44px]"
             >
               {CONFIRM_LABEL_CANCEL}
             </button>
             <button
               type="button"
               onClick={handleConfirm}
-              className="rounded-[12px] bg-gradient-to-b from-[var(--accent-soft)] to-[var(--accent)] px-3 py-2 text-sm font-medium text-white hover:opacity-95"
+              className="rounded-[14px] bg-gradient-to-b from-[var(--accent-soft)] to-[var(--accent)] px-3 py-2.5 text-sm font-medium text-white hover:opacity-95 min-h-[44px]"
             >
               {CONFIRM_LABEL_CONFIRM}
             </button>

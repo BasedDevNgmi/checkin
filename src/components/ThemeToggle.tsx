@@ -65,7 +65,7 @@ export function ThemeToggle() {
 
   return (
     <div
-      className="inline-flex items-center rounded-[14px] border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] p-1"
+      className="inline-flex items-center rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] p-0.5"
       role="group"
       aria-label="Thema kiezen"
     >
@@ -76,17 +76,16 @@ export function ThemeToggle() {
             key={id}
             type="button"
             onClick={() => handleSetPreference(id)}
-            className={`inline-flex items-center gap-1 rounded-[10px] px-2.5 py-1.5 text-xs font-medium transition ${
+            className={`inline-flex min-h-[36px] min-w-[36px] items-center justify-center rounded-[10px] p-1.5 transition ${
               isActive
                 ? "bg-[var(--interactive-active)] text-[var(--text-primary)]"
                 : "text-[var(--text-muted)] hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)]"
             }`}
             aria-pressed={isActive}
             aria-label={`Thema: ${label}`}
-            title={`Thema: ${label}`}
+            title={label}
           >
             <Icon className="h-3.5 w-3.5" aria-hidden />
-            <span className="hidden sm:inline">{label}</span>
           </button>
         );
       })}

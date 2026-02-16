@@ -37,9 +37,9 @@ export function GedragStep({
                 type="button"
                 whileTap={{ scale: 0.98 }}
                 onClick={() => onBewustAutonoom(opt)}
-                className={`flex-1 rounded-xl border-2 py-3 px-4 font-medium transition focus:outline-none focus:ring-2 focus:ring-violet-300 focus:ring-offset-2 ${
+                className={`flex-1 rounded-xl border-2 py-3 px-4 font-medium transition focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] focus:ring-offset-2 focus:ring-offset-[var(--background)] ${
                   isSelected
-                    ? "border-violet-500 bg-violet-100/80 text-violet-900 dark:bg-violet-300/20 dark:text-violet-100"
+                    ? "border-[var(--accent)] bg-[var(--interactive-active)] text-[var(--text-primary)]"
                     : "border-[var(--surface-border)] bg-[var(--surface-glass-strong)] text-[var(--text-muted)] hover:bg-[var(--interactive-hover)]"
                 }`}
                 aria-pressed={isSelected}
@@ -63,9 +63,9 @@ export function GedragStep({
                 type="button"
                 whileTap={{ scale: 0.98 }}
                 onClick={() => onWaardenCheck(opt)}
-                className={`flex-1 rounded-xl border-2 py-3 px-4 font-medium transition focus:outline-none focus:ring-2 focus:ring-violet-300 focus:ring-offset-2 ${
+                className={`flex-1 rounded-xl border-2 py-3 px-4 font-medium transition focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] focus:ring-offset-2 focus:ring-offset-[var(--background)] ${
                   isSelected
-                    ? "border-violet-500 bg-violet-100/80 text-violet-900 dark:bg-violet-300/20 dark:text-violet-100"
+                    ? "border-[var(--accent)] bg-[var(--interactive-active)] text-[var(--text-primary)]"
                     : "border-[var(--surface-border)] bg-[var(--surface-glass-strong)] text-[var(--text-muted)] hover:bg-[var(--interactive-hover)]"
                 }`}
                 aria-pressed={isSelected}

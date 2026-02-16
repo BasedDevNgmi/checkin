@@ -28,6 +28,11 @@ export interface CheckInRow {
   behavior_meta: BehaviorMeta | null;
 }
 
+export type SaveResult =
+  | { ok: true }
+  | { ok: false; offline: true }
+  | { ok: false; error: string };
+
 export const EMOTION_OPTIONS = [
   { id: "Blij", label: "Blij", emoji: "😊" },
   { id: "Bang", label: "Bang", emoji: "😨" },

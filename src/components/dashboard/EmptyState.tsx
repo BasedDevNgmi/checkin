@@ -1,17 +1,21 @@
+"use client";
+
 import Link from "next/link";
 
 export function EmptyState() {
   return (
-    <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] p-8 text-center shadow-[var(--shadow-zen)] backdrop-blur-xl">
-      <p className="text-[var(--text-primary)]">Nog geen check-ins vandaag.</p>
-      <p className="mt-2 text-sm text-[var(--text-muted)]">
-        Begin met een check-in en bouw je overzicht rustig op.
+    <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] px-5 py-10 text-center shadow-[var(--shadow-zen)] backdrop-blur-xl">
+      <p className="text-[17px] font-semibold text-[var(--text-primary)]">
+        Nog geen check-ins
+      </p>
+      <p className="mt-2 text-[15px] text-[var(--text-muted)]">
+        Start met een check-in en bouw je overzicht rustig op.
       </p>
       <Link
         href="/checkin"
-        className="mt-6 inline-flex rounded-[14px] bg-gradient-to-b from-[var(--accent-soft)] to-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white shadow-[var(--shadow-zen)] transition hover:opacity-95"
+        className="mt-6 inline-flex min-h-[44px] items-center rounded-[var(--radius-control)] bg-[var(--accent)] px-5 py-2.5 text-[15px] font-medium text-white shadow-sm transition hover:opacity-92 active:opacity-90"
       >
-        Beantwoord de 5 vragen
+        Eerste check-in
       </Link>
     </div>
   );
