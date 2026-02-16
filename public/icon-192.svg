@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" role="img" aria-label="Mind Journal icon">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8ea0ff" />
+      <stop offset="100%" stop-color="#5a4fff" />
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="44" fill="url(#g)" />
+  <path d="M56 52h70c6.6 0 12 5.4 12 12v64c0 6.6-5.4 12-12 12H66c-6.6 0-12-5.4-12-12V54a2 2 0 0 1 2-2z" fill="#ffffff" fill-opacity="0.9"/>
+  <path d="M76 76h42M76 94h42M76 112h30" stroke="#5a4fff" stroke-width="8" stroke-linecap="round"/>
+</svg>
