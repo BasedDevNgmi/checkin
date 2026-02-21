@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { EASE_SMOOTH } from "@/lib/motion";
@@ -93,9 +93,19 @@ export function Timeline({ checkins }: TimelineProps) {
   const [emotionFilter, setEmotionFilter] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState<DateRangePreset>("all");
   const [showFilters, setShowFilters] = useState(false);
+  const filtersPanelId = useId();
 
   const allEmotions = useMemo(() => {
-    return Array.from(new Set(checkins.flatMap((entry) => entry.emotions ?? []))).slice(0, 8);
+    const counts = new Map<string, number>();
+    for (const entry of checkins) {
+      for (const emotion of entry.emotions ?? []) {
+        counts.set(emotion, (counts.get(emotion) ?? 0) + 1);
+      }
+    }
+    return [...counts.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .map(([emotion]) => emotion)
+      .slice(0, 6);
   }, [checkins]);
 
   const rangeStart = getRangeStart(dateRange);
@@ -142,29 +152,29 @@ export function Timeline({ checkins }: TimelineProps) {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div
           className="inline-flex rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--interactive-hover)] p-0.5"
-          role="tablist"
           aria-label="Periode"
         >
-        {DATE_RANGE_OPTIONS.map(({ value, label }) => (
-          <button
-            key={value}
-            type="button"
-            role="tab"
-            onClick={() => setDateRange(value)}
-            className={`rounded-[var(--radius-small)] px-3 py-1.5 text-[13px] font-medium transition-colors duration-200 ${
-              dateRange === value
-                ? "bg-[var(--surface)] text-[var(--text-primary)] shadow-[var(--shadow-zen)]"
-                : "text-[var(--text-soft)] hover:text-[var(--text-primary)]"
-            }`}
-            aria-selected={dateRange === value}
-          >
-            {label}
-          </button>
-        ))}
+          {DATE_RANGE_OPTIONS.map(({ value, label }) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => setDateRange(value)}
+              className={`rounded-[var(--radius-small)] px-3 py-1.5 text-[13px] font-medium transition-colors duration-200 ${
+                dateRange === value
+                  ? "bg-[var(--surface)] text-[var(--text-primary)] shadow-[var(--shadow-zen)]"
+                  : "text-[var(--text-soft)] hover:text-[var(--text-primary)]"
+              }`}
+              aria-pressed={dateRange === value}
+            >
+              {label}
+            </button>
+          ))}
         </div>
         <button
           type="button"
           onClick={() => setShowFilters((v) => !v)}
+          aria-expanded={showFilters || Boolean(query) || Boolean(emotionFilter)}
+          aria-controls={filtersPanelId}
           className={`inline-flex min-h-[38px] items-center gap-1.5 rounded-[var(--radius-control)] border px-3 text-[13px] font-medium transition-colors duration-200 ${
             showFilters || query || emotionFilter
               ? "border-[var(--accent)] text-[var(--accent)]"
@@ -177,50 +187,65 @@ export function Timeline({ checkins }: TimelineProps) {
       </div>
 
       {(showFilters || query || emotionFilter) && (
-        <div className="space-y-3 rounded-[var(--radius-control)] border border-[var(--surface-border)]/80 bg-[var(--surface)]/80 p-3.5">
-        <div className="relative">
-          <Search
-            className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-soft)]"
-            aria-hidden
-          />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Zoek in gedachten of gedrag"
-            className="w-full rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface)] py-2.5 pl-10 pr-4 text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus-visible:border-[var(--focus-ring)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition"
-            aria-label="Zoek entries"
-          />
-        </div>
-        {allEmotions.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => setEmotionFilter(null)}
-              className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium border transition-colors duration-200 ${
-                emotionFilter == null
-                  ? "border-[var(--accent)] bg-[var(--accent)] text-white"
-                  : "border-[var(--surface-border)] text-[var(--text-muted)] hover:border-[var(--text-soft)] hover:text-[var(--text-primary)]"
-              }`}
-            >
-              Alles
-            </button>
-            {allEmotions.map((emotion) => (
+        <div
+          id={filtersPanelId}
+          className="space-y-3 rounded-[var(--radius-control)] border border-[var(--surface-border)]/80 bg-[var(--surface)]/80 p-3.5"
+        >
+          <div className="relative">
+            <Search
+              className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-soft)]"
+              aria-hidden
+            />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Zoek in gedachten of gedrag"
+              className="w-full rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface)] py-2.5 pl-10 pr-4 text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus-visible:border-[var(--focus-ring)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition"
+              aria-label="Zoek entries"
+            />
+          </div>
+          {allEmotions.length > 0 && (
+            <div className="flex flex-wrap gap-2">
               <button
-                key={emotion}
                 type="button"
-                onClick={() => setEmotionFilter(emotion)}
+                onClick={() => setEmotionFilter(null)}
                 className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium border transition-colors duration-200 ${
-                  emotionFilter === emotion
+                  emotionFilter == null
                     ? "border-[var(--accent)] bg-[var(--accent)] text-white"
                     : "border-[var(--surface-border)] text-[var(--text-muted)] hover:border-[var(--text-soft)] hover:text-[var(--text-primary)]"
                 }`}
               >
-                {emotion}
+                Alles
               </button>
-            ))}
-          </div>
-        )}
-      </div>
+              {allEmotions.map((emotion) => (
+                <button
+                  key={emotion}
+                  type="button"
+                  onClick={() => setEmotionFilter(emotion)}
+                  className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium border transition-colors duration-200 ${
+                    emotionFilter === emotion
+                      ? "border-[var(--accent)] bg-[var(--accent)] text-white"
+                      : "border-[var(--surface-border)] text-[var(--text-muted)] hover:border-[var(--text-soft)] hover:text-[var(--text-primary)]"
+                  }`}
+                >
+                  {emotion}
+                </button>
+              ))}
+            </div>
+          )}
+          {(query || emotionFilter) && (
+            <button
+              type="button"
+              onClick={() => {
+                setQuery("");
+                setEmotionFilter(null);
+              }}
+              className="text-[12px] font-medium text-[var(--accent)] hover:opacity-80"
+            >
+              Wis filters
+            </button>
+          )}
+        </div>
       )}
 
       {groupedByDay.length === 0 ? (

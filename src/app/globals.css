@@ -149,8 +149,8 @@ body {
   height: 16rem;
   pointer-events: none;
   background:
-    radial-gradient(65% 55% at 22% 8%, color-mix(in oklab, var(--accent) 12%, transparent) 0%, transparent 78%),
-    radial-gradient(55% 45% at 82% 0%, color-mix(in oklab, var(--accent-soft) 10%, transparent) 0%, transparent 74%);
+    radial-gradient(65% 55% at 22% 8%, rgb(139 130 255 / 0.16) 0%, transparent 78%),
+    radial-gradient(55% 45% at 82% 0%, rgb(168 160 255 / 0.14) 0%, transparent 74%);
   opacity: 0.55;
   z-index: 0;
 }
