@@ -7,7 +7,7 @@ import { EASE_SMOOTH } from "@/lib/motion";
 import { EMOTION_OPTIONS, type CheckInRow } from "@/types/checkin";
 import { Search } from "lucide-react";
 
-const EMOJI_MAP = new Map(EMOTION_OPTIONS.map((e) => [e.id, e.emoji]));
+const EMOJI_MAP: Map<string, string> = new Map(EMOTION_OPTIONS.map((e) => [e.id, e.emoji]));
 
 function energyColor(level: number): string {
   if (level >= 70) return "var(--text-success)";
