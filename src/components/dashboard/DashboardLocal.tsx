@@ -12,7 +12,7 @@ import {
   getTopEmotion,
 } from "@/lib/checkin-insights";
 import Link from "next/link";
-import { ArrowRight, Flame, Sparkles } from "lucide-react";
+import { ArrowRight, Flame } from "lucide-react";
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -42,16 +42,15 @@ export function DashboardLocal() {
     <div className="dashboard-calm-shell min-h-full pb-24">
       <div className="mx-auto w-full max-w-3xl">
         <header className="mb-6">
-          <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)]/70 bg-[var(--surface)]/95 p-5 shadow-[var(--shadow-elevation)] sm:p-6">
+          <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)]/70 bg-[var(--surface)] p-5 shadow-[var(--shadow-elevation)] sm:p-6">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <p className="inline-flex items-center gap-1.5 rounded-full border border-[var(--surface-border)] bg-[var(--interactive-hover)] px-2.5 py-1 text-[11px] font-medium uppercase tracking-wide text-[var(--text-muted)]">
-                  <Sparkles className="h-3.5 w-3.5" aria-hidden />
+                <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-[var(--text-soft)]">
                   Vandaag
                 </p>
                 <h1
                   suppressHydrationWarning
-                  className="mt-3 text-[1.45rem] font-semibold tracking-[-0.025em] text-[var(--text-primary)] sm:text-[1.7rem]"
+                  className="mt-2 text-[1.4rem] font-semibold tracking-[-0.02em] text-[var(--text-primary)] sm:text-[1.62rem]"
                 >
                   {hasTodayEntry ? `${getGreeting()}, je bent op koers` : `${getGreeting()}, hoe gaat het vandaag?`}
                 </h1>
@@ -80,11 +79,11 @@ export function DashboardLocal() {
             </div>
 
             {stats.length > 0 && (
-              <div className="mt-4 flex flex-wrap gap-2.5 text-[13px]">
+              <div className="mt-4 flex flex-wrap items-center gap-2.5 text-[13px]">
                 {stats.map((stat, i) => (
                   <span
                     key={i}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-[var(--surface-border)] bg-[var(--interactive-hover)] px-3 py-1 text-[var(--text-muted)]"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-[var(--surface-border)] px-3 py-1 text-[var(--text-muted)]"
                   >
                     {stat.icon && <Flame className="h-3.5 w-3.5 text-[var(--accent)]" aria-hidden />}
                     {stat.label}
@@ -92,7 +91,7 @@ export function DashboardLocal() {
                 ))}
                 <Link
                   href="/analytics"
-                  className="inline-flex items-center rounded-full border border-[var(--surface-border)] px-3 py-1 font-medium text-[var(--accent)] transition-colors duration-200 hover:bg-[var(--interactive-hover)]"
+                  className="inline-flex items-center rounded-full border border-[var(--surface-border)] px-3 py-1 font-medium text-[var(--text-primary)] transition-colors duration-200 hover:bg-[var(--interactive-hover)]"
                 >
                   Bekijk trends
                 </Link>

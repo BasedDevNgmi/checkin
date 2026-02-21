@@ -4,7 +4,7 @@ import { forwardRef, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
 const inputBase =
-  "w-full rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface)] px-4 py-3 text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus-visible:border-[var(--focus-ring)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition disabled:opacity-50 disabled:pointer-events-none";
+  "w-full rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface)] px-4 py-3 text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus-visible:border-[var(--surface-border-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition-colors duration-200 disabled:opacity-50 disabled:pointer-events-none";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -38,7 +38,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               onClick={() => setShowPassword((v) => !v)}
               className="absolute right-0 top-0 flex h-full min-w-[44px] items-center justify-center text-[var(--text-soft)] transition-colors duration-200 hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--focus-ring)] rounded-r-[var(--radius-control)]"
               aria-label={showPassword ? "Wachtwoord verbergen" : "Wachtwoord tonen"}
-              tabIndex={-1}
             >
               {showPassword ? (
                 <EyeOff className="h-[18px] w-[18px]" aria-hidden />

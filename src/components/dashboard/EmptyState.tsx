@@ -5,9 +5,9 @@ import { BookOpenCheck } from "lucide-react";
 
 export function EmptyState() {
   return (
-    <section className="rounded-[var(--radius-card)] border border-[var(--surface-border)]/70 bg-[var(--surface)]/95 p-8 text-center shadow-[var(--shadow-elevation)]">
-      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--interactive-hover)]">
-        <BookOpenCheck className="h-6 w-6 text-[var(--accent)]" aria-hidden />
+    <section className="rounded-[var(--radius-card)] border border-[var(--surface-border)]/70 bg-[var(--surface)] p-8 text-center shadow-[var(--shadow-elevation)]">
+      <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--interactive-hover)]">
+        <BookOpenCheck className="h-5 w-5 text-[var(--text-primary)]" aria-hidden />
       </div>
       <p className="mt-4 text-[19px] font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
         Welkom, dit is jouw rustige plek.

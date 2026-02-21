@@ -37,13 +37,13 @@ function NavLink({ item, pathname }: { item: NavItem; pathname: string }) {
       href={item.href}
       className={`relative flex h-10 items-center gap-3 rounded-[var(--radius-control)] px-3 text-[14px] font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] ${
         active
-          ? "text-[var(--text-primary)] bg-[var(--interactive-hover)]"
+          ? "text-[var(--text-primary)] bg-[var(--interactive-hover)]/75"
           : "text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--interactive-hover)]"
       }`}
       aria-current={active ? "page" : undefined}
     >
       {active && (
-        <span className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-full bg-[var(--accent)]" />
+        <span className="absolute left-0 top-2 bottom-2 w-[2px] rounded-r-full bg-[var(--accent)]" />
       )}
       <Icon className="h-[18px] w-[18px] shrink-0" aria-hidden />
       <span className="whitespace-nowrap opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200">
@@ -58,7 +58,7 @@ export function Sidebar() {
 
   return (
     <aside
-      className="group/sidebar hidden md:flex fixed left-0 top-0 bottom-0 z-30 w-14 hover:w-[220px] flex-col border-r border-[var(--surface-border)] bg-[var(--background)]/80 backdrop-blur-xl backdrop-saturate-150 transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden"
+      className="group/sidebar hidden md:flex fixed left-0 top-0 bottom-0 z-30 w-14 hover:w-[220px] flex-col border-r border-[var(--surface-border)] bg-[var(--background)]/72 backdrop-blur-lg backdrop-saturate-150 transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden"
       aria-label="Hoofdnavigatie"
     >
       <div className="flex h-14 shrink-0 items-center px-3">

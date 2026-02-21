@@ -161,7 +161,7 @@ export function Timeline({ checkins }: TimelineProps) {
               onClick={() => setDateRange(value)}
               className={`rounded-[var(--radius-small)] px-3 py-1.5 text-[13px] font-medium transition-colors duration-200 ${
                 dateRange === value
-                  ? "bg-[var(--surface)] text-[var(--text-primary)] shadow-[var(--shadow-zen)]"
+                  ? "bg-[var(--surface)] text-[var(--text-primary)]"
                   : "text-[var(--text-soft)] hover:text-[var(--text-primary)]"
               }`}
               aria-pressed={dateRange === value}
@@ -211,7 +211,7 @@ export function Timeline({ checkins }: TimelineProps) {
                 onClick={() => setEmotionFilter(null)}
                 className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium border transition-colors duration-200 ${
                   emotionFilter == null
-                    ? "border-[var(--accent)] bg-[var(--accent)] text-white"
+                    ? "border-[var(--surface-border-strong)] bg-[var(--interactive-hover)] text-[var(--text-primary)]"
                     : "border-[var(--surface-border)] text-[var(--text-muted)] hover:border-[var(--text-soft)] hover:text-[var(--text-primary)]"
                 }`}
               >
@@ -224,7 +224,7 @@ export function Timeline({ checkins }: TimelineProps) {
                   onClick={() => setEmotionFilter(emotion)}
                   className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium border transition-colors duration-200 ${
                     emotionFilter === emotion
-                      ? "border-[var(--accent)] bg-[var(--accent)] text-white"
+                      ? "border-[var(--surface-border-strong)] bg-[var(--interactive-hover)] text-[var(--text-primary)]"
                       : "border-[var(--surface-border)] text-[var(--text-muted)] hover:border-[var(--text-soft)] hover:text-[var(--text-primary)]"
                   }`}
                 >
@@ -258,7 +258,7 @@ export function Timeline({ checkins }: TimelineProps) {
         <ul className="space-y-7">
           {groupsWithStaggerIndex.map(({ dayKey, items }) => (
             <li key={dayKey}>
-              <p className="mb-3 mt-1 first:mt-0 text-[11px] font-semibold uppercase tracking-wide text-[var(--text-soft)]">
+              <p className="mb-3 mt-1 first:mt-0 text-[12px] font-medium text-[var(--text-soft)]">
                 {dayDividerLabel(dayKey)}
               </p>
               <ul className="space-y-2.5">
@@ -275,7 +275,7 @@ export function Timeline({ checkins }: TimelineProps) {
                   >
                     <Link
                       href={`/entries/${c.id}`}
-                      className="block rounded-[var(--radius-card)] border border-[var(--surface-border)]/70 bg-[var(--surface)] px-4 py-3.5 sm:px-5 transition-colors duration-200 hover:bg-[var(--interactive-hover)]/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
+                      className="block rounded-[var(--radius-card)] border border-[var(--surface-border)]/70 bg-[var(--surface)] px-4 py-3.5 sm:px-5 transition-colors duration-200 hover:border-[var(--surface-border-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
                     >
                       <div className="flex items-center justify-between gap-3">
                         <p suppressHydrationWarning className="text-[13px] font-medium text-[var(--text-muted)]">
