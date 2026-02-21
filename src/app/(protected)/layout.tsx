@@ -33,9 +33,8 @@ export default async function ProtectedLayout({
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen md:pl-14">
       <ReminderScheduler />
-      <OfflineBanner />
       <Sidebar />
       <header
         className="sticky top-0 z-20 border-b border-[var(--surface-border)]/60 bg-[var(--background)]/80 backdrop-blur-xl backdrop-saturate-150 pt-[env(safe-area-inset-top,0px)] md:hidden"
@@ -51,8 +50,9 @@ export default async function ProtectedLayout({
           </Link>
         </div>
       </header>
+      <OfflineBanner />
       <CheckinsProvider initialCheckins={initialCheckins}>
-        <main className="mx-auto max-w-5xl px-5 py-6 pb-[calc(7.25rem+env(safe-area-inset-bottom,0px))] sm:px-6 sm:py-8 md:ml-14 md:pb-10">{children}</main>
+        <main className="mx-auto max-w-5xl px-5 py-6 pb-[calc(7.25rem+env(safe-area-inset-bottom,0px))] sm:px-6 sm:py-8 md:pb-10">{children}</main>
       </CheckinsProvider>
       <BottomNav />
     </div>
