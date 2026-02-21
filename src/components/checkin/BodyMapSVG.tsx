@@ -7,8 +7,6 @@ interface BodyMapSVGProps {
   onTogglePart: (id: BodyPartId) => void;
 }
 
-// Simplified front-facing body silhouette with tappable regions.
-// Each path has a data-part id for selection. We use large transparent strokes for touch targets.
 const PARTS: { id: BodyPartId; path: string; label: string }[] = [
   { id: "head", path: "M 50 8 A 12 12 0 1 1 50 32 A 12 12 0 1 1 50 8", label: "Hoofd" },
   { id: "neck", path: "M 44 32 L 56 32 L 54 42 L 46 42 Z", label: "Nek" },
@@ -28,7 +26,7 @@ export function BodyMapSVG({ selectedParts, onTogglePart }: BodyMapSVGProps) {
   return (
     <svg
       viewBox="0 0 100 108"
-      className="w-full max-w-[280px] mx-auto touch-none select-none"
+      className="w-full max-w-[260px] mx-auto touch-none select-none"
       preserveAspectRatio="xMidYMid meet"
       aria-label="Lichaam: tik op een gebied om sensaties te markeren"
     >
@@ -38,10 +36,12 @@ export function BodyMapSVG({ selectedParts, onTogglePart }: BodyMapSVGProps) {
           <path
             key={id}
             d={path}
-            fill={isSelected ? "rgba(90, 79, 255, 0.4)" : "rgba(148, 163, 184, 0.2)"}
-            stroke={isSelected ? "var(--accent)" : "rgba(148, 163, 184, 0.5)"}
-            strokeWidth={4}
-            className="cursor-pointer transition-colors duration-200"
+            fill={isSelected ? "var(--accent)" : "var(--text-soft)"}
+            fillOpacity={isSelected ? 0.35 : 0.15}
+            stroke={isSelected ? "var(--accent)" : "var(--text-soft)"}
+            strokeOpacity={isSelected ? 0.8 : 0.35}
+            strokeWidth={3}
+            className="cursor-pointer transition-all duration-200"
             style={{ pointerEvents: "all" }}
             onClick={() => onTogglePart(id)}
             onKeyDown={(e) => {

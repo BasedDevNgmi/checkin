@@ -16,7 +16,7 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-30 border-t border-[var(--surface-border)] bg-[var(--surface-glass)]/95 backdrop-blur-xl pb-[env(safe-area-inset-bottom,0px)] md:hidden"
+      className="fixed bottom-0 left-0 right-0 z-30 border-t border-[var(--surface-border)] bg-[var(--background)] pb-[env(safe-area-inset-bottom,0px)] md:hidden"
       aria-label="Hoofdnavigatie"
     >
       <div className="mx-auto flex max-w-4xl items-center justify-around gap-1 px-2 pt-3 pb-2">
@@ -29,10 +29,10 @@ export function BottomNav() {
             <Link
               key={href}
               href={href}
-              className={`flex min-w-0 flex-1 max-w-[88px] min-h-[48px] flex-col items-center justify-center gap-1 rounded-xl px-2 py-2.5 text-[11px] font-medium transition active:scale-[0.98] ${
+              className={`flex min-w-0 flex-1 max-w-[88px] min-h-[48px] flex-col items-center justify-center gap-1 rounded-[var(--radius-control)] px-2 py-2.5 text-[11px] font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] ${
                 isActive
-                  ? "bg-[var(--interactive-active)] text-[var(--accent-soft)]"
-                  : "text-[var(--text-soft)] hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)]"
+                  ? "text-[var(--accent)]"
+                  : "text-[var(--text-soft)] hover:text-[var(--text-primary)]"
               }`}
               aria-current={isActive ? "page" : undefined}
             >

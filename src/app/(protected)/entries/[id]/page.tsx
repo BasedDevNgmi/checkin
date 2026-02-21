@@ -19,7 +19,7 @@ export default async function EntryDetailPage({
 
   const { data: checkin, error } = await supabase
     .from("checkins")
-    .select("*")
+    .select("id,user_id,created_at,thoughts,emotions,body_parts,energy_level,behavior_meta")
     .eq("id", id)
     .eq("user_id", user.id)
     .single();
@@ -30,7 +30,7 @@ export default async function EntryDetailPage({
     <div className="space-y-6 py-5 sm:py-6">
       <Link
         href="/dashboard"
-        className="inline-flex items-center gap-1 text-sm text-[var(--text-muted)] transition hover:text-[var(--text-primary)]"
+        className="inline-flex items-center gap-1 text-[13px] text-[var(--text-muted)] transition hover:text-[var(--text-primary)]"
       >
         <ArrowLeft className="h-4 w-4" /> Terug naar tijdlijn
       </Link>

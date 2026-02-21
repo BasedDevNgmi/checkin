@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { motion, useReducedMotion } from "framer-motion";
+import { EASE_SMOOTH } from "@/lib/motion";
 import type { CheckInRow } from "@/types/checkin";
 import { Search } from "lucide-react";
 
@@ -57,7 +59,11 @@ function getRangeStart(preset: DateRangePreset): number | null {
   }
 }
 
+const STAGGER_DELAY = 0.04;
+const STAGGER_DURATION = 0.3;
+
 export function Timeline({ checkins }: TimelineProps) {
+  const reduceMotion = useReducedMotion();
   const [query, setQuery] = useState("");
   const [emotionFilter, setEmotionFilter] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState<DateRangePreset>("all");
@@ -96,44 +102,48 @@ export function Timeline({ checkins }: TimelineProps) {
     return [...groups.entries()];
   }, [filtered]);
 
+  const groupsWithStaggerIndex = useMemo(() => {
+    let index = 0;
+    return groupedByMonth.map(([monthLabel, entries]) => {
+      const items = entries.map((entry) => ({ entry, staggerIndex: index++ }));
+      return { monthLabel, items };
+    });
+  }, [groupedByMonth]);
+
   if (checkins.length === 0) return null;
 
   return (
     <div className="space-y-5">
-      {/* Segmented control: date range */}
-      <div className="rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface-glass)] p-1 shadow-sm backdrop-blur-xl">
-        <div className="flex gap-0.5" role="tablist" aria-label="Periode">
-          {DATE_RANGE_OPTIONS.map(({ value, label }) => (
-            <button
-              key={value}
-              type="button"
-              role="tab"
-              onClick={() => setDateRange(value)}
-              className={`flex-1 rounded-[10px] px-3 py-2.5 text-[13px] font-medium transition ${
-                dateRange === value
-                  ? "bg-[var(--interactive-active)] text-[var(--text-primary)] shadow-sm"
-                  : "text-[var(--text-muted)] hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)]"
-              }`}
-              aria-selected={dateRange === value}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+      <div className="flex gap-1 border-b border-[var(--surface-border)]" role="tablist" aria-label="Periode">
+        {DATE_RANGE_OPTIONS.map(({ value, label }) => (
+          <button
+            key={value}
+            type="button"
+            role="tab"
+            onClick={() => setDateRange(value)}
+            className={`px-3 py-2.5 text-[13px] font-medium transition-colors duration-200 border-b-2 -mb-px ${
+              dateRange === value
+                ? "border-[var(--accent)] text-[var(--text-primary)]"
+                : "border-transparent text-[var(--text-soft)] hover:text-[var(--text-primary)]"
+            }`}
+            aria-selected={dateRange === value}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
-      {/* Search + emotion filters */}
       <div className="space-y-3">
         <div className="relative">
           <Search
-            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-soft)]"
+            className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-soft)]"
             aria-hidden
           />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Zoek in gedachten of gedrag"
-            className="w-full rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] py-2.5 pl-10 pr-4 text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-soft)] backdrop-blur-xl focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20"
+            className="w-full rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface)] py-2.5 pl-10 pr-4 text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus-visible:border-[var(--focus-ring)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition"
             aria-label="Zoek entries"
           />
         </div>
@@ -142,10 +152,10 @@ export function Timeline({ checkins }: TimelineProps) {
             <button
               type="button"
               onClick={() => setEmotionFilter(null)}
-              className={`rounded-full px-3.5 py-2 text-[13px] font-medium transition ${
+              className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium border transition-colors duration-200 ${
                 emotionFilter == null
-                  ? "bg-[var(--accent)] text-white"
-                  : "bg-[var(--surface-glass-strong)] text-[var(--text-muted)] hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)]"
+                  ? "border-[var(--accent)] bg-[var(--accent)] text-white"
+                  : "border-[var(--surface-border)] text-[var(--text-muted)] hover:border-[var(--text-soft)] hover:text-[var(--text-primary)]"
               }`}
             >
               Alles
@@ -155,10 +165,10 @@ export function Timeline({ checkins }: TimelineProps) {
                 key={emotion}
                 type="button"
                 onClick={() => setEmotionFilter(emotion)}
-                className={`rounded-full px-3.5 py-2 text-[13px] font-medium transition ${
+                className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium border transition-colors duration-200 ${
                   emotionFilter === emotion
-                    ? "bg-[var(--accent)] text-white"
-                    : "bg-[var(--surface-glass-strong)] text-[var(--text-muted)] hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)]"
+                    ? "border-[var(--accent)] bg-[var(--accent)] text-white"
+                    : "border-[var(--surface-border)] text-[var(--text-muted)] hover:border-[var(--text-soft)] hover:text-[var(--text-primary)]"
                 }`}
               >
                 {emotion}
@@ -168,29 +178,37 @@ export function Timeline({ checkins }: TimelineProps) {
         )}
       </div>
 
-      {/* List */}
       {groupedByMonth.length === 0 ? (
-        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] px-5 py-8 text-center backdrop-blur-xl">
-          <p className="text-[15px] text-[var(--text-muted)]">
+        <div className="py-10 text-center">
+          <p className="text-[13px] text-[var(--text-muted)]">
             Geen entries voor deze filters.
           </p>
         </div>
       ) : (
-        <ul className="space-y-1">
-          {groupedByMonth.map(([monthLabel, entries]) => (
+        <ul className="space-y-8">
+          {groupsWithStaggerIndex.map(({ monthLabel, items }) => (
             <li key={monthLabel}>
-              <p className="mb-2 mt-5 first:mt-0 px-1 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-soft)]">
+              <p className="mb-3 mt-2 first:mt-0 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-soft)]">
                 {monthLabel}
               </p>
-              <ul className="space-y-1">
-                {entries.map((c) => (
-                  <li key={c.id}>
+              <ul className="divide-y divide-[var(--surface-border)]">
+                {items.map(({ entry: c, staggerIndex }) => (
+                  <motion.li
+                    key={c.id}
+                    initial={reduceMotion ? false : { opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: STAGGER_DURATION,
+                      delay: reduceMotion ? 0 : staggerIndex * STAGGER_DELAY,
+                      ease: EASE_SMOOTH,
+                    }}
+                  >
                     <Link
                       href={`/entries/${c.id}`}
-                      className="flex min-h-[var(--tap-min-height)] items-center gap-3 rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface-glass)] px-4 py-3.5 shadow-sm backdrop-blur-xl transition hover:bg-[var(--interactive-hover)] active:bg-[var(--interactive-active)]"
+                      className="flex min-h-[var(--tap-min-height)] items-center gap-3 py-4 transition-colors duration-200 hover:bg-[var(--interactive-hover)] -mx-2 px-2 rounded-[var(--radius-control)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
                     >
                       <div className="min-w-0 flex-1">
-                        <p className="text-[13px] text-[var(--text-soft)]">
+                        <p suppressHydrationWarning className="text-[13px] text-[var(--text-soft)]">
                           {formatDate(c.created_at)}
                           {c.energy_level != null && ` · ${c.energy_level}%`}
                         </p>
@@ -211,7 +229,7 @@ export function Timeline({ checkins }: TimelineProps) {
                       </div>
                       <span className="text-[var(--text-soft)]" aria-hidden>→</span>
                     </Link>
-                  </li>
+                  </motion.li>
                 ))}
               </ul>
             </li>

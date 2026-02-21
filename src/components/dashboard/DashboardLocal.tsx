@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { EnergySummary } from "@/components/dashboard/EnergySummary";
 import { Timeline } from "@/components/dashboard/Timeline";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { FAB } from "@/components/FAB";
+import { Card } from "@/components/ui/Card";
 import { useCheckinsContext } from "@/lib/CheckinsContext";
 import { useMindJournal } from "@/features/app/useMindJournal";
 import Link from "next/link";
@@ -18,99 +20,103 @@ function getGreeting() {
 export function DashboardLocal() {
   const { checkins: rows, loading } = useCheckinsContext();
   const { preferences } = useMindJournal();
-  const todayKey = new Date().toISOString().slice(0, 10);
+  const [todayKey] = useState(() => new Date().toISOString().slice(0, 10));
   const hasTodayEntry = rows.some((row) => row.created_at.slice(0, 10) === todayKey);
 
   return (
     <div className="min-h-full pb-24">
-      {/* Page title + optional onboarding */}
-      <header className="mb-6 sm:mb-8">
-        <h1 className="text-[28px] font-semibold tracking-tight text-[var(--text-primary)]">
+      <header className="mb-8 sm:mb-10">
+        <h1 suppressHydrationWarning className="text-[2rem] font-bold tracking-[-0.025em] text-[var(--text-primary)] sm:text-[2.25rem]">
           {getGreeting()}
         </h1>
-        <p className="mt-1 text-[15px] text-[var(--text-muted)]">
+        <p className="mt-2 text-[15px] text-[var(--text-muted)]">
           Je dagelijkse overzicht en check-ins
         </p>
         {preferences == null && (
-          <div className="mt-4 rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface-glass)] px-4 py-3 backdrop-blur-xl">
-            <p className="text-sm text-[var(--text-muted)]">
+          <div className="mt-5 border-l-2 border-[var(--accent)] pl-4 py-1">
+            <p className="text-[13px] text-[var(--text-muted)]">
               Rond je profiel af voor herinneringen en persoonlijke instellingen.
             </p>
-            <Link
-              href="/onboarding"
-              className="mt-2 inline-block text-sm font-medium text-[var(--accent)] transition hover:underline"
-            >
+            <Link href="/onboarding" className="link-accent mt-1.5 inline-block text-[13px] font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 rounded">
               Naar onboarding →
             </Link>
           </div>
         )}
       </header>
 
-      {/* Today status: done vs start check-in */}
-      <section className="mb-8">
+      <section className="mb-10" aria-labelledby="today-heading">
+        <h2 id="today-heading" className="sr-only">
+          Status vandaag
+        </h2>
         {hasTodayEntry ? (
-          <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] px-5 py-4 shadow-[var(--shadow-zen)] backdrop-blur-xl">
+          <Card variant="elevated" className="px-6 py-5 sm:px-7 sm:py-6">
             <p className="text-[15px] font-medium text-[var(--text-primary)]">
               Je bent klaar voor vandaag
             </p>
-            <p className="mt-0.5 text-sm text-[var(--text-muted)]">
-              Geen check-in meer nodig. Bekijk je inzichten of blader door je entries.
+            <p className="mt-1 text-[13px] text-[var(--text-muted)] leading-relaxed">
+              Bekijk je inzichten of blader door je entries.
             </p>
-            <div className="mt-4 flex flex-wrap items-center gap-3">
+            <div className="mt-5 flex flex-wrap items-center gap-3">
               <Link
                 href="/analytics"
-                className="inline-flex min-h-[44px] items-center rounded-[var(--radius-control)] bg-[var(--accent)] px-5 py-2.5 text-[15px] font-medium text-white shadow-sm transition hover:opacity-92 active:opacity-90"
+                className="inline-flex min-h-[44px] items-center rounded-[var(--radius-control)] bg-[var(--accent)] px-5 py-2.5 text-[15px] font-medium text-white transition-colors duration-200 hover:bg-[var(--accent-soft)] active:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
               >
                 Inzichten bekijken
               </Link>
               <Link
                 href="/checkin"
-                className="inline-flex min-h-[44px] items-center rounded-[var(--radius-control)] px-4 py-2.5 text-[15px] font-medium text-[var(--text-muted)] transition hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)]"
+                className="inline-flex min-h-[44px] items-center rounded-[var(--radius-control)] px-4 py-2.5 text-[15px] font-medium text-[var(--text-muted)] transition-colors duration-200 hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
               >
                 Nog een check-in
               </Link>
             </div>
-          </div>
+          </Card>
         ) : (
-          <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] px-5 py-5 shadow-[var(--shadow-zen)] backdrop-blur-xl">
+          <Card variant="elevated" className="px-6 py-6 sm:px-7 sm:py-7">
             <p className="text-[17px] font-semibold text-[var(--text-primary)]">
               Nog geen check-in vandaag
             </p>
-            <p className="mt-1 text-[15px] text-[var(--text-muted)]">
+            <p className="mt-1.5 text-[13px] text-[var(--text-muted)] leading-relaxed">
               Beantwoord de 5 vragen en houd je ritme vast.
             </p>
-            <div className="mt-5 flex flex-wrap items-center gap-3">
+            <div className="mt-6 flex flex-wrap items-center gap-3">
               <Link
                 href="/checkin"
-                className="inline-flex min-h-[44px] items-center rounded-[var(--radius-control)] bg-[var(--accent)] px-5 py-2.5 text-[15px] font-medium text-white shadow-sm transition hover:opacity-92 active:opacity-90"
+                className="inline-flex min-h-[44px] items-center rounded-[var(--radius-control)] bg-[var(--accent)] px-5 py-2.5 text-[15px] font-medium text-white transition-colors duration-200 hover:bg-[var(--accent-soft)] active:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
               >
                 Nieuwe check-in
               </Link>
               <Link
                 href="/analytics"
-                className="inline-flex min-h-[44px] items-center rounded-[var(--radius-control)] px-4 py-2.5 text-[15px] font-medium text-[var(--text-muted)] transition hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)]"
+                className="inline-flex min-h-[44px] items-center rounded-[var(--radius-control)] px-4 py-2.5 text-[15px] font-medium text-[var(--text-muted)] transition-colors duration-200 hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
               >
                 Inzichten
               </Link>
             </div>
-          </div>
+          </Card>
         )}
       </section>
 
       {loading ? (
-        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] px-5 py-8 text-center backdrop-blur-xl">
-          <p className="text-[15px] text-[var(--text-muted)]">Laden…</p>
+        <div className="space-y-6">
+          <Card className="p-6">
+            <div className="h-6 w-48 animate-pulse rounded-[var(--radius-control)] bg-[var(--interactive-hover)]" />
+            <div className="mt-2 h-4 w-72 animate-pulse rounded bg-[var(--interactive-hover)]" />
+          </Card>
+          <p className="text-[13px] text-[var(--text-soft)]">Laden…</p>
         </div>
       ) : (
         <>
           <EnergySummary checkins={rows} />
 
-          <section className="mt-8">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-[17px] font-semibold text-[var(--text-primary)]">Overzicht</h2>
+          <section className="mt-10" aria-labelledby="timeline-heading">
+            <div className="mb-5 flex items-baseline justify-between">
+              <h2 id="timeline-heading" className="text-[17px] font-semibold text-[var(--text-primary)]">
+                Tijdlijn
+              </h2>
               <Link
                 href="/analytics"
-                className="text-[13px] font-medium text-[var(--text-muted)] transition hover:text-[var(--accent)]"
+                className="link-accent text-[13px] font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 rounded"
               >
                 Trends
               </Link>

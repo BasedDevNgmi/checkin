@@ -1,17 +1,21 @@
 import { createClient } from "@/lib/supabase/server";
 import type { CheckInRow } from "@/types/checkin";
 
-/** List check-ins for the current user (server). Use for initial data in dashboard/analytics. */
-export async function listCheckInsServer(): Promise<CheckInRow[]> {
+/** List check-ins for a given user (server). Pass userId to skip an extra getUser() round-trip. */
+export async function listCheckInsServer(userId?: string): Promise<CheckInRow[]> {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return [];
+  let uid = userId;
+  if (!uid) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return [];
+    uid = user.id;
+  }
   const { data, error } = await supabase
     .from("checkins")
-    .select("*")
-    .eq("user_id", user.id)
+    .select("id,user_id,created_at,thoughts,emotions,body_parts,energy_level,behavior_meta")
+    .eq("user_id", uid)
     .order("created_at", { ascending: false });
   if (error) return [];
   return (data ?? []) as CheckInRow[];

@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+import { motion, useReducedMotion } from "framer-motion";
+import { EASE_SMOOTH } from "@/lib/motion";
 import { BrandLogo } from "@/components/BrandLogo";
 
 const FIVE_QUESTIONS = [
@@ -10,65 +14,82 @@ const FIVE_QUESTIONS = [
 ] as const;
 
 export function LandingPage() {
+  const reducedMotion = useReducedMotion();
+
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--surface-border)]/50 bg-[var(--surface-glass)]/80 backdrop-blur-2xl px-4 sm:px-6 pt-[max(1rem,env(safe-area-inset-top,0px))] pb-3 sm:pb-4">
+      <header className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--surface-border)] bg-[var(--background)] px-5 sm:px-8 pt-[max(1rem,env(safe-area-inset-top,0px))] pb-3 sm:pb-4">
         <BrandLogo />
         <Link
           href="/login"
-          className="rounded-[10px] min-h-[36px] inline-flex items-center px-3.5 py-2 text-[15px] font-medium text-[var(--text-muted)] transition hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)]"
+          className="rounded-[var(--radius-control)] min-h-[44px] inline-flex items-center px-3.5 py-2 text-[15px] font-medium text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
         >
           Log in
         </Link>
       </header>
 
-      <main className="flex-1 flex flex-col items-center px-4 pb-20 pt-10 sm:px-6 sm:pt-16">
-        <section className="w-full max-w-xl mx-auto text-center">
-          <h1 className="text-3xl font-semibold tracking-tight text-[var(--text-primary)] sm:text-4xl">
-            Check in met de 5 vragen
+      <main className="flex-1 flex flex-col items-center px-5 pb-20 pt-16 sm:px-8 sm:pt-24">
+        <motion.section
+          initial={reducedMotion ? false : { opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: EASE_SMOOTH }}
+          className="w-full max-w-xl mx-auto text-center"
+        >
+          <h1 className="text-[2.75rem] leading-[1.1] font-bold tracking-[-0.025em] text-[var(--text-primary)] sm:text-5xl">
+            Check in met<br />de 5 vragen
           </h1>
-          <p className="mt-3 text-sm text-[var(--text-muted)] sm:text-base">
+          <p className="mt-5 text-[17px] text-[var(--text-muted)] leading-relaxed max-w-sm mx-auto">
             Elke dag even stilstaan bij denken, gevoel en lijf.
           </p>
-        </section>
+        </motion.section>
 
         <section
           id="vragen"
-          className="w-full max-w-2xl mx-auto mt-12 sm:mt-16"
+          className="w-full max-w-md mx-auto mt-16 sm:mt-20"
           aria-labelledby="vragen-heading"
         >
           <h2 id="vragen-heading" className="sr-only">
             De 5 vragen
           </h2>
-          <ul className="space-y-4 rounded-[var(--radius-card)] border border-[var(--surface-border)]/80 bg-[var(--surface-glass)]/80 py-5 px-5 sm:px-6 backdrop-blur-sm">
+          <ul className="space-y-8">
             {FIVE_QUESTIONS.map(({ name, tagline }, i) => (
-              <li key={name} className="flex gap-4">
-                <span className="text-xs font-semibold tabular-nums text-[var(--text-soft)] shrink-0 pt-0.5">
-                  {i + 1}.
+              <motion.li
+                key={name}
+                className="flex gap-5"
+                initial={reducedMotion ? false : { opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.4,
+                  delay: 0.15 + i * 0.06,
+                  ease: EASE_SMOOTH,
+                }}
+              >
+                <span className="text-[13px] font-medium tabular-nums text-[var(--text-soft)] shrink-0 pt-0.5 w-5 text-right">
+                  {i + 1}
                 </span>
                 <div>
-                  <span className="text-sm font-medium text-[var(--text-primary)]">{name}</span>
-                  <p className="mt-0.5 text-sm text-[var(--text-muted)]">{tagline}</p>
+                  <span className="text-[15px] font-medium text-[var(--text-primary)]">{name}</span>
+                  <p className="mt-1 text-[13px] text-[var(--text-muted)] leading-relaxed">{tagline}</p>
                 </div>
-              </li>
+              </motion.li>
             ))}
           </ul>
         </section>
 
-        <p className="mt-8 text-center text-xs text-[var(--text-soft)] max-w-md mx-auto">
-          Jouw data blijft van jou – lokaal of veilig gesynchroniseerd.
+        <p className="mt-16 text-center text-xs text-[var(--text-soft)] max-w-xs mx-auto leading-relaxed">
+          Jouw data blijft van jou — lokaal of veilig gesynchroniseerd.
         </p>
 
         <div className="mt-10 flex flex-col items-center gap-4">
           <Link
             href="/login"
-            className="inline-flex items-center justify-center rounded-[14px] bg-gradient-to-b from-[var(--accent-soft)] to-[var(--accent)] px-6 py-3.5 text-sm font-medium text-white shadow-[var(--shadow-zen)] transition hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2"
+            className="inline-flex items-center justify-center rounded-[var(--radius-control)] bg-[var(--accent)] px-7 py-3.5 text-[15px] font-medium text-white transition-colors duration-200 hover:bg-[var(--accent-soft)] active:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] min-h-[44px]"
           >
             Start met inchecken
           </Link>
           <Link
             href="/#vragen"
-            className="text-xs text-[var(--text-soft)] transition hover:text-[var(--text-muted)]"
+            className="link-muted text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] rounded"
           >
             Bekijk hoe het werkt
           </Link>

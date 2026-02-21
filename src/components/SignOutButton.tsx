@@ -53,7 +53,7 @@ export function SignOutButton() {
         disabled={isLoading}
         aria-busy={isLoading}
         title="Uitloggen"
-        className="flex items-center gap-1.5 rounded-[14px] border border-[var(--surface-border-strong)] bg-[var(--surface-glass-strong)] px-3 py-2.5 text-sm text-[var(--text-primary)] min-h-[44px] transition hover:bg-[var(--interactive-active)] disabled:opacity-70 disabled:pointer-events-none"
+        className="flex items-center gap-1.5 rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-transparent px-3 py-2.5 text-[15px] text-[var(--text-primary)] min-h-[44px] transition-colors duration-200 hover:bg-[var(--interactive-hover)] active:bg-[var(--interactive-active)] disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
       >
         {isLoading ? (
           <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
@@ -64,7 +64,7 @@ export function SignOutButton() {
       </button>
       {showConfirm && (
         <div
-          className="rounded-xl border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] p-4 shadow-[var(--shadow-zen)]"
+          className="rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface)] p-4 shadow-[var(--shadow-elevation)]"
           role="dialog"
           aria-labelledby="signout-dialog-title"
           aria-describedby="signout-dialog-desc"
@@ -72,21 +72,21 @@ export function SignOutButton() {
           <p id="signout-dialog-title" className="font-medium text-[var(--text-primary)]">
             Uitloggen
           </p>
-          <p id="signout-dialog-desc" className="mt-1 text-sm text-[var(--text-muted)]">
+          <p id="signout-dialog-desc" className="mt-1 text-[13px] text-[var(--text-muted)]">
             {CONFIRM_MESSAGE}
           </p>
           <div className="mt-4 flex gap-2">
             <button
               type="button"
               onClick={handleCancel}
-              className="rounded-[14px] border border-[var(--surface-border)] px-3 py-2.5 text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--interactive-hover)] min-h-[44px]"
+              className="rounded-[var(--radius-control)] border border-[var(--surface-border)] px-3 py-2.5 text-[15px] font-medium text-[var(--text-primary)] hover:bg-[var(--interactive-hover)] active:bg-[var(--interactive-active)] min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
             >
               {CONFIRM_LABEL_CANCEL}
             </button>
             <button
               type="button"
               onClick={handleConfirm}
-              className="rounded-[14px] bg-gradient-to-b from-[var(--accent-soft)] to-[var(--accent)] px-3 py-2.5 text-sm font-medium text-white hover:opacity-95 min-h-[44px]"
+              className="rounded-[var(--radius-control)] bg-[var(--accent)] px-3 py-2.5 text-[15px] font-medium text-white hover:bg-[var(--accent-soft)] active:opacity-90 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
             >
               {CONFIRM_LABEL_CONFIRM}
             </button>

@@ -2,19 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { WifiOff } from "lucide-react";
-import { syncCheckIns } from "@/lib/checkin";
 
 export function OfflineBanner() {
   const [showBanner, setShowBanner] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const isOnline = navigator.onLine;
-    setShowBanner(!isOnline);
+    setShowBanner(!navigator.onLine);
 
-    const handleOnline = () => {
-      setShowBanner(false);
-      void syncCheckIns();
-    };
+    const handleOnline = () => setShowBanner(false);
     const handleOffline = () => setShowBanner(true);
 
     window.addEventListener("online", handleOnline);
@@ -29,12 +24,12 @@ export function OfflineBanner() {
 
   return (
     <div
-      className="flex items-center justify-center gap-2 border-b border-[var(--surface-border)] bg-[var(--surface-glass-strong)] py-2 px-4 text-sm font-medium text-[var(--text-primary)] backdrop-blur-xl"
+      className="flex items-center justify-center gap-2 border-b border-[var(--surface-border)] bg-[var(--surface)] py-2 px-4 text-[13px] font-medium text-[var(--text-primary)]"
       role="status"
       aria-live="polite"
     >
       <WifiOff className="h-4 w-4 flex-shrink-0" />
-      Je bent offline. Check-ins worden lokaal opgeslagen en later gesynchroniseerd.
+      Je bent offline. Check-ins worden opgeslagen zodra je weer verbinding hebt.
     </div>
   );
 }

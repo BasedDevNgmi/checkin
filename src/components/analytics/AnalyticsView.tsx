@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { EASE_SMOOTH } from "@/lib/motion";
 import type { CheckInRow } from "@/types/checkin";
 import { BODY_PART_IDS } from "@/types/checkin";
 import type { BodyPartId } from "@/types/checkin";
@@ -61,14 +62,14 @@ function startOfDay(date: Date) {
 }
 
 /** Consecutive days with at least one check-in, from today backwards. */
-function computeStreaks(checkins: CheckInRow[]): { current: number; longest: number } {
+function computeStreaks(checkins: CheckInRow[], referenceDate: Date): { current: number; longest: number } {
   const daysWithCheckIn = new Set(
     checkins.map((c) => dayKey(new Date(c.created_at)))
   );
   const sortedDays = Array.from(daysWithCheckIn).sort();
   if (sortedDays.length === 0) return { current: 0, longest: 0 };
 
-  const today = dayKey(startOfDay(new Date()));
+  const today = dayKey(startOfDay(referenceDate));
   let current = 0;
   let d = new Date(today);
   for (;;) {
@@ -157,7 +158,7 @@ function generateInsights(
 export function AnalyticsView({ checkins }: AnalyticsViewProps) {
   const [period, setPeriod] = useState<(typeof periods)[number]["value"]>(30);
   const reduceMotion = useReducedMotion();
-  const now = new Date();
+  const [now] = useState(() => new Date());
   const start = startOfDay(new Date(now.getTime() - (period - 1) * 24 * 60 * 60 * 1000));
 
   const aggregate = useMemo(() => {
@@ -214,8 +215,8 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
     .sort((a, b) => (a.value ?? 0) - (b.value ?? 0))[0];
 
   const { current: currentStreak, longest: longestStreak } = useMemo(
-    () => computeStreaks(checkins),
-    [checkins]
+    () => computeStreaks(checkins, now),
+    [checkins, now]
   );
 
   const emotionInsights = useMemo(() => {
@@ -325,19 +326,19 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
   if (isEmpty) {
     return (
       <div className="space-y-8 pb-24">
-        <section className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] p-6 shadow-[var(--shadow-zen)] backdrop-blur-xl text-center">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-glass-strong)]">
-            <Sparkles className="h-7 w-7 text-[var(--accent-soft)]" />
+        <section className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-6 shadow-[var(--shadow-elevation)] text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--interactive-hover)]">
+            <Sparkles className="h-7 w-7 text-[var(--accent)]" />
           </div>
-          <h2 className="mt-4 text-xl font-semibold text-[var(--text-primary)]">
+          <h2 className="mt-4 text-[22px] font-semibold text-[var(--text-primary)]">
             Jouw inzichten groeien met elke check-in
           </h2>
-          <p className="mt-2 max-w-sm mx-auto text-sm text-[var(--text-muted)]">
+          <p className="mt-2 max-w-sm mx-auto text-[13px] text-[var(--text-muted)]">
             Na je eerste check-ins zie je hier energie, patronen, emoties en persoonlijke inzichten.
           </p>
           <Link
             href="/checkin"
-            className="mt-6 inline-flex items-center gap-2 rounded-[14px] bg-gradient-to-b from-[var(--accent-soft)] to-[var(--accent)] px-5 py-2.5 text-sm font-medium text-white shadow-[var(--shadow-zen)] transition hover:opacity-95"
+            className="mt-6 inline-flex min-h-[44px] items-center gap-2 rounded-[var(--radius-control)] bg-[var(--accent)] px-5 py-2.5 text-[15px] font-medium text-white shadow-[var(--shadow-elevation)] transition hover:opacity-95 active:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
           >
             Eerste check-in doen <ChevronRight className="h-4 w-4" />
           </Link>
@@ -349,26 +350,26 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
   return (
     <div className="space-y-8 pb-24">
       {/* Hero + period */}
-      <section className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] p-6 shadow-[var(--shadow-zen)] backdrop-blur-xl">
+      <section className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-6 shadow-[var(--shadow-elevation)]">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-semibold text-[var(--text-primary)]">
+            <h1 className="text-[22px] font-semibold text-[var(--text-primary)]">
               Jouw stemming door de tijd
             </h1>
-            <p className="mt-1.5 text-sm text-[var(--text-muted)]">
+            <p className="mt-1.5 text-[13px] text-[var(--text-muted)]">
               Patronen in energie, emoties en gedrag — alleen voor jou.
             </p>
           </div>
-          <div className="inline-flex rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] p-1">
+          <div className="inline-flex rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--interactive-hover)] p-1">
             {periods.map((option) => (
               <button
                 key={option.value}
                 type="button"
                 onClick={() => setPeriod(option.value)}
-                className={`rounded-[14px] px-3 py-1.5 text-sm font-medium transition ${
+                className={`rounded-[var(--radius-control)] px-3 py-1.5 text-[13px] font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] ${
                   option.value === period
-                    ? "bg-[var(--interactive-active)] text-[var(--text-primary)] shadow-sm"
-                    : "text-[var(--text-muted)] hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)]"
+                    ? "bg-[var(--interactive-active)] text-[var(--text-primary)] shadow-[var(--shadow-zen)]"
+                    : "text-[var(--text-muted)] hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)] active:bg-[var(--interactive-active)]"
                 }`}
                 aria-pressed={option.value === period}
               >
@@ -381,45 +382,45 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
 
       {/* At a glance: streaks + stats */}
       <motion.section
-        initial={reduceMotion ? false : { opacity: 0, y: 12 }}
-        animate={reduceMotion ? {} : { opacity: 1, y: 0 }}
-        transition={{ duration: 0.35 }}
+        initial={reduceMotion ? false : { opacity: 0, y: 4 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: EASE_SMOOTH }}
         className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
       >
-        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] p-5 shadow-[var(--shadow-zen)] backdrop-blur-xl">
+        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-elevation)]">
           <div className="flex items-center gap-2 text-[var(--text-soft)]">
-            <Flame className="h-4 w-4 text-[var(--accent-soft)]" />
+            <Flame className="h-4 w-4 text-[var(--accent)]" />
             <span className="text-xs font-medium uppercase tracking-wider">Huidige reeks</span>
           </div>
-          <p className="mt-2 text-2xl font-semibold text-[var(--text-primary)]">
+          <p suppressHydrationWarning className="mt-2 text-[22px] font-semibold text-[var(--text-primary)]">
             {currentStreak} {currentStreak === 1 ? "dag" : "dagen"}
           </p>
           <p className="mt-1 text-xs text-[var(--text-muted)]">
             opeenvolgende dagen met check-in
           </p>
         </div>
-        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] p-5 shadow-[var(--shadow-zen)] backdrop-blur-xl">
+        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-elevation)]">
           <div className="flex items-center gap-2 text-[var(--text-soft)]">
             <TrendingUp className="h-4 w-4" />
             <span className="text-xs font-medium uppercase tracking-wider">Beste reeks</span>
           </div>
-          <p className="mt-2 text-2xl font-semibold text-[var(--text-primary)]">
+          <p className="mt-2 text-[22px] font-semibold text-[var(--text-primary)]">
             {longestStreak} {longestStreak === 1 ? "dag" : "dagen"}
           </p>
         </div>
-        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] p-5 shadow-[var(--shadow-zen)] backdrop-blur-xl">
+        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-elevation)]">
           <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-soft)]">
             Gem. energie
           </p>
-          <p className="mt-2 text-2xl font-semibold text-[var(--text-primary)]">
+          <p className="mt-2 text-[22px] font-semibold text-[var(--text-primary)]">
             {avgEnergy == null ? "—" : `${avgEnergy}%`}
           </p>
         </div>
-        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] p-5 shadow-[var(--shadow-zen)] backdrop-blur-xl">
+        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-elevation)]">
           <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-soft)]">
             Consistentie
           </p>
-          <p className="mt-2 text-2xl font-semibold text-[var(--text-primary)]">
+          <p className="mt-2 text-[22px] font-semibold text-[var(--text-primary)]">
             {Math.round((completedDays / period) * 100)}%
           </p>
           <p className="mt-1 text-xs text-[var(--text-muted)]">
@@ -436,14 +437,14 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
 
       {/* Heatmap + best/low day */}
       <motion.section
-        initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-        whileInView={reduceMotion ? {} : { opacity: 1, y: 0 }}
+        initial={reduceMotion ? false : { opacity: 0, y: 4 }}
+        whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.45, ease: EASE_SMOOTH }}
         className="grid gap-4 lg:grid-cols-3"
       >
-        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] p-5 shadow-[var(--shadow-zen)] backdrop-blur-xl lg:col-span-2">
-          <h2 className="text-base font-semibold text-[var(--text-primary)]">
+        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-elevation)] lg:col-span-2">
+          <h2 className="text-[15px] font-semibold text-[var(--text-primary)]">
             Kalender heatmap
           </h2>
           <p className="mt-1 text-xs text-[var(--text-soft)]">
@@ -453,12 +454,12 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
             {heatmapCells.map((cell) => (
               <div key={cell.date} className="space-y-1 text-center">
                 <div
-                  className={`h-9 rounded-xl border border-[var(--surface-border)] ${getEnergyTone(cell.value)}`}
+                  className={`h-9 rounded-[var(--radius-control)] border border-[var(--surface-border)] ${getEnergyTone(cell.value)}`}
                   title={`${cell.label}: ${cell.value ?? "geen score"}${
                     cell.entries > 0 ? `, ${cell.entries} check-in(s)` : ""
                   }`}
                 />
-                <p className="text-[10px] text-[var(--text-soft)]">
+                <p suppressHydrationWarning className="text-[10px] text-[var(--text-soft)]">
                   {new Date(cell.date).toLocaleDateString("nl-NL", { weekday: "short" })}
                 </p>
               </div>
@@ -466,15 +467,15 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
           </div>
         </div>
         <div className="space-y-4">
-          <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] p-4 shadow-[var(--shadow-zen)] backdrop-blur-xl">
+          <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-4 shadow-[var(--shadow-elevation)]">
             <p className="text-xs text-[var(--text-soft)]">Beste dag</p>
-            <p className="mt-1 text-lg font-semibold text-[var(--text-primary)]">
+            <p className="mt-1 text-[17px] font-semibold text-[var(--text-primary)]">
               {bestDay ? `${bestDay.label} (${bestDay.value}%)` : "—"}
             </p>
           </div>
-          <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] p-4 shadow-[var(--shadow-zen)] backdrop-blur-xl">
+          <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-4 shadow-[var(--shadow-elevation)]">
             <p className="text-xs text-[var(--text-soft)]">Zwaarste dag</p>
-            <p className="mt-1 text-lg font-semibold text-[var(--text-primary)]">
+            <p className="mt-1 text-[17px] font-semibold text-[var(--text-primary)]">
               {lowDay ? `${lowDay.label} (${lowDay.value}%)` : "—"}
             </p>
           </div>
@@ -483,16 +484,16 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
 
       {/* Emotions + Body + Gedrag */}
       <motion.section
-        initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-        whileInView={reduceMotion ? {} : { opacity: 1, y: 0 }}
+        initial={reduceMotion ? false : { opacity: 0, y: 4 }}
+        whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.15 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.45, ease: EASE_SMOOTH }}
         className="grid gap-4 lg:grid-cols-3"
       >
-        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] p-5 shadow-[var(--shadow-zen)] backdrop-blur-xl">
+        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-elevation)]">
           <div className="flex items-center gap-2">
-            <Heart className="h-4 w-4 text-[var(--accent-soft)]" />
-            <h2 className="text-base font-semibold text-[var(--text-primary)]">
+            <Heart className="h-4 w-4 text-[var(--accent)]" />
+            <h2 className="text-[15px] font-semibold text-[var(--text-primary)]">
               Emotie × energie
             </h2>
           </div>
@@ -500,16 +501,16 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
             Gemiddelde energie wanneer deze emotie aanwezig was.
           </p>
           {emotionInsights.length === 0 ? (
-            <p className="mt-4 text-sm text-[var(--text-muted)]">Nog te weinig data.</p>
+            <p className="mt-4 text-[13px] text-[var(--text-muted)]">Nog te weinig data.</p>
           ) : (
             <ul className="mt-4 space-y-2">
               {emotionInsights.map((item) => (
                 <li
                   key={item.emotion}
-                  className="flex items-center justify-between rounded-xl border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] px-3 py-2"
+                  className="flex items-center justify-between rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--interactive-hover)] px-3 py-2"
                 >
-                  <span className="text-sm text-[var(--text-primary)]">{item.emotion}</span>
-                  <span className="text-sm font-semibold text-[var(--accent-soft)]">
+                  <span className="text-[13px] text-[var(--text-primary)]">{item.emotion}</span>
+                  <span className="text-[13px] font-semibold text-[var(--accent)]">
                     {item.avg}%
                   </span>
                 </li>
@@ -517,10 +518,10 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
             </ul>
           )}
         </div>
-        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] p-5 shadow-[var(--shadow-zen)] backdrop-blur-xl">
+        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-elevation)]">
           <div className="flex items-center gap-2">
-            <Activity className="h-4 w-4 text-[var(--accent-soft)]" />
-            <h2 className="text-base font-semibold text-[var(--text-primary)]">
+            <Activity className="h-4 w-4 text-[var(--accent)]" />
+            <h2 className="text-[15px] font-semibold text-[var(--text-primary)]">
               Lichaam
             </h2>
           </div>
@@ -528,18 +529,18 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
             Gebieden waar je het vaakst iets merkt.
           </p>
           {bodyPartCounts.length === 0 ? (
-            <p className="mt-4 text-sm text-[var(--text-muted)]">Nog geen data.</p>
+            <p className="mt-4 text-[13px] text-[var(--text-muted)]">Nog geen data.</p>
           ) : (
             <ul className="mt-4 space-y-2">
               {bodyPartCounts.map(({ part, count }) => (
                 <li
                   key={part}
-                  className="flex items-center justify-between rounded-xl border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] px-3 py-2"
+                  className="flex items-center justify-between rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--interactive-hover)] px-3 py-2"
                 >
-                  <span className="text-sm text-[var(--text-primary)]">
+                  <span className="text-[13px] text-[var(--text-primary)]">
                     {BODY_PART_LABELS[part]}
                   </span>
-                  <span className="text-sm font-medium text-[var(--text-muted)]">
+                  <span className="text-[13px] font-medium text-[var(--text-muted)]">
                     {count}×
                   </span>
                 </li>
@@ -547,21 +548,21 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
             </ul>
           )}
         </div>
-        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] p-5 shadow-[var(--shadow-zen)] backdrop-blur-xl">
+        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-elevation)]">
           <div className="flex items-center gap-2">
-            <Brain className="h-4 w-4 text-[var(--accent-soft)]" />
-            <h2 className="text-base font-semibold text-[var(--text-primary)]">
+            <Brain className="h-4 w-4 text-[var(--accent)]" />
+            <h2 className="text-[15px] font-semibold text-[var(--text-primary)]">
               Gedrag
             </h2>
           </div>
           <p className="mt-1 text-xs text-[var(--text-soft)]">
             Bewust vs automatisch, waarden-check.
           </p>
-          <div className="mt-4 space-y-3 text-sm text-[var(--text-primary)]">
+          <div className="mt-4 space-y-3 text-[13px] text-[var(--text-primary)]">
             {behaviorInsights.bewustPct != null ? (
               <p>
                 Bewust:{" "}
-                <span className="font-semibold text-[var(--accent-soft)]">
+                <span className="font-semibold text-[var(--accent)]">
                   {behaviorInsights.bewustPct}%
                 </span>{" "}
                 · Autonoom:{" "}
@@ -575,7 +576,7 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
             {behaviorInsights.waardenCheckPct != null && (
               <p>
                 Waarden-check ja:{" "}
-                <span className="font-semibold text-[var(--accent-soft)]">
+                <span className="font-semibold text-[var(--accent)]">
                   {behaviorInsights.waardenCheckPct}%
                 </span>
               </p>
@@ -587,15 +588,15 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
       {/* Generated insights */}
       {generatedInsights.length > 0 && (
         <motion.section
-          initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-          whileInView={reduceMotion ? {} : { opacity: 1, y: 0 }}
+          initial={reduceMotion ? false : { opacity: 0, y: 4 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.4 }}
-          className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] p-6 shadow-[var(--shadow-zen)] backdrop-blur-xl"
+          transition={{ duration: 0.45, ease: EASE_SMOOTH }}
+          className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-6 shadow-[var(--shadow-elevation)]"
         >
           <div className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-[var(--accent-soft)]" />
-            <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+            <Sparkles className="h-5 w-5 text-[var(--accent)]" />
+            <h2 className="text-[17px] font-semibold text-[var(--text-primary)]">
               Persoonlijke inzichten
             </h2>
           </div>
@@ -606,7 +607,7 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
             {generatedInsights.map((text, i) => (
               <li
                 key={i}
-                className="flex gap-3 text-sm text-[var(--text-primary)]"
+                className="flex gap-3 text-[13px] text-[var(--text-primary)]"
               >
                 <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent-soft)]" />
                 <span>{text}</span>
@@ -618,16 +619,16 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
 
       {/* Rhythm summary (weekday) */}
       {weekdayInsight && (
-        <section className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] p-5 shadow-[var(--shadow-zen)] backdrop-blur-xl">
-          <h2 className="text-base font-semibold text-[var(--text-primary)]">
+        <section className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-elevation)]">
+          <h2 className="text-[15px] font-semibold text-[var(--text-primary)]">
             Persoonlijk ritme
           </h2>
           <p className="mt-1 text-xs text-[var(--text-soft)]">
             Weekdag waarop je gemiddeld de hoogste energie hebt.
           </p>
-          <p className="mt-3 text-sm text-[var(--text-primary)]">
+          <p className="mt-3 text-[13px] text-[var(--text-primary)]">
             Beste weekdag:{" "}
-            <span className="font-semibold text-[var(--accent-soft)]">
+            <span className="font-semibold text-[var(--accent)]">
               {weekdayInsight.day} (gem. {weekdayInsight.avg}% energie)
             </span>
           </p>

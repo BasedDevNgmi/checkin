@@ -1,13 +1,17 @@
-export function Card({
-  children,
-  className = "",
-}: {
+interface CardProps {
   children: React.ReactNode;
   className?: string;
-}) {
+  variant?: "default" | "elevated";
+}
+
+export function Card({ children, className = "", variant = "default" }: CardProps) {
+  const shadow =
+    variant === "elevated"
+      ? "shadow-[var(--shadow-zen)]"
+      : "shadow-[var(--shadow-elevation)]";
   return (
     <div
-      className={`rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] shadow-[var(--shadow-zen)] backdrop-blur-xl ${className}`}
+      className={`rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] ${shadow} ${className}`}
     >
       {children}
     </div>

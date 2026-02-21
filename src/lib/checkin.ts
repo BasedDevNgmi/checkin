@@ -1,10 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
 import type { CheckInFormState, CheckInRow, SaveResult } from "@/types/checkin";
-import {
-  isOnline,
-  addPendingCheckIn,
-  syncPendingCheckIns,
-} from "./offline";
 
 export type { SaveResult };
 
@@ -17,7 +12,7 @@ export async function listCheckIns(): Promise<CheckInRow[]> {
   if (!user) return [];
   const { data, error } = await supabase
     .from("checkins")
-    .select("*")
+    .select("id,user_id,created_at,thoughts,emotions,body_parts,energy_level,behavior_meta")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
   if (error) return [];
@@ -33,7 +28,7 @@ export async function getCheckIn(id: string): Promise<CheckInRow | null> {
   if (!user) return null;
   const { data, error } = await supabase
     .from("checkins")
-    .select("*")
+    .select("id,user_id,created_at,thoughts,emotions,body_parts,energy_level,behavior_meta")
     .eq("id", id)
     .eq("user_id", user.id)
     .single();
@@ -42,11 +37,6 @@ export async function getCheckIn(id: string): Promise<CheckInRow | null> {
 }
 
 export async function saveCheckIn(data: CheckInFormState): Promise<SaveResult> {
-  if (!isOnline()) {
-    await addPendingCheckIn(data);
-    return { ok: false, offline: true };
-  }
-
   const supabase = createClient();
   const {
     data: { user },
@@ -62,13 +52,7 @@ export async function saveCheckIn(data: CheckInFormState): Promise<SaveResult> {
     behavior_meta: data.behaviorMeta,
   });
 
-  if (error) {
-    if (typeof navigator !== "undefined" && !navigator.onLine) {
-      await addPendingCheckIn(data);
-      return { ok: false, offline: true };
-    }
-    return { ok: false, error: error.message };
-  }
+  if (error) return { ok: false, error: error.message };
   return { ok: true };
 }
 
@@ -77,9 +61,6 @@ export async function updateCheckIn(
   id: string,
   data: CheckInFormState
 ): Promise<SaveResult> {
-  if (!isOnline()) {
-    return { ok: false, error: "Offline; wijzigingen later opslaan." };
-  }
   const supabase = createClient();
   const {
     data: { user },
@@ -102,9 +83,6 @@ export async function updateCheckIn(
 
 /** Delete a check-in by id. */
 export async function deleteCheckIn(id: string): Promise<SaveResult> {
-  if (!isOnline()) {
-    return { ok: false, error: "Offline; verwijderen wanneer je weer online bent." };
-  }
   const supabase = createClient();
   const {
     data: { user },
@@ -117,10 +95,6 @@ export async function deleteCheckIn(id: string): Promise<SaveResult> {
     .eq("user_id", user.id);
   if (error) return { ok: false, error: error.message };
   return { ok: true };
-}
-
-export async function syncCheckIns(): Promise<{ synced: number; failed: number }> {
-  return syncPendingCheckIns();
 }
 
 /** Restore check-ins (e.g. after backup import) into Supabase. */

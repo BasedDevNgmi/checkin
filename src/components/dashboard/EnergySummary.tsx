@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import type { CheckInRow } from "@/types/checkin";
 import {
@@ -14,10 +15,10 @@ interface EnergySummaryProps {
 }
 
 export function EnergySummary({ checkins }: EnergySummaryProps) {
-  const avg = getAverageEnergy(checkins, 7);
-  const uniqueDays = getUniqueCheckinDays(checkins);
-  const streak = getCurrentStreak(checkins);
-  const topEmotion = getTopEmotion(checkins, 30);
+  const avg = useMemo(() => getAverageEnergy(checkins, 7), [checkins]);
+  const uniqueDays = useMemo(() => getUniqueCheckinDays(checkins), [checkins]);
+  const streak = useMemo(() => getCurrentStreak(checkins), [checkins]);
+  const topEmotion = useMemo(() => getTopEmotion(checkins, 30), [checkins]);
 
   const cards = [
     {
@@ -60,21 +61,25 @@ export function EnergySummary({ checkins }: EnergySummaryProps) {
             </p>
           </>
         );
-        const className =
-          "rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] p-4 shadow-[var(--shadow-zen)] backdrop-blur-xl transition " +
+        const cls =
+          "rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-4 shadow-[var(--shadow-elevation)] transition-colors duration-200 min-h-[88px] flex flex-col justify-center" +
           (href
-            ? "hover:bg-[var(--interactive-hover)] active:bg-[var(--interactive-active)] min-h-[88px] flex flex-col justify-center"
-            : "min-h-[88px] flex flex-col justify-center");
+            ? " hover:bg-[var(--interactive-hover)] active:bg-[var(--interactive-active)]"
+            : "");
 
         if (href) {
           return (
-            <Link key={label} href={href} className={className}>
+            <Link
+              key={label}
+              href={href}
+              className={`${cls} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]`}
+            >
               {content}
             </Link>
           );
         }
         return (
-          <div key={label} className={className}>
+          <div key={label} className={cls}>
             {content}
           </div>
         );

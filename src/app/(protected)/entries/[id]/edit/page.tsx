@@ -32,17 +32,23 @@ export default function EditEntryPage() {
       setNotFound(true);
       return;
     }
-    getCheckIn(id).then((row) => {
-      if (row) setInitialData(rowToFormState(row));
-      else setNotFound(true);
-      setLoading(false);
-    });
+    getCheckIn(id)
+      .then((row) => {
+        if (row) setInitialData(rowToFormState(row));
+        else setNotFound(true);
+      })
+      .catch(() => setNotFound(true))
+      .finally(() => setLoading(false));
   }, [id]);
 
   if (loading) {
     return (
       <div className="space-y-6 py-5 pb-24 sm:py-6">
-        <p className="text-sm text-[var(--text-soft)]">Laden…</p>
+        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-6 shadow-[var(--shadow-elevation)]">
+          <div className="h-6 w-48 animate-pulse rounded-[var(--radius-control)] bg-[var(--interactive-hover)]" />
+          <div className="mt-2 h-4 w-72 animate-pulse rounded bg-[var(--interactive-hover)]" />
+        </div>
+        <p className="text-[13px] text-[var(--text-soft)]">Laden…</p>
       </div>
     );
   }
@@ -53,7 +59,7 @@ export default function EditEntryPage() {
         <p className="text-[var(--text-muted)]">Check-in niet gevonden.</p>
         <Link
           href="/dashboard"
-          className="inline-flex text-sm text-[var(--accent-soft)] transition hover:opacity-80"
+          className="inline-flex text-[13px] text-[var(--accent)] transition hover:opacity-80"
         >
           Terug naar overzicht
         </Link>
@@ -68,12 +74,12 @@ export default function EditEntryPage() {
   return (
     <div className="space-y-6 py-5 pb-24 sm:py-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-[var(--text-primary)]">
+        <h1 className="text-[22px] font-semibold text-[var(--text-primary)]">
           Check-in bewerken
         </h1>
         <Link
           href={`/entries/${id}`}
-          className="rounded-[14px] border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] px-3 py-2.5 text-sm min-h-[44px]"
+          className="link-muted inline-flex min-h-[44px] items-center rounded-[var(--radius-control)] border border-[var(--surface-border)] px-3 py-2.5 text-[13px] font-medium transition-colors duration-200 hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
         >
           Annuleren
         </Link>

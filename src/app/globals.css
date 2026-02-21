@@ -2,10 +2,7 @@
 
 @font-face {
   font-family: "Satoshi";
-  src: url("https://cdn.fontshare.com/wf/TTX2Z3BF3P6Y5BQT3IV2VNOK6FL22KUT/7QYRJOI3JIMYHGY6CH7SOIFRQLZOLNJ6/KFIAZD4RUMEZIYV6FQ3T3GP5PDBDB6JY.woff2")
-      format("woff2"),
-    url("https://cdn.fontshare.com/wf/TTX2Z3BF3P6Y5BQT3IV2VNOK6FL22KUT/7QYRJOI3JIMYHGY6CH7SOIFRQLZOLNJ6/KFIAZD4RUMEZIYV6FQ3T3GP5PDBDB6JY.woff")
-      format("woff");
+  src: url("/fonts/Satoshi-Regular.woff2") format("woff2");
   font-style: normal;
   font-weight: 400;
   font-display: swap;
@@ -13,10 +10,7 @@
 
 @font-face {
   font-family: "Satoshi";
-  src: url("https://cdn.fontshare.com/wf/P2LQKHE6KA6ZP4AAGN72KDWMHH6ZH3TA/ZC32TK2P7FPS5GFTL46EU6KQJA24ZYDB/7AHDUZ4A7LFLVFUIFSARGIWCRQJHISQP.woff2")
-      format("woff2"),
-    url("https://cdn.fontshare.com/wf/P2LQKHE6KA6ZP4AAGN72KDWMHH6ZH3TA/ZC32TK2P7FPS5GFTL46EU6KQJA24ZYDB/7AHDUZ4A7LFLVFUIFSARGIWCRQJHISQP.woff")
-      format("woff");
+  src: url("/fonts/Satoshi-Medium.woff2") format("woff2");
   font-style: normal;
   font-weight: 500;
   font-display: swap;
@@ -24,50 +18,67 @@
 
 @font-face {
   font-family: "Satoshi";
-  src: url("https://cdn.fontshare.com/wf/LAFFD4SDUCDVQEXFPDC7C53EQ4ZELWQI/PXCT3G6LO6ICM5I3NTYENYPWJAECAWDD/GHM6WVH6MILNYOOCXHXB5GTSGNTMGXZR.woff2")
-      format("woff2"),
-    url("https://cdn.fontshare.com/wf/LAFFD4SDUCDVQEXFPDC7C53EQ4ZELWQI/PXCT3G6LO6ICM5I3NTYENYPWJAECAWDD/GHM6WVH6MILNYOOCXHXB5GTSGNTMGXZR.woff")
-      format("woff");
+  src: url("/fonts/Satoshi-Bold.woff2") format("woff2");
   font-style: normal;
   font-weight: 700;
   font-display: swap;
 }
 
 :root {
-  --background: #e4e8ee;
-  --foreground: #1e2333;
-  --surface-glass: rgb(255 255 255 / 0.62);
-  --surface-glass-strong: rgb(255 255 255 / 0.78);
-  --surface-border: rgb(255 255 255 / 0.62);
-  --surface-border-strong: rgb(255 255 255 / 0.78);
-  --text-primary: #1e2333;
-  --text-muted: #4f5870;
-  --text-soft: #647089;
-  --interactive-hover: rgb(255 255 255 / 0.7);
-  --interactive-active: rgb(255 255 255 / 0.86);
-  --accent: #5a4fff;
-  --accent-soft: #8ea0ff;
-  --focus-ring: #5546ff;
-  --focus-shadow: rgb(85 70 255 / 0.24);
-  --radius-card: 1.5rem;
-  --radius-control: 0.875rem; /* 14px – buttons, inputs, chips (Apple-style) */
-  --tap-min-height: 44px; /* minimum touch target */
-  --space-section: 2rem;
-  --space-page-y: 1.25rem; /* py-5 */
-  --space-card: 1.25rem; /* p-5 */
-  --page-gradient: radial-gradient(
-      80rem 50rem at 20% -10%,
-      rgb(160 175 195 / 0.35),
-      transparent 55%
-    ),
-    radial-gradient(70rem 44rem at 95% 0%, rgb(165 180 175 / 0.2), transparent 50%),
-    linear-gradient(160deg, #e8ecf0 0%, #e2e6ec 50%, #dce2ea 100%);
-  --shadow-zen: 0 12px 32px -20px rgb(45 60 80 / 0.2), 0 8px 20px -16px rgb(40 55 75 / 0.18);
+  --background: #F7F6F3;
+  --foreground: #1C1C1A;
+  --surface: #FFFFFF;
+  --surface-glass: #FFFFFF;
+  --surface-glass-strong: #FFFFFF;
+  --surface-border: #E8E7E4;
+  --surface-border-strong: #DDDCD8;
+  --text-primary: #1C1C1A;
+  --text-muted: #6E6E6A;
+  --text-soft: #A3A39E;
+  --interactive-hover: #F0EFEC;
+  --interactive-active: #E8E7E4;
+  --accent: #4A3AFF;
+  --accent-soft: #7B6FFF;
+  --focus-ring: #4A3AFF;
+  --focus-shadow: rgb(74 58 255 / 0.18);
+  --text-success: #2D7A4F;
+  --text-error: #C43333;
+  --radius-card: 1rem;
+  --radius-control: 0.625rem;
+  --radius-small: 0.5rem;
+  --tap-min-height: 44px;
+  --space-section: 3rem;
+  --space-page-y: 1.75rem;
+  --space-card: 1.5rem;
+  --shadow-elevation: 0 1px 3px rgb(0 0 0 / 0.04), 0 1px 2px rgb(0 0 0 / 0.03);
+  --shadow-zen: 0 2px 8px rgb(0 0 0 / 0.06), 0 1px 3px rgb(0 0 0 / 0.04);
+
+  /* Type scale */
+  --text-display: 2.75rem;
+  --text-title: 1.75rem;
+  --text-body: 1rem;
+  --text-ui: 0.9375rem;
+  --text-small: 0.875rem;
+  --text-caption: 0.75rem;
+
+  /* Spacing scale (8px base) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
   --color-text-primary: var(--text-primary);
   --color-text-muted: var(--text-muted);
   --color-text-soft: var(--text-soft);
@@ -75,55 +86,74 @@
   --color-interactive-active: var(--interactive-active);
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
+  --color-text-success: var(--text-success);
+  --color-text-error: var(--text-error);
   --font-sans: "Satoshi", "Avenir Next", "Inter", ui-sans-serif, system-ui, sans-serif;
   --shadow-zen: var(--shadow-zen);
+  --shadow-elevation: var(--shadow-elevation);
   --color-surface-glass: var(--surface-glass);
   --color-surface-glass-strong: var(--surface-glass-strong);
   --color-surface-border: var(--surface-border);
   --radius-card: var(--radius-card);
   --radius-control: var(--radius-control);
+  --radius-small: var(--radius-small);
   --space-section: var(--space-section);
   --space-page-y: var(--space-page-y);
   --space-card: var(--space-card);
+  --font-size-display: var(--text-display);
+  --font-size-title: var(--text-title);
+  --font-size-body: var(--text-body);
+  --font-size-ui: var(--text-ui);
+  --font-size-small: var(--text-small);
+  --font-size-caption: var(--text-caption);
 }
 
 :root[data-theme="dark"] {
-  --background: #0d1117;
-  --foreground: #f2f6ff;
-  --surface-glass: rgb(29 41 67 / 0.88);
-  --surface-glass-strong: rgb(36 51 82 / 0.95);
-  --surface-border: rgb(161 183 255 / 0.44);
-  --surface-border-strong: rgb(198 213 255 / 0.58);
-  --text-primary: #f3f7ff;
-  --text-muted: #d5dfff;
-  --text-soft: #bbc8ef;
-  --interactive-hover: rgb(79 98 141 / 0.58);
-  --interactive-active: rgb(96 117 167 / 0.7);
-  --accent: #8b82ff;
-  --accent-soft: #a8a0ff;
-  --focus-ring: #8b82ff;
-  --focus-shadow: rgb(139 130 255 / 0.34);
-  --page-gradient: radial-gradient(
-      62rem 38rem at 8% -10%,
-      rgb(45 60 80 / 0.4),
-      transparent 58%
-    ),
-    radial-gradient(56rem 34rem at 100% -2%, rgb(35 50 65 / 0.3), transparent 56%),
-    linear-gradient(165deg, #0d1117 0%, #131920 45%, #0f1419 100%);
-  --shadow-zen: 0 24px 44px -28px rgb(2 6 23 / 0.86), 0 14px 28px -22px rgb(15 23 42 / 0.8);
+  --background: #121211;
+  --foreground: #EAEAE7;
+  --surface: #1A1A18;
+  --surface-glass: #1A1A18;
+  --surface-glass-strong: #1E1E1C;
+  --surface-border: #2A2A27;
+  --surface-border-strong: #333330;
+  --text-primary: #EAEAE7;
+  --text-muted: #8D8D88;
+  --text-soft: #5C5C58;
+  --interactive-hover: #222220;
+  --interactive-active: #2A2A28;
+  --accent: #8B82FF;
+  --accent-soft: #A8A0FF;
+  --focus-ring: #8B82FF;
+  --focus-shadow: rgb(139 130 255 / 0.24);
+  --text-success: #34d399;
+  --text-error: #f87171;
+  --shadow-elevation: 0 1px 3px rgb(0 0 0 / 0.12), 0 1px 2px rgb(0 0 0 / 0.08);
+  --shadow-zen: 0 2px 8px rgb(0 0 0 / 0.2), 0 1px 3px rgb(0 0 0 / 0.12);
 }
 
 body {
-  background: var(--page-gradient);
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
   min-height: 100vh;
 }
 
-/* Focus visible for accessibility */
 *:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px var(--focus-shadow);
+}
+
+.link-accent {
+  color: var(--accent);
+  transition: opacity 0.2s;
+}
+.link-accent:hover {
+  opacity: 0.8;
+}
+.link-muted {
+  color: var(--text-soft);
+  transition: color 0.2s;
+}
+.link-muted:hover {
+  color: var(--text-primary);
 }

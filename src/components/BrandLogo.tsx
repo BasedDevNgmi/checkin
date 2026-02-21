@@ -2,7 +2,6 @@ interface BrandLogoProps {
   compact?: boolean;
 }
 
-/** Premium logo mark: breath + check — a calm “in” moment. */
 function LogoIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -13,26 +12,24 @@ function LogoIcon({ className }: { className?: string }) {
       aria-hidden
     >
       <defs>
-        <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="var(--accent-soft)" />
-          <stop offset="100%" stopColor="var(--accent)" />
-        </linearGradient>
+        <radialGradient id="logo-fill" cx="50%" cy="40%" r="60%">
+          <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="var(--accent)" stopOpacity="0.04" />
+        </radialGradient>
       </defs>
-      {/* Outer ring — subtle, suggests focus/breath */}
       <circle
         cx="16"
         cy="16"
         r="14"
-        stroke="url(#logo-grad)"
+        stroke="var(--accent)"
         strokeWidth="1.5"
         strokeOpacity="0.4"
-        fill="none"
+        fill="url(#logo-fill)"
       />
-      {/* Inner check — single smooth stroke */}
       <path
         d="M10 16.5 L14.2 20.8 L22 11.2"
-        stroke="url(#logo-grad)"
-        strokeWidth="2.4"
+        stroke="var(--accent)"
+        strokeWidth="2.8"
         strokeLinecap="round"
         strokeLinejoin="round"
         fill="none"
@@ -44,11 +41,11 @@ function LogoIcon({ className }: { className?: string }) {
 export function BrandLogo({ compact = false }: BrandLogoProps) {
   return (
     <div className="inline-flex items-center gap-2.5">
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-[var(--surface-glass-strong)]/80 shadow-sm">
-        <LogoIcon className="h-5 w-5" />
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center">
+        <LogoIcon className="h-6 w-6" />
       </span>
       {!compact ? (
-        <span className="text-[17px] font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
+        <span className="text-[17px] font-semibold tracking-[-0.025em] text-[var(--text-primary)]">
           Inchecken
         </span>
       ) : null}

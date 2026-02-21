@@ -15,7 +15,7 @@ export function ProfileScreen() {
   } = useMindJournal();
 
   return (
-    <div className="space-y-6 py-5 pb-24 sm:py-6">
+    <div className="space-y-10 py-6 pb-24 sm:py-8">
       <SettingsPanel
         preferences={preferences}
         onSavePreferences={savePreferences}
@@ -25,11 +25,8 @@ export function ProfileScreen() {
         listCheckIns={listCheckIns}
         restoreCheckIns={restoreCheckIns}
       />
-      <section
-        className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] p-6 shadow-[var(--shadow-zen)] backdrop-blur-xl"
-        aria-labelledby="account-heading"
-      >
-        <h2 id="account-heading" className="text-xl font-semibold text-[var(--text-primary)] mb-4">
+      <section aria-labelledby="account-heading">
+        <h2 id="account-heading" className="text-[17px] font-semibold text-[var(--text-primary)] mb-4">
           Account
         </h2>
         <SignOutButton />

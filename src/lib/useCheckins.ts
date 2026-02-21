@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { CheckInRow } from "@/types/checkin";
-import { listCheckIns, syncCheckIns } from "./checkin";
+import { listCheckIns } from "./checkin";
 
 export function useCheckins(initialCheckins?: CheckInRow[] | null) {
   const [checkins, setCheckins] = useState<CheckInRow[]>(initialCheckins ?? []);
@@ -16,22 +16,12 @@ export function useCheckins(initialCheckins?: CheckInRow[] | null) {
     } finally {
       setLoading(false);
     }
-    const { synced } = await syncCheckIns();
-    if (synced > 0) {
-      const rows = await listCheckIns();
-      setCheckins(rows);
-    }
   }, []);
 
   useEffect(() => {
     if (initialCheckins != null) {
       setCheckins(initialCheckins);
       setLoading(false);
-      syncCheckIns().then(({ synced }) => {
-        if (synced > 0) {
-          listCheckIns().then(setCheckins);
-        }
-      });
     } else {
       refresh();
     }

@@ -30,7 +30,6 @@ export interface CheckInRow {
 
 export type SaveResult =
   | { ok: true }
-  | { ok: false; offline: true }
   | { ok: false; error: string };
 
 export const EMOTION_OPTIONS = [

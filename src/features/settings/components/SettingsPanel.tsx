@@ -3,6 +3,12 @@
 import { useRef, useState } from "react";
 import type { BackupPayload, UserPreferences } from "@/core/storage/models";
 import type { CheckInRow } from "@/types/checkin";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
+import { ThemeToggle } from "@/components/ThemeToggle";
+
+const selectClass =
+  "w-full rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface)] px-4 py-3 text-[15px] text-[var(--text-primary)] focus-visible:border-[var(--focus-ring)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition disabled:opacity-50";
 
 interface SettingsPanelProps {
   preferences: UserPreferences | null;
@@ -105,78 +111,82 @@ export function SettingsPanel({
   }
 
   return (
-    <section className="space-y-6 rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-glass)] p-6 shadow-[var(--shadow-zen)] backdrop-blur-xl">
-      <h1 className="text-xl font-semibold text-[var(--text-primary)]">Instellingen en backup</h1>
-      <div className="grid gap-3 sm:grid-cols-2">
-        <input
-          value={name}
-          onChange={(event) => setName(event.target.value)}
-          placeholder="Naam"
-          className="rounded-xl border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] px-3 py-2 text-sm text-[var(--text-primary)]"
-        />
-        <input
-          value={timezone}
-          onChange={(event) => setTimezone(event.target.value)}
-          placeholder="Tijdzone"
-          className="rounded-xl border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] px-3 py-2 text-sm text-[var(--text-primary)]"
-        />
-      </div>
-      <select
-        value={theme}
-        onChange={(event) => setTheme(event.target.value as "light" | "dark" | "system")}
-        className="w-full rounded-xl border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] px-3 py-2 text-sm"
-      >
-        <option value="system">Thema: Systeem</option>
-        <option value="light">Thema: Licht</option>
-        <option value="dark">Thema: Donker</option>
-      </select>
-      <div className="grid gap-2 sm:grid-cols-[auto_1fr_auto] sm:items-center">
-        <label className="inline-flex items-center gap-2 text-sm text-[var(--text-muted)]">
-          <input
-            type="checkbox"
-            checked={reminderEnabled}
-            onChange={(event) => setReminderEnabled(event.target.checked)}
-          />
-          Dagelijkse herinnering
-        </label>
-        <input
-          type="time"
-          value={reminderTime}
-          onChange={(event) => setReminderTime(event.target.value)}
-          disabled={!reminderEnabled}
-          className="rounded-xl border border-[var(--surface-border)] bg-[var(--surface-glass-strong)] px-3 py-2 text-sm disabled:opacity-50"
-        />
-        <button
-          type="button"
-          onClick={requestReminderPermission}
-          className="rounded-[14px] border border-[var(--surface-border)] px-3 py-2.5 text-sm min-h-[44px]"
-        >
-          Sta meldingen toe
-        </button>
+    <section className="space-y-8">
+      <div>
+        <h1 className="text-[17px] font-semibold text-[var(--text-primary)]">Instellingen</h1>
+        <p className="mt-1 text-[13px] text-[var(--text-muted)]">Beheer je profiel en voorkeuren</p>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        <button
-          type="button"
-          onClick={saveSettings}
-          className="rounded-[14px] bg-gradient-to-b from-[var(--accent-soft)] to-[var(--accent)] px-4 py-2 text-sm font-medium text-white"
-        >
-          Instellingen opslaan
-        </button>
-        <button
-          type="button"
-          onClick={handleExport}
-          className="rounded-[14px] border border-[var(--surface-border)] px-4 py-2 text-sm"
-        >
-          Backup exporteren
-        </button>
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          className="rounded-[14px] border border-[var(--surface-border)] px-4 py-2 text-sm"
-        >
-          Backup importeren
-        </button>
+      <div className="space-y-6">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Input
+            label="Naam"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            placeholder="Naam"
+          />
+          <Input
+            label="Tijdzone"
+            value={timezone}
+            onChange={(event) => setTimezone(event.target.value)}
+            placeholder="Tijdzone"
+          />
+        </div>
+
+        <div className="border-t border-[var(--surface-border)] pt-6">
+          <p className="text-[13px] font-medium text-[var(--text-primary)] mb-3">Thema</p>
+          <ThemeToggle />
+        </div>
+
+        <div className="border-t border-[var(--surface-border)] pt-6">
+          <p className="text-[13px] font-medium text-[var(--text-primary)] mb-3">Herinneringen</p>
+          <div className="grid gap-3 sm:grid-cols-[auto_1fr_auto] sm:items-center">
+            <label className="inline-flex items-center gap-2 text-[13px] text-[var(--text-muted)]">
+              <input
+                type="checkbox"
+                checked={reminderEnabled}
+                onChange={(event) => setReminderEnabled(event.target.checked)}
+                className="rounded border-[var(--surface-border)] focus-visible:ring-[var(--focus-ring)]"
+              />
+              Dagelijkse herinnering
+            </label>
+            <input
+              type="time"
+              value={reminderTime}
+              onChange={(event) => setReminderTime(event.target.value)}
+              disabled={!reminderEnabled}
+              className={selectClass}
+            />
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={requestReminderPermission}
+              className="min-h-[44px]"
+            >
+              Sta meldingen toe
+            </Button>
+          </div>
+        </div>
+
+        <div className="border-t border-[var(--surface-border)] pt-6">
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" variant="primary" size="sm" onClick={saveSettings}>
+              Instellingen opslaan
+            </Button>
+            <Button type="button" variant="secondary" size="sm" onClick={handleExport}>
+              Backup exporteren
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              Backup importeren
+            </Button>
+          </div>
+        </div>
       </div>
 
       <input
@@ -187,7 +197,17 @@ export function SettingsPanel({
         className="hidden"
       />
 
-      {status ? <p className="text-sm text-[var(--text-muted)]">{status}</p> : null}
+      {status ? (
+        <p
+          className={`text-[13px] ${
+            /Ongeldig|geweigerd|kon niet|niet ondersteund/i.test(status)
+              ? "text-[var(--text-error)]"
+              : "text-[var(--text-success)]"
+          }`}
+        >
+          {status}
+        </p>
+      ) : null}
     </section>
   );
 }
