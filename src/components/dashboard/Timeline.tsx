@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { EASE_SMOOTH } from "@/lib/motion";
 import { EMOTION_OPTIONS, type CheckInRow } from "@/types/checkin";
-import { Search } from "lucide-react";
+import { Search, SlidersHorizontal } from "lucide-react";
 
 const EMOJI_MAP: Map<string, string> = new Map(EMOTION_OPTIONS.map((e) => [e.id, e.emoji]));
 
@@ -28,13 +28,30 @@ function formatDate(iso: string) {
   });
 }
 
+function dayDividerLabel(iso: string): string {
+  const d = new Date(iso);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const target = new Date(d);
+  target.setHours(0, 0, 0, 0);
+  const diff = Math.round((today.getTime() - target.getTime()) / (24 * 60 * 60 * 1000));
+
+  if (diff === 0) return "Vandaag";
+  if (diff === 1) return "Gisteren";
+  return d.toLocaleDateString("nl-NL", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
+}
+
 type DateRangePreset = "all" | "week" | "month" | "quarter";
 
 const DATE_RANGE_OPTIONS: { value: DateRangePreset; label: string }[] = [
+  { value: "week", label: "7d" },
+  { value: "month", label: "30d" },
+  { value: "quarter", label: "90d" },
   { value: "all", label: "Alles" },
-  { value: "week", label: "Deze week" },
-  { value: "month", label: "Deze maand" },
-  { value: "quarter", label: "3 maanden" },
 ];
 
 function getRangeStart(preset: DateRangePreset): number | null {
@@ -75,6 +92,7 @@ export function Timeline({ checkins }: TimelineProps) {
   const [query, setQuery] = useState("");
   const [emotionFilter, setEmotionFilter] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState<DateRangePreset>("all");
+  const [showFilters, setShowFilters] = useState(false);
 
   const allEmotions = useMemo(() => {
     return Array.from(new Set(checkins.flatMap((entry) => entry.emotions ?? []))).slice(0, 8);
@@ -98,11 +116,10 @@ export function Timeline({ checkins }: TimelineProps) {
     });
   }, [checkins, emotionFilter, query, rangeStart]);
 
-  const groupedByMonth = useMemo(() => {
+  const groupedByDay = useMemo(() => {
     const groups = new Map<string, CheckInRow[]>();
     for (const entry of filtered) {
-      const date = new Date(entry.created_at);
-      const key = date.toLocaleDateString("nl-NL", { month: "long", year: "numeric" });
+      const key = entry.created_at.slice(0, 10);
       const current = groups.get(key) ?? [];
       current.push(entry);
       groups.set(key, current);
@@ -112,36 +129,55 @@ export function Timeline({ checkins }: TimelineProps) {
 
   const groupsWithStaggerIndex = useMemo(() => {
     let index = 0;
-    return groupedByMonth.map(([monthLabel, entries]) => {
+    return groupedByDay.map(([dayKey, entries]) => {
       const items = entries.map((entry) => ({ entry, staggerIndex: index++ }));
-      return { monthLabel, items };
+      return { dayKey, items };
     });
-  }, [groupedByMonth]);
+  }, [groupedByDay]);
 
   if (checkins.length === 0) return null;
 
   return (
-    <div className="space-y-5">
-      <div className="flex gap-1 border-b border-[var(--surface-border)]" role="tablist" aria-label="Periode">
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div
+          className="inline-flex rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--interactive-hover)] p-0.5"
+          role="tablist"
+          aria-label="Periode"
+        >
         {DATE_RANGE_OPTIONS.map(({ value, label }) => (
           <button
             key={value}
             type="button"
             role="tab"
             onClick={() => setDateRange(value)}
-            className={`px-3 py-2.5 text-[13px] font-medium transition-colors duration-200 border-b-2 -mb-px ${
+            className={`rounded-[var(--radius-small)] px-3 py-1.5 text-[13px] font-medium transition-colors duration-200 ${
               dateRange === value
-                ? "border-[var(--accent)] text-[var(--text-primary)]"
-                : "border-transparent text-[var(--text-soft)] hover:text-[var(--text-primary)]"
+                ? "bg-[var(--surface)] text-[var(--text-primary)] shadow-[var(--shadow-zen)]"
+                : "text-[var(--text-soft)] hover:text-[var(--text-primary)]"
             }`}
             aria-selected={dateRange === value}
           >
             {label}
           </button>
         ))}
+        </div>
+        <button
+          type="button"
+          onClick={() => setShowFilters((v) => !v)}
+          className={`inline-flex min-h-[38px] items-center gap-1.5 rounded-[var(--radius-control)] border px-3 text-[13px] font-medium transition-colors duration-200 ${
+            showFilters || query || emotionFilter
+              ? "border-[var(--accent)] text-[var(--accent)]"
+              : "border-[var(--surface-border)] text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+          }`}
+        >
+          <SlidersHorizontal className="h-3.5 w-3.5" aria-hidden />
+          Filters
+        </button>
       </div>
 
-      <div className="space-y-3">
+      {(showFilters || query || emotionFilter) && (
+        <div className="space-y-3 rounded-[var(--radius-control)] border border-[var(--surface-border)]/80 bg-[var(--surface)]/80 p-3.5">
         <div className="relative">
           <Search
             className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-soft)]"
@@ -185,21 +221,22 @@ export function Timeline({ checkins }: TimelineProps) {
           </div>
         )}
       </div>
+      )}
 
-      {groupedByMonth.length === 0 ? (
+      {groupedByDay.length === 0 ? (
         <div className="py-10 text-center">
           <p className="text-[13px] text-[var(--text-muted)]">
             Geen entries voor deze filters.
           </p>
         </div>
       ) : (
-        <ul className="space-y-8">
-          {groupsWithStaggerIndex.map(({ monthLabel, items }) => (
-            <li key={monthLabel}>
-              <p className="mb-4 mt-1 first:mt-0 text-[11px] font-semibold uppercase tracking-widest text-[var(--text-soft)]">
-                {monthLabel}
+        <ul className="space-y-7">
+          {groupsWithStaggerIndex.map(({ dayKey, items }) => (
+            <li key={dayKey}>
+              <p className="mb-3 mt-1 first:mt-0 text-[11px] font-semibold uppercase tracking-wide text-[var(--text-soft)]">
+                {dayDividerLabel(dayKey)}
               </p>
-              <ul className="space-y-3">
+              <ul className="space-y-2.5">
                 {items.map(({ entry: c, staggerIndex }) => (
                   <motion.li
                     key={c.id}
@@ -213,7 +250,7 @@ export function Timeline({ checkins }: TimelineProps) {
                   >
                     <Link
                       href={`/entries/${c.id}`}
-                      className="block rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] shadow-[var(--shadow-elevation)] px-4 py-4 sm:px-5 transition-shadow duration-200 hover:shadow-[var(--shadow-zen)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
+                      className="block rounded-[var(--radius-card)] border border-[var(--surface-border)]/70 bg-[var(--surface)] px-4 py-3.5 sm:px-5 transition-colors duration-200 hover:bg-[var(--interactive-hover)]/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
                     >
                       <div className="flex items-center justify-between gap-3">
                         <p suppressHydrationWarning className="text-[13px] font-medium text-[var(--text-muted)]">

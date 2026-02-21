@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 import { Timeline } from "@/components/dashboard/Timeline";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { FAB } from "@/components/FAB";
-import { Card } from "@/components/ui/Card";
 import { useCheckinsContext } from "@/lib/CheckinsContext";
 import { useMindJournal } from "@/features/app/useMindJournal";
 import {
@@ -13,7 +12,7 @@ import {
   getTopEmotion,
 } from "@/lib/checkin-insights";
 import Link from "next/link";
-import { Flame } from "lucide-react";
+import { ArrowRight, Flame, Sparkles } from "lucide-react";
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -26,7 +25,8 @@ export function DashboardLocal() {
   const { checkins: rows, loading } = useCheckinsContext();
   const { preferences } = useMindJournal();
   const [todayKey] = useState(() => new Date().toISOString().slice(0, 10));
-  const hasTodayEntry = rows.some((row) => row.created_at.slice(0, 10) === todayKey);
+  const todayEntry = rows.find((row) => row.created_at.slice(0, 10) === todayKey);
+  const hasTodayEntry = todayEntry != null;
 
   const streak = useMemo(() => getCurrentStreak(rows), [rows]);
   const avgEnergy = useMemo(() => getAverageEnergy(rows, 7), [rows]);
@@ -39,72 +39,105 @@ export function DashboardLocal() {
   ].filter(Boolean) as { label: string; icon: boolean }[];
 
   return (
-    <div className="min-h-full pb-24">
-      <header className="mb-6">
-        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-          <h1 suppressHydrationWarning className="text-[1.5rem] font-bold tracking-[-0.025em] text-[var(--text-primary)] sm:text-[1.75rem]">
-            {getGreeting()}
-          </h1>
-          {stats.length > 0 && (
-            <div className="flex items-center gap-3 text-[13px] text-[var(--text-muted)]">
-              {stats.map((stat, i) => (
-                <span key={i} className="inline-flex items-center gap-1">
-                  {stat.icon && <Flame className="h-3.5 w-3.5 text-[var(--accent)]" aria-hidden />}
-                  {stat.label}
-                </span>
-              ))}
+    <div className="dashboard-calm-shell min-h-full pb-24">
+      <div className="mx-auto w-full max-w-2xl">
+        <header className="mb-6">
+          <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)]/70 bg-[var(--surface)]/95 p-5 shadow-[var(--shadow-elevation)] sm:p-6">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <p className="inline-flex items-center gap-1.5 rounded-full border border-[var(--surface-border)] bg-[var(--interactive-hover)] px-2.5 py-1 text-[11px] font-medium uppercase tracking-wide text-[var(--text-muted)]">
+                  <Sparkles className="h-3.5 w-3.5" aria-hidden />
+                  Vandaag
+                </p>
+                <h1
+                  suppressHydrationWarning
+                  className="mt-3 text-[1.45rem] font-semibold tracking-[-0.025em] text-[var(--text-primary)] sm:text-[1.7rem]"
+                >
+                  {hasTodayEntry ? `${getGreeting()}, je bent op koers` : `${getGreeting()}, hoe gaat het vandaag?`}
+                </h1>
+                <p className="mt-2 max-w-md text-[13px] leading-relaxed text-[var(--text-muted)]">
+                  {hasTodayEntry
+                    ? "Mooi dat je al hebt ingecheckt. Pak je moment en kijk wat opvalt."
+                    : "Een korte check-in geeft rust en overzicht. Begin klein, je hoeft het niet perfect te doen."}
+                </p>
+              </div>
+
+              {hasTodayEntry ? (
+                <Link
+                  href={`/entries/${todayEntry.id}`}
+                  className="inline-flex min-h-[44px] items-center gap-1.5 rounded-[var(--radius-control)] border border-[var(--surface-border)] px-4 py-2.5 text-[14px] font-medium text-[var(--text-primary)] transition-colors duration-200 hover:bg-[var(--interactive-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
+                >
+                  Bekijk vandaag <ArrowRight className="h-4 w-4" aria-hidden />
+                </Link>
+              ) : (
+                <Link
+                  href="/checkin"
+                  className="inline-flex min-h-[44px] items-center rounded-[var(--radius-control)] bg-[var(--accent)] px-4 py-2.5 text-[14px] font-medium text-white transition-colors duration-200 hover:bg-[var(--accent-soft)] active:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
+                >
+                  Start check-in
+                </Link>
+              )}
+            </div>
+
+            {stats.length > 0 && (
+              <div className="mt-4 flex flex-wrap gap-2.5 text-[13px]">
+                {stats.map((stat, i) => (
+                  <span
+                    key={i}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-[var(--surface-border)] bg-[var(--interactive-hover)] px-3 py-1 text-[var(--text-muted)]"
+                  >
+                    {stat.icon && <Flame className="h-3.5 w-3.5 text-[var(--accent)]" aria-hidden />}
+                    {stat.label}
+                  </span>
+                ))}
+                <Link
+                  href="/analytics"
+                  className="inline-flex items-center rounded-full border border-[var(--surface-border)] px-3 py-1 font-medium text-[var(--accent)] transition-colors duration-200 hover:bg-[var(--interactive-hover)]"
+                >
+                  Bekijk trends
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {preferences == null && (
+            <div className="mt-3 rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface)]/90 px-4 py-2.5">
+              <p className="text-[13px] text-[var(--text-muted)]">
+                Rond je profiel af voor herinneringen.{" "}
+                <Link href="/onboarding" className="link-accent font-medium">
+                  Naar onboarding
+                </Link>
+              </p>
             </div>
           )}
-        </div>
+        </header>
 
-        {!hasTodayEntry && rows.length > 0 && (
-          <p className="mt-2 text-[13px] text-[var(--text-muted)]">
-            Nog geen check-in vandaag.{" "}
-            <Link href="/checkin" className="link-accent font-medium">
-              Start er een
-            </Link>
-          </p>
-        )}
-
-        {preferences == null && (
-          <div className="mt-3 border-l-2 border-[var(--accent)] pl-4 py-1">
-            <p className="text-[13px] text-[var(--text-muted)]">
-              Rond je profiel af voor herinneringen.{" "}
-              <Link href="/onboarding" className="link-accent font-medium">
-                Naar onboarding →
-              </Link>
-            </p>
+        {loading ? (
+          <div className="space-y-4">
+            <div className="h-36 w-full animate-pulse rounded-[var(--radius-card)] bg-[var(--interactive-hover)]" />
+            <div className="h-12 w-full animate-pulse rounded-[var(--radius-card)] bg-[var(--interactive-hover)]" />
+            <div className="h-24 w-full animate-pulse rounded-[var(--radius-card)] bg-[var(--interactive-hover)]" />
           </div>
+        ) : rows.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <>
+            <section aria-labelledby="timeline-heading">
+              <div className="mb-4">
+                <h2 id="timeline-heading" className="text-[15px] font-semibold text-[var(--text-primary)]">
+                  Tijdlijn
+                </h2>
+                <p className="mt-1 text-[13px] text-[var(--text-muted)]">
+                  Je recente check-ins, gedachten en patronen.
+                </p>
+              </div>
+              <Timeline checkins={rows} />
+            </section>
+
+            <FAB />
+          </>
         )}
-      </header>
-
-      {loading ? (
-        <div className="space-y-4">
-          <div className="h-10 w-full animate-pulse rounded-[var(--radius-card)] bg-[var(--interactive-hover)]" />
-          <div className="h-24 w-full animate-pulse rounded-[var(--radius-card)] bg-[var(--interactive-hover)]" />
-        </div>
-      ) : rows.length === 0 ? (
-        <EmptyState />
-      ) : (
-        <>
-          <section aria-labelledby="timeline-heading">
-            <div className="mb-4 flex items-baseline justify-between">
-              <h2 id="timeline-heading" className="text-[15px] font-semibold text-[var(--text-primary)]">
-                Tijdlijn
-              </h2>
-              <Link
-                href="/analytics"
-                className="link-accent text-[13px] font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 rounded"
-              >
-                Trends
-              </Link>
-            </div>
-            <Timeline checkins={rows} />
-          </section>
-
-          <FAB />
-        </>
-      )}
+      </div>
     </div>
   );
 }

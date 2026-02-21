@@ -138,6 +138,28 @@ body {
   min-height: 100vh;
 }
 
+.dashboard-calm-shell {
+  position: relative;
+}
+
+.dashboard-calm-shell::before {
+  content: "";
+  position: absolute;
+  inset: -1.5rem -1rem auto;
+  height: 16rem;
+  pointer-events: none;
+  background:
+    radial-gradient(65% 55% at 22% 8%, color-mix(in oklab, var(--accent) 12%, transparent) 0%, transparent 78%),
+    radial-gradient(55% 45% at 82% 0%, color-mix(in oklab, var(--accent-soft) 10%, transparent) 0%, transparent 74%);
+  opacity: 0.55;
+  z-index: 0;
+}
+
+.dashboard-calm-shell > * {
+  position: relative;
+  z-index: 1;
+}
+
 *:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
