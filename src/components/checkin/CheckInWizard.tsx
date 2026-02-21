@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
-import { BodyMapSVG } from "./BodyMapSVG";
 import type { BodyPartId, CheckInFormState } from "@/types/checkin";
 import { Check, ChevronLeft } from "lucide-react";
 import { EMOTION_OPTIONS } from "@/types/checkin";
@@ -62,6 +61,21 @@ interface CheckInWizardProps {
 }
 
 const TRANSITION = { duration: 0.35, ease: EASE_SMOOTH };
+
+const BODY_PART_OPTIONS: { id: BodyPartId; label: string }[] = [
+  { id: "head", label: "Hoofd" },
+  { id: "neck", label: "Nek" },
+  { id: "chest", label: "Borst" },
+  { id: "stomach", label: "Buik" },
+  { id: "shoulder_left", label: "Schouder links" },
+  { id: "shoulder_right", label: "Schouder rechts" },
+  { id: "arm_left", label: "Arm links" },
+  { id: "arm_right", label: "Arm rechts" },
+  { id: "hip_left", label: "Heup links" },
+  { id: "hip_right", label: "Heup rechts" },
+  { id: "leg_left", label: "Been links" },
+  { id: "leg_right", label: "Been rechts" },
+];
 
 export function CheckInWizard({
   onSubmit,
@@ -144,7 +158,7 @@ export function CheckInWizard({
   function renderStepContent() {
     if (step === 0) {
       return (
-        <div className="space-y-4">
+        <div className="mx-auto max-w-3xl space-y-4">
           <textarea
             value={state.thoughts}
             onChange={(e) =>
@@ -164,8 +178,8 @@ export function CheckInWizard({
 
     if (step === 1) {
       return (
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div className="mx-auto max-w-3xl space-y-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             {EMOTION_OPTIONS.map(({ id, label, emoji }) => {
               const selected = state.emotions.includes(id);
               return (
@@ -196,12 +210,43 @@ export function CheckInWizard({
 
     if (step === 2) {
       return (
-        <div className="space-y-5">
-          <div className="flex justify-center py-2">
-            <BodyMapSVG
-              selectedParts={state.bodyParts}
-              onTogglePart={toggleBodyPart}
-            />
+        <div className="mx-auto max-w-3xl space-y-4">
+          <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-3.5">
+            <div className="mb-2.5 flex items-center justify-between gap-2">
+              <p className="text-[13px] font-medium text-[var(--text-primary)]">
+                Kies plekken
+              </p>
+              <p className="text-[12px] text-[var(--text-muted)]">
+                {state.bodyParts.length} geselecteerd
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4">
+              {BODY_PART_OPTIONS.map(({ id, label }) => {
+                const selected = state.bodyParts.includes(id);
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => toggleBodyPart(id)}
+                    className={`min-h-[42px] rounded-[var(--radius-control)] border px-3 py-2 text-[13px] font-medium text-left transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] ${controlClass(
+                      selected
+                    )}`}
+                    aria-pressed={selected}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+            {state.bodyParts.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setState((s) => ({ ...s, bodyParts: [] }))}
+                className="mt-3 text-[12px] font-medium text-[var(--accent)] hover:opacity-80"
+              >
+                Wis selectie
+              </button>
+            )}
           </div>
           <textarea
             value={state.behaviorMeta.body_sensations ?? ""}
@@ -215,7 +260,7 @@ export function CheckInWizard({
               }))
             }
             placeholder="Bijv. druk op borst, warme schouders…"
-            rows={2}
+            rows={3}
             className={textareaClass}
             aria-label="Lichaamssensaties"
           />
@@ -229,7 +274,7 @@ export function CheckInWizard({
     if (step === 3) {
       const pct = state.energyLevel;
       return (
-        <div className="space-y-8">
+        <div className="mx-auto max-w-3xl space-y-8">
           <div className="flex flex-col items-center gap-5">
             <div
               className="relative h-40 w-20 flex-shrink-0 overflow-hidden rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--interactive-hover)]"
@@ -263,7 +308,7 @@ export function CheckInWizard({
     }
 
     return (
-      <div className="space-y-6">
+      <div className="mx-auto max-w-3xl space-y-6">
         <textarea
           value={state.behaviorMeta.activity_now ?? ""}
           onChange={(e) =>
@@ -404,8 +449,10 @@ export function CheckInWizard({
     );
   }
 
+  const primaryLabel = isLast ? (isSubmitting ? "Opslaan…" : "Afronden") : "Volgende";
+
   return (
-    <div className="mx-auto max-w-lg">
+    <div className="mx-auto flex w-full max-w-5xl min-h-[700px] flex-col">
       <div className="mb-8">
         <div
           className="h-0.5 w-full overflow-hidden rounded-full bg-[var(--surface-border)]"
@@ -434,7 +481,7 @@ export function CheckInWizard({
           animate={{ opacity: 1, y: 0 }}
           exit={reduceMotion ? {} : { opacity: 0, y: -4 }}
           transition={reduceMotion ? {} : TRANSITION}
-          className="min-h-[280px]"
+          className="min-h-[520px] flex-1"
         >
           <h2 className="text-[22px] font-semibold leading-snug tracking-[-0.015em] text-[var(--text-primary)]">
             {current.title}
@@ -458,31 +505,25 @@ export function CheckInWizard({
         </p>
       )}
 
-      <div className="mt-12 flex items-center justify-between gap-4 border-t border-[var(--surface-border)] pt-6">
+      <div className="mt-8 flex min-h-[64px] items-center justify-between gap-4 border-t border-[var(--surface-border)] pt-6">
         <button
           type="button"
           onClick={handlePrev}
           disabled={isFirst}
-          className="flex min-h-[44px] items-center gap-1 rounded-[var(--radius-control)] px-3 py-2.5 text-[15px] font-medium text-[var(--text-muted)] transition-colors duration-200 hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)] disabled:pointer-events-none disabled:opacity-40"
+          className="flex min-h-[44px] w-[112px] items-center gap-1 rounded-[var(--radius-control)] px-3 py-2.5 text-[15px] font-medium text-[var(--text-muted)] transition-colors duration-200 hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)] disabled:pointer-events-none disabled:opacity-40"
           aria-label="Vorige stap"
         >
           <ChevronLeft className="h-5 w-5" />
           Terug
         </button>
-        {isLast ? (
-          <Button
-            onClick={handleFinish}
-            disabled={isSubmitting}
-            variant="primary"
-            className="min-h-[44px]"
-          >
-            {isSubmitting ? "Opslaan…" : "Afronden"}
-          </Button>
-        ) : (
-          <Button onClick={handleNext} variant="primary" className="min-h-[44px]">
-            Volgende
-          </Button>
-        )}
+        <Button
+          onClick={isLast ? handleFinish : handleNext}
+          disabled={isSubmitting}
+          variant="primary"
+          className="min-h-[44px] w-[132px]"
+        >
+          {primaryLabel}
+        </Button>
       </div>
     </div>
   );

@@ -40,7 +40,7 @@ export function DashboardLocal() {
 
   return (
     <div className="dashboard-calm-shell min-h-full pb-24">
-      <div className="mx-auto w-full max-w-3xl">
+      <div className="w-full">
         <header className="mb-6">
           <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)]/70 bg-[var(--surface)] p-5 shadow-[var(--shadow-elevation)] sm:p-6">
             <div className="flex flex-wrap items-start justify-between gap-4">
