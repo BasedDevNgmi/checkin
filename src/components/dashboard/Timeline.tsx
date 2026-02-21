@@ -4,8 +4,16 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { EASE_SMOOTH } from "@/lib/motion";
-import type { CheckInRow } from "@/types/checkin";
+import { EMOTION_OPTIONS, type CheckInRow } from "@/types/checkin";
 import { Search } from "lucide-react";
+
+const EMOJI_MAP = new Map(EMOTION_OPTIONS.map((e) => [e.id, e.emoji]));
+
+function energyColor(level: number): string {
+  if (level >= 70) return "var(--text-success)";
+  if (level >= 40) return "#d9a038";
+  return "var(--text-error)";
+}
 
 interface TimelineProps {
   checkins: CheckInRow[];
@@ -188,10 +196,10 @@ export function Timeline({ checkins }: TimelineProps) {
         <ul className="space-y-8">
           {groupsWithStaggerIndex.map(({ monthLabel, items }) => (
             <li key={monthLabel}>
-              <p className="mb-3 mt-2 first:mt-0 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-soft)]">
+              <p className="mb-4 mt-1 first:mt-0 text-[11px] font-semibold uppercase tracking-widest text-[var(--text-soft)]">
                 {monthLabel}
               </p>
-              <ul className="divide-y divide-[var(--surface-border)]">
+              <ul className="space-y-3">
                 {items.map(({ entry: c, staggerIndex }) => (
                   <motion.li
                     key={c.id}
@@ -205,29 +213,55 @@ export function Timeline({ checkins }: TimelineProps) {
                   >
                     <Link
                       href={`/entries/${c.id}`}
-                      className="flex min-h-[var(--tap-min-height)] items-center gap-3 py-4 transition-colors duration-200 hover:bg-[var(--interactive-hover)] -mx-2 px-2 rounded-[var(--radius-control)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
+                      className="block rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] shadow-[var(--shadow-elevation)] px-4 py-4 sm:px-5 transition-shadow duration-200 hover:shadow-[var(--shadow-zen)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
                     >
-                      <div className="min-w-0 flex-1">
-                        <p suppressHydrationWarning className="text-[13px] text-[var(--text-soft)]">
+                      <div className="flex items-center justify-between gap-3">
+                        <p suppressHydrationWarning className="text-[13px] font-medium text-[var(--text-muted)]">
                           {formatDate(c.created_at)}
-                          {c.energy_level != null && ` · ${c.energy_level}%`}
                         </p>
-                        {c.thoughts ? (
-                          <p className="mt-0.5 line-clamp-2 text-[15px] font-medium text-[var(--text-primary)]">
-                            {c.thoughts}
-                          </p>
-                        ) : (
-                          <p className="mt-0.5 text-[15px] font-medium text-[var(--text-primary)]">
-                            Check-in
-                          </p>
-                        )}
-                        {c.emotions && c.emotions.length > 0 && (
-                          <p className="mt-1 text-[13px] text-[var(--text-muted)]">
-                            {c.emotions.join(", ")}
-                          </p>
+                        {c.energy_level != null && (
+                          <div className="flex items-center gap-2 shrink-0">
+                            <div className="h-1 w-12 rounded-full bg-[var(--interactive-hover)] overflow-hidden">
+                              <div
+                                className="h-full rounded-full transition-all"
+                                style={{
+                                  width: `${c.energy_level}%`,
+                                  backgroundColor: energyColor(c.energy_level),
+                                }}
+                              />
+                            </div>
+                            <span className="text-[12px] tabular-nums font-medium" style={{ color: energyColor(c.energy_level) }}>
+                              {c.energy_level}%
+                            </span>
+                          </div>
                         )}
                       </div>
-                      <span className="text-[var(--text-soft)]" aria-hidden>→</span>
+
+                      {c.thoughts ? (
+                        <p className="mt-2 line-clamp-2 text-[15px] font-medium leading-snug text-[var(--text-primary)]">
+                          {c.thoughts}
+                        </p>
+                      ) : (
+                        <p className="mt-2 text-[15px] font-medium text-[var(--text-primary)]">
+                          Check-in
+                        </p>
+                      )}
+
+                      {c.emotions && c.emotions.length > 0 && (
+                        <div className="mt-3 flex flex-wrap gap-1.5">
+                          {c.emotions.map((emotion) => (
+                            <span
+                              key={emotion}
+                              className="inline-flex items-center gap-1 rounded-full border border-[var(--surface-border)] bg-[var(--interactive-hover)] px-2.5 py-0.5 text-[12px] font-medium text-[var(--text-muted)]"
+                            >
+                              {EMOJI_MAP.get(emotion) && (
+                                <span aria-hidden>{EMOJI_MAP.get(emotion)}</span>
+                              )}
+                              {emotion}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </Link>
                   </motion.li>
                 ))}

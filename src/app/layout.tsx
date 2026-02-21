@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { RegisterSW } from "@/components/RegisterSW";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const themeInitScript = `
 (() => {
@@ -49,6 +50,7 @@ export default function RootLayout({
       </head>
       <body className="font-sans antialiased">
         <RegisterSW />
+        <SpeedInsights />
         {children}
       </body>
     </html>
