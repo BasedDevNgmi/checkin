@@ -4,7 +4,6 @@ import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -293,11 +292,7 @@ function LoginContent() {
           )}
         </AnimatePresence>
 
-        <p className="mt-8 text-center">
-          <Link href="/" className="link-muted text-[13px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] rounded-sm">
-            Terug naar start
-          </Link>
-        </p>
+        
       </motion.div>
     </div>
   );

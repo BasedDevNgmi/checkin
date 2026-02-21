@@ -77,7 +77,7 @@ export default function UpdatePasswordPage() {
             Deze link is ongeldig of verlopen. Vraag een nieuwe resetlink aan.
           </p>
           <Link
-            href="/login"
+            href="/"
             className="inline-flex items-center justify-center rounded-[var(--radius-control)] bg-[var(--accent)] px-5 py-3 text-[15px] font-medium text-white transition-colors duration-200 hover:bg-[var(--accent-soft)] active:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
           >
             Naar inloggen
@@ -140,7 +140,7 @@ export default function UpdatePasswordPage() {
         </form>
 
         <p className="mt-8 text-center">
-          <Link href="/login" className="link-muted text-[13px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] rounded-sm">
+          <Link href="/" className="link-muted text-[13px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] rounded-sm">
             Terug naar inloggen
           </Link>
         </p>

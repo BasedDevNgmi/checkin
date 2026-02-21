@@ -3,18 +3,14 @@ import type { CheckInRow } from "@/types/checkin";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-export function getSortedCheckins(checkins: CheckInRow[]): CheckInRow[] {
+function sortedByDate(checkins: CheckInRow[]): CheckInRow[] {
   return [...checkins].sort(
     (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
   );
 }
 
-export function getUniqueCheckinDays(checkins: CheckInRow[]): number {
-  return new Set(checkins.map((row) => toDayKey(row.created_at))).size;
-}
-
 export function getCurrentStreak(checkins: CheckInRow[]): number {
-  const sorted = getSortedCheckins(checkins);
+  const sorted = sortedByDate(checkins);
   if (sorted.length === 0) return 0;
 
   const uniqueDays = Array.from(new Set(sorted.map((row) => toDayKey(row.created_at))));

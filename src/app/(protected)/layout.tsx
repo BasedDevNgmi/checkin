@@ -27,7 +27,7 @@ export default async function ProtectedLayout({
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) {
-      redirect("/login");
+      redirect("/");
     }
     initialCheckins = await listCheckInsServer(user.id);
   }

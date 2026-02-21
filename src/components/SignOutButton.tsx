@@ -24,7 +24,7 @@ export function SignOutButton() {
       } catch {
         // Client sign-out already done; redirect regardless
       }
-      router.push("/login");
+      router.push("/");
       router.refresh();
     } finally {
       setIsLoading(false);

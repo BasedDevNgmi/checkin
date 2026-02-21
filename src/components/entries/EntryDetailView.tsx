@@ -5,8 +5,16 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { deleteCheckIn } from "@/lib/checkin";
-import type { CheckInRow } from "@/types/checkin";
+import { EMOTION_OPTIONS, type CheckInRow } from "@/types/checkin";
 import { Pencil, Trash2 } from "lucide-react";
+
+const EMOJI_MAP: Map<string, string> = new Map(EMOTION_OPTIONS.map((e) => [e.id, e.emoji]));
+
+function energyColor(level: number): string {
+  if (level >= 70) return "var(--text-success)";
+  if (level >= 40) return "#d9a038";
+  return "var(--text-error)";
+}
 
 interface EntryDetailViewProps {
   checkin: CheckInRow;
@@ -108,11 +116,22 @@ export function EntryDetailView({ checkin }: EntryDetailViewProps) {
       )}
       <article className="max-w-2xl space-y-10">
         <header>
-          <p suppressHydrationWarning className="text-[13px] text-[var(--text-soft)]">{formatDate(checkin.created_at)}</p>
+          <p suppressHydrationWarning className="text-[13px] font-medium text-[var(--text-muted)]">{formatDate(checkin.created_at)}</p>
           {checkin.energy_level != null && (
-            <p className="mt-1 text-[13px] text-[var(--text-muted)]">
-              {checkin.energy_level}% energie
-            </p>
+            <div className="mt-2 flex items-center gap-2.5">
+              <div className="h-1.5 w-20 rounded-full bg-[var(--interactive-hover)] overflow-hidden">
+                <div
+                  className="h-full rounded-full"
+                  style={{
+                    width: `${checkin.energy_level}%`,
+                    backgroundColor: energyColor(checkin.energy_level),
+                  }}
+                />
+              </div>
+              <span className="text-[13px] tabular-nums font-medium" style={{ color: energyColor(checkin.energy_level) }}>
+                {checkin.energy_level}%
+              </span>
+            </div>
           )}
         </header>
 
@@ -129,10 +148,20 @@ export function EntryDetailView({ checkin }: EntryDetailViewProps) {
 
         {checkin.emotions?.length > 0 ? (
           <section>
-            <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-soft)]">
+            <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-soft)]">
               Gevoel
             </h3>
-            <p className="text-[15px] text-[var(--text-primary)]">{checkin.emotions.join(", ")}</p>
+            <div className="flex flex-wrap gap-2">
+              {checkin.emotions.map((emotion) => (
+                <span
+                  key={emotion}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-[var(--surface-border)] bg-[var(--interactive-hover)] px-3 py-1 text-[13px] font-medium text-[var(--text-primary)]"
+                >
+                  {EMOJI_MAP.get(emotion) && <span aria-hidden>{EMOJI_MAP.get(emotion)}</span>}
+                  {emotion}
+                </span>
+              ))}
+            </div>
           </section>
         ) : null}
 
@@ -149,15 +178,6 @@ export function EntryDetailView({ checkin }: EntryDetailViewProps) {
                 {checkin.behavior_meta.body_sensations}
               </p>
             ) : null}
-          </section>
-        ) : null}
-
-        {checkin.energy_level != null ? (
-          <section>
-            <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-soft)]">
-              Energie
-            </h3>
-            <p className="text-[22px] font-bold tracking-tight text-[var(--text-primary)]">{checkin.energy_level}%</p>
           </section>
         ) : null}
 
