@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { isProduction, isServiceWorkerEnabled } from "@/config/flags";
 
 export function RegisterSW() {
   const [waitingWorker, setWaitingWorker] = useState<ServiceWorker | null>(null);
@@ -8,8 +9,6 @@ export function RegisterSW() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (!("serviceWorker" in navigator)) return;
-    const swEnabled = process.env.NEXT_PUBLIC_ENABLE_SW === "true";
-
     const unregisterAndClearCaches = async () => {
       const registrations = await navigator.serviceWorker.getRegistrations();
       await Promise.all(registrations.map((registration) => registration.unregister()));
@@ -22,7 +21,7 @@ export function RegisterSW() {
       );
     };
 
-    if (process.env.NODE_ENV !== "production" || !swEnabled) {
+    if (!isProduction || !isServiceWorkerEnabled) {
       void unregisterAndClearCaches();
       return;
     }

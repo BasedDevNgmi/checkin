@@ -10,8 +10,7 @@ import { CheckinsProvider } from "@/lib/CheckinsContext";
 import { listCheckInsServer } from "@/lib/checkin-server";
 import { MOCK_CHECKINS } from "@/lib/dev-mock-data";
 import { BackgroundSyncBridge } from "@/components/BackgroundSyncBridge";
-
-const isDevPreview = process.env.NEXT_PUBLIC_DEV_PREVIEW === "true";
+import { isDevPreview } from "@/config/flags";
 
 export default async function ProtectedLayout({
   children,

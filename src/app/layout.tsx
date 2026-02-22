@@ -4,6 +4,7 @@ import "./globals.css";
 import { RegisterSW } from "@/components/RegisterSW";
 import { WebVitalsReporter } from "@/components/WebVitalsReporter";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { isServiceWorkerEnabled } from "@/config/flags";
 
 export const metadata: Metadata = {
   title: "Inchecken",
@@ -22,7 +23,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const swEnabled = process.env.NEXT_PUBLIC_ENABLE_SW === "true";
+  const swEnabled = isServiceWorkerEnabled;
 
   return (
     <html lang="nl" suppressHydrationWarning>

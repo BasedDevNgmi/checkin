@@ -1,8 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { isDevPreview } from "@/config/flags";
 
 export async function updateSession(request: NextRequest) {
-  if (process.env.NEXT_PUBLIC_DEV_PREVIEW === "true") {
+  if (isDevPreview) {
     return NextResponse.next({ request });
   }
 

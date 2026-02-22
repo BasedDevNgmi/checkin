@@ -45,53 +45,83 @@ export async function getCheckIn(id: string): Promise<CheckInRow | null> {
   return data as CheckInRow;
 }
 
-export async function saveCheckIn(data: CheckInFormState): Promise<SaveResult> {
-  if (typeof window !== "undefined" && !window.navigator.onLine) {
-    queueOperation({ type: "save", payload: data });
-    await requestBackgroundSync();
-    trackEvent("checkin_saved", { mode: "queued_offline", queueLength: getQueueLength() });
-    return { ok: true };
-  }
+type CheckinEventName = "checkin_saved" | "checkin_updated" | "checkin_deleted";
 
+type DirectCheckinOperation =
+  | { type: "save"; payload: CheckInFormState }
+  | { type: "update"; targetId: string; payload: CheckInFormState }
+  | { type: "delete"; targetId: string };
+
+const isBrowser = typeof window !== "undefined";
+
+function toDbPayload(payload: CheckInFormState) {
+  const sanitized = sanitizeCheckInPayload(payload);
+  return {
+    thoughts: sanitized.thoughts || null,
+    emotions: sanitized.emotions,
+    body_parts: sanitized.bodyParts,
+    energy_level: sanitized.energyLevel,
+    behavior_meta: sanitized.behaviorMeta,
+  };
+}
+
+async function executeOperation(
+  userId: string,
+  operation: DirectCheckinOperation
+): Promise<string | null> {
   const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { ok: false, error: "Niet ingelogd" };
-  const payload = sanitizeCheckInPayload(data);
 
-  const { error } = await supabase.from("checkins").insert({
-    user_id: user.id,
-    thoughts: payload.thoughts || null,
-    emotions: payload.emotions,
-    body_parts: payload.bodyParts,
-    energy_level: payload.energyLevel,
-    behavior_meta: payload.behaviorMeta,
-  });
-
-  if (error) {
-    if (typeof window !== "undefined") {
-      queueOperation({ type: "save", payload: data });
-      await requestBackgroundSync();
-      trackEvent("checkin_saved", { mode: "queued_retry", queueLength: getQueueLength() });
-      return { ok: true };
-    }
-    return { ok: false, error: error.message };
+  if (operation.type === "save") {
+    const { error } = await supabase
+      .from("checkins")
+      .insert({ user_id: userId, ...toDbPayload(operation.payload) });
+    return error?.message ?? null;
   }
-  trackEvent("checkin_saved");
+
+  if (operation.type === "update") {
+    const { error } = await supabase
+      .from("checkins")
+      .update(toDbPayload(operation.payload))
+      .eq("id", operation.targetId)
+      .eq("user_id", userId);
+    return error?.message ?? null;
+  }
+
+  const { error } = await supabase
+    .from("checkins")
+    .delete()
+    .eq("id", operation.targetId)
+    .eq("user_id", userId);
+  return error?.message ?? null;
+}
+
+function toQueuedOperation(operation: DirectCheckinOperation) {
+  if (operation.type === "save") {
+    return { type: "save", payload: operation.payload } as const;
+  }
+  if (operation.type === "update") {
+    return { type: "update", targetId: operation.targetId, payload: operation.payload } as const;
+  }
+  return { type: "delete", targetId: operation.targetId } as const;
+}
+
+async function queueAndTrack(
+  operation: DirectCheckinOperation,
+  eventName: CheckinEventName,
+  mode: "queued_offline" | "queued_retry"
+): Promise<SaveResult> {
+  queueOperation(toQueuedOperation(operation));
+  await requestBackgroundSync();
+  trackEvent(eventName, { mode, queueLength: getQueueLength() });
   return { ok: true };
 }
 
-/** Update an existing check-in by id. */
-export async function updateCheckIn(
-  id: string,
-  data: CheckInFormState
+async function runWithOfflineFallback(
+  operation: DirectCheckinOperation,
+  eventName: CheckinEventName
 ): Promise<SaveResult> {
-  if (typeof window !== "undefined" && !window.navigator.onLine) {
-    queueOperation({ type: "update", targetId: id, payload: data });
-    await requestBackgroundSync();
-    trackEvent("checkin_updated", { mode: "queued_offline", queueLength: getQueueLength() });
-    return { ok: true };
+  if (isBrowser && !window.navigator.onLine) {
+    return queueAndTrack(operation, eventName, "queued_offline");
   }
 
   const supabase = createClient();
@@ -99,61 +129,34 @@ export async function updateCheckIn(
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "Niet ingelogd" };
-  const payload = sanitizeCheckInPayload(data);
-  const { error } = await supabase
-    .from("checkins")
-    .update({
-      thoughts: payload.thoughts || null,
-      emotions: payload.emotions,
-      body_parts: payload.bodyParts,
-      energy_level: payload.energyLevel,
-      behavior_meta: payload.behaviorMeta,
-    })
-    .eq("id", id)
-    .eq("user_id", user.id);
-  if (error) {
-    if (typeof window !== "undefined") {
-      queueOperation({ type: "update", targetId: id, payload: data });
-      await requestBackgroundSync();
-      trackEvent("checkin_updated", { mode: "queued_retry", queueLength: getQueueLength() });
-      return { ok: true };
+
+  const errorMessage = await executeOperation(user.id, operation);
+  if (errorMessage) {
+    if (isBrowser) {
+      return queueAndTrack(operation, eventName, "queued_retry");
     }
-    return { ok: false, error: error.message };
+    return { ok: false, error: errorMessage };
   }
-  trackEvent("checkin_updated");
+
+  trackEvent(eventName);
   return { ok: true };
+}
+
+export async function saveCheckIn(data: CheckInFormState): Promise<SaveResult> {
+  return runWithOfflineFallback({ type: "save", payload: data }, "checkin_saved");
+}
+
+/** Update an existing check-in by id. */
+export async function updateCheckIn(id: string, data: CheckInFormState): Promise<SaveResult> {
+  return runWithOfflineFallback(
+    { type: "update", targetId: id, payload: data },
+    "checkin_updated"
+  );
 }
 
 /** Delete a check-in by id. */
 export async function deleteCheckIn(id: string): Promise<SaveResult> {
-  if (typeof window !== "undefined" && !window.navigator.onLine) {
-    queueOperation({ type: "delete", targetId: id });
-    await requestBackgroundSync();
-    trackEvent("checkin_deleted", { mode: "queued_offline", queueLength: getQueueLength() });
-    return { ok: true };
-  }
-
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { ok: false, error: "Niet ingelogd" };
-  const { error } = await supabase
-    .from("checkins")
-    .delete()
-    .eq("id", id)
-    .eq("user_id", user.id);
-  if (error) {
-    if (typeof window !== "undefined") {
-      queueOperation({ type: "delete", targetId: id });
-      await requestBackgroundSync();
-      trackEvent("checkin_deleted", { mode: "queued_retry", queueLength: getQueueLength() });
-      return { ok: true };
-    }
-    return { ok: false, error: error.message };
-  }
-  trackEvent("checkin_deleted");
-  return { ok: true };
+  return runWithOfflineFallback({ type: "delete", targetId: id }, "checkin_deleted");
 }
 
 /** Restore check-ins (e.g. after backup import) into Supabase. */
@@ -182,42 +185,8 @@ async function processQueuedOperation(operation: CheckinSyncOperation) {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return false;
-
-  if (operation.type === "save") {
-    const payload = sanitizeCheckInPayload(operation.payload);
-    const { error } = await supabase.from("checkins").insert({
-      user_id: user.id,
-      thoughts: payload.thoughts || null,
-      emotions: payload.emotions,
-      body_parts: payload.bodyParts,
-      energy_level: payload.energyLevel,
-      behavior_meta: payload.behaviorMeta,
-    });
-    return !error;
-  }
-
-  if (operation.type === "update") {
-    const payload = sanitizeCheckInPayload(operation.payload);
-    const { error } = await supabase
-      .from("checkins")
-      .update({
-        thoughts: payload.thoughts || null,
-        emotions: payload.emotions,
-        body_parts: payload.bodyParts,
-        energy_level: payload.energyLevel,
-        behavior_meta: payload.behaviorMeta,
-      })
-      .eq("id", operation.targetId)
-      .eq("user_id", user.id);
-    return !error;
-  }
-
-  const { error } = await supabase
-    .from("checkins")
-    .delete()
-    .eq("id", operation.targetId)
-    .eq("user_id", user.id);
-  return !error;
+  const errorMessage = await executeOperation(user.id, operation);
+  return errorMessage === null;
 }
 
 export async function flushQueuedCheckins() {

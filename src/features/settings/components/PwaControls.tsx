@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { FormMessage } from "@/components/ui/FormMessage";
 import { trackEvent } from "@/core/telemetry/events";
 import { requestBackgroundSync } from "@/lib/offline-sync";
+import { isPwaExperimentsEnabled, vapidPublicKey } from "@/config/flags";
 
 type DeferredInstallPrompt = Event & {
   prompt: () => Promise<void>;
@@ -23,8 +24,8 @@ function base64ToUint8Array(base64: string) {
 }
 
 export function PwaControls() {
-  const enabled = process.env.NEXT_PUBLIC_ENABLE_PWA_EXPERIMENTS === "true";
-  const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? "";
+  const enabled = isPwaExperimentsEnabled;
+  const publicKey = vapidPublicKey;
   const [installPrompt, setInstallPrompt] = useState<DeferredInstallPrompt | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const isStandalone = useMemo(() => {
