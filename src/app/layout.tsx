@@ -22,12 +22,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const swEnabled = process.env.NEXT_PUBLIC_ENABLE_SW === "true";
+
   return (
     <html lang="nl" suppressHydrationWarning>
       <head>
         <link rel="preload" href="/fonts/Satoshi-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preload" href="/fonts/Satoshi-Medium.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preload" href="/fonts/Satoshi-Bold.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <meta name="inchecken-sw-enabled" content={swEnabled ? "true" : "false"} />
+        <Script src="/sw-reset.js" strategy="beforeInteractive" />
         <Script src="/theme-init.js" strategy="beforeInteractive" />
       </head>
       <body className="font-sans antialiased">
@@ -37,7 +41,7 @@ export default function RootLayout({
         >
           Ga naar inhoud
         </a>
-        <RegisterSW />
+        {swEnabled ? <RegisterSW /> : null}
         <WebVitalsReporter />
         <SpeedInsights />
         {children}

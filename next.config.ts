@@ -14,7 +14,9 @@ const contentSecurityPolicy = [
   "img-src 'self' data: blob:",
   "manifest-src 'self'",
   "media-src 'self'",
-  "script-src 'self'",
+  // Next.js app router injects inline runtime scripts for streamed payloads.
+  // Blocking inline scripts can leave the UI stuck on skeleton/blank states.
+  "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline'",
   "worker-src 'self' blob:",
   "upgrade-insecure-requests",
