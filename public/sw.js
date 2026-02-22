@@ -1,10 +1,12 @@
-const CACHE = "inchecken-v3";
+const CACHE = "inchecken-v4";
+const APP_SHELL_ROUTES = ["/", "/login"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE).then((cache) => {
-      return cache.addAll(["/", "/login"]);
-    })
+    caches
+      .open(CACHE)
+      .then((cache) => cache.addAll(APP_SHELL_ROUTES))
+      .catch(() => {})
   );
   self.skipWaiting();
 });
@@ -26,10 +28,27 @@ self.addEventListener("fetch", (event) => {
   if (url.pathname.startsWith("/api/") || url.pathname.startsWith("/auth/")) return;
   if (event.request.mode === "navigate") {
     event.respondWith(
-      fetch(event.request).catch(async () => {
-        const cachedHome = await caches.match("/");
-        return cachedHome ?? new Response("Offline", { status: 503 });
-      })
+      (async () => {
+        try {
+          const response = await fetch(event.request);
+          if (response.ok) {
+            const cache = await caches.open(CACHE);
+            cache.put(event.request, response.clone());
+          }
+          return response;
+        } catch {
+          const cachedPage = await caches.match(event.request);
+          if (cachedPage) return cachedPage;
+          const cachedHome = await caches.match("/");
+          return (
+            cachedHome ??
+            new Response("Offline", {
+              status: 503,
+              headers: { "Content-Type": "text/plain; charset=utf-8" },
+            })
+          );
+        }
+      })()
     );
     return;
   }
@@ -43,19 +62,22 @@ self.addEventListener("fetch", (event) => {
   if (!isStaticAsset) return;
 
   event.respondWith(
-    fetch(event.request)
-      .then((res) => {
-        if (!res.ok) {
-          return res;
+    (async () => {
+      const cached = await caches.match(event.request);
+      if (cached) return cached;
+
+      try {
+        const response = await fetch(event.request);
+        if (response.ok) {
+          const cache = await caches.open(CACHE);
+          cache.put(event.request, response.clone());
         }
-        const clone = res.clone();
-        caches.open(CACHE).then((cache) => cache.put(event.request, clone));
-        return res;
-      })
-      .catch(async () => {
-        const cached = await caches.match(event.request);
-        if (cached) return cached;
-        return caches.match("/");
-      })
+        return response;
+      } catch {
+        // Never return HTML fallback for JS/CSS/image/font requests.
+        // Doing so can break hydration and leave the app on a skeleton.
+        return Response.error();
+      }
+    })()
   );
 });
