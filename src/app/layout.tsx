@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { RegisterSW } from "@/components/RegisterSW";
+import { WebVitalsReporter } from "@/components/WebVitalsReporter";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { themeInitScript } from "@/core/theme/theme";
 
@@ -30,7 +31,14 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="font-sans antialiased">
+        <a
+          href="#main-content"
+          className="sr-only z-50 rounded-[var(--radius-control)] bg-[var(--surface-elevated)] px-3 py-2 text-[13px] text-[var(--text-primary)] focus:not-sr-only focus:fixed focus:left-3 focus:top-3"
+        >
+          Ga naar inhoud
+        </a>
         <RegisterSW />
+        <WebVitalsReporter />
         <SpeedInsights />
         {children}
       </body>

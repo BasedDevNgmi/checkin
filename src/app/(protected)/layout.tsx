@@ -53,7 +53,10 @@ export default async function ProtectedLayout({
         </header>
         <OfflineBanner />
         <CheckinsProvider initialCheckins={initialCheckins}>
-          <main className="ios-scroll-area mx-auto w-full max-w-5xl flex-1 px-5 py-6 pb-[calc(8.5rem+env(safe-area-inset-bottom,0px))] sm:px-6 sm:py-8 md:pb-10">
+          <main
+            id="main-content"
+            className="ios-scroll-area mx-auto w-full max-w-5xl flex-1 px-5 py-6 pb-[calc(8.5rem+env(safe-area-inset-bottom,0px))] sm:px-6 sm:py-8 md:pb-10"
+          >
             {children}
           </main>
         </CheckinsProvider>

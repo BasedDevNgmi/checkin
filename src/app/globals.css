@@ -149,7 +149,16 @@ body {
 
 html,
 body {
+  margin: 0;
+  padding: 0;
   overscroll-behavior-y: none;
+}
+
+@media (display-mode: standalone) {
+  html,
+  body {
+    overscroll-behavior: none;
+  }
 }
 
 /* Keep form controls at native iOS-friendly size to prevent zoom/jumps. */
@@ -169,6 +178,12 @@ select {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-y: contain;
+}
+
+@media (display-mode: standalone) {
+  .ios-scroll-area {
+    overscroll-behavior-y: none;
+  }
 }
 
 @media (min-width: 768px) {

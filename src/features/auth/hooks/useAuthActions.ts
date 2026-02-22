@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { trackEvent } from "@/core/telemetry/events";
 import { getAuthRedirectBase } from "@/features/auth/lib/authRedirect";
 
 type AuthLoadingAction = "password" | "magic" | "signup" | "forgot" | null;
@@ -29,6 +30,7 @@ export function useAuthActions() {
     return runWithLoading("password", async () => {
       const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
       if (error) return { ok: false, message: error.message };
+      trackEvent("auth_login_success");
       return { ok: true };
     });
   }
@@ -41,7 +43,11 @@ export function useAuthActions() {
         options: { emailRedirectTo: `${redirectBase}/auth/callback` },
       });
       if (error) return { ok: false, message: error.message };
-      if (data.session) return { ok: true, hasSession: true };
+      if (data.session) {
+        trackEvent("auth_signup_success", { confirmationRequired: false });
+        return { ok: true, hasSession: true };
+      }
+      trackEvent("auth_signup_success", { confirmationRequired: true });
       return {
         ok: true,
         hasSession: false,
@@ -57,6 +63,7 @@ export function useAuthActions() {
         options: { emailRedirectTo: `${redirectBase}/auth/callback` },
       });
       if (error) return { ok: false, message: error.message };
+      trackEvent("auth_magic_link_sent");
       return { ok: true, message: "Check je e-mail voor de magic link om in te loggen." };
     });
   }

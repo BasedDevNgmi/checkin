@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BookOpen, PlusCircle, BarChart3, User } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
+import { useNavPrefetch } from "@/components/navigation/useNavPrefetch";
 import type { LucideIcon } from "lucide-react";
 
 interface NavItem {
@@ -55,6 +56,10 @@ function NavLink({ item, pathname }: { item: NavItem; pathname: string }) {
 
 export function Sidebar() {
   const pathname = usePathname();
+  useNavPrefetch([
+    ...NAV_ITEMS.map((item) => item.href),
+    ...BOTTOM_ITEMS.map((item) => item.href),
+  ]);
 
   return (
     <aside

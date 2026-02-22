@@ -50,4 +50,18 @@ A mobile-first PWA for a psychological daily check-in exercise (Dutch). Built wi
 - `npm run dev` – development
 - `npm run build` – production build
 - `npm run start` – run production build
-# checkin
+- `npm run lint` – lint checks
+- `npm run typecheck` – strict TypeScript checks
+- `npm run test` – unit tests
+- `npm run validate` – full local release gate (lint + typecheck + test + build)
+
+## Operational docs
+
+- `docs/a-z-baseline-audit.md` – current RAG score across A-Z checklist
+- `docs/release-ritual.md` – pre-release and post-release verification steps
+- `docs/mobile-qa-checklist.md` – repeatable mobile/PWA verification
+- `docs/ux-writing-guidelines.md` – copy and microcopy standards
+- `docs/design-system-contract.md` – visual/spacing consistency rules
+- `docs/performance-budget.md` – measurable speed targets and review cycle
+- `docs/security-and-data-checklist.md` – auth/data/privacy/offline verification
+- `docs/experiments-roadmap.md` – controlled growth experiments and success metrics

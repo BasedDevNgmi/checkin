@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/client";
+import { sanitizeCheckInPayload } from "@/lib/checkin-validation";
+import { trackEvent } from "@/core/telemetry/events";
 import type { CheckInFormState, CheckInRow, SaveResult } from "@/types/checkin";
 
 export type { SaveResult };
@@ -42,17 +44,19 @@ export async function saveCheckIn(data: CheckInFormState): Promise<SaveResult> {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "Niet ingelogd" };
+  const payload = sanitizeCheckInPayload(data);
 
   const { error } = await supabase.from("checkins").insert({
     user_id: user.id,
-    thoughts: data.thoughts || null,
-    emotions: data.emotions,
-    body_parts: data.bodyParts,
-    energy_level: data.energyLevel,
-    behavior_meta: data.behaviorMeta,
+    thoughts: payload.thoughts || null,
+    emotions: payload.emotions,
+    body_parts: payload.bodyParts,
+    energy_level: payload.energyLevel,
+    behavior_meta: payload.behaviorMeta,
   });
 
   if (error) return { ok: false, error: error.message };
+  trackEvent("checkin_saved");
   return { ok: true };
 }
 
@@ -66,18 +70,20 @@ export async function updateCheckIn(
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "Niet ingelogd" };
+  const payload = sanitizeCheckInPayload(data);
   const { error } = await supabase
     .from("checkins")
     .update({
-      thoughts: data.thoughts || null,
-      emotions: data.emotions,
-      body_parts: data.bodyParts,
-      energy_level: data.energyLevel,
-      behavior_meta: data.behaviorMeta,
+      thoughts: payload.thoughts || null,
+      emotions: payload.emotions,
+      body_parts: payload.bodyParts,
+      energy_level: payload.energyLevel,
+      behavior_meta: payload.behaviorMeta,
     })
     .eq("id", id)
     .eq("user_id", user.id);
   if (error) return { ok: false, error: error.message };
+  trackEvent("checkin_updated");
   return { ok: true };
 }
 
@@ -94,6 +100,7 @@ export async function deleteCheckIn(id: string): Promise<SaveResult> {
     .eq("id", id)
     .eq("user_id", user.id);
   if (error) return { ok: false, error: error.message };
+  trackEvent("checkin_deleted");
   return { ok: true };
 }
 

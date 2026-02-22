@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BarChart3, BookOpen, PlusCircle, User } from "lucide-react";
+import { useNavPrefetch } from "@/components/navigation/useNavPrefetch";
 
 const tabs = [
   { href: "/dashboard", label: "Dagboek", icon: BookOpen },
@@ -13,6 +14,7 @@ const tabs = [
 
 export function BottomNav() {
   const pathname = usePathname();
+  useNavPrefetch(tabs.map((tab) => tab.href));
 
   return (
     <nav

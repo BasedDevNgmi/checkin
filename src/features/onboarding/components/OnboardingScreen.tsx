@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { trackEvent } from "@/core/telemetry/events";
 import { useMindJournal } from "@/features/app/useMindJournal";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -24,6 +25,7 @@ export function OnboardingScreen() {
         reminderTime: null,
         theme: "system",
       });
+      trackEvent("onboarding_completed");
       router.push("/dashboard");
     } finally {
       setSubmitting(false);
