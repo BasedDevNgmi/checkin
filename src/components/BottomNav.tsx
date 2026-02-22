@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BarChart3, BookOpen, PlusCircle, User } from "lucide-react";
@@ -15,10 +16,31 @@ const tabs = [
 export function BottomNav() {
   const pathname = usePathname();
   useNavPrefetch(tabs.map((tab) => tab.href));
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.visualViewport) {
+      return;
+    }
+    const viewport = window.visualViewport;
+    const updateVisibility = () => {
+      const inset = window.innerHeight - viewport.height - viewport.offsetTop;
+      setKeyboardVisible(inset > 80);
+    };
+    updateVisibility();
+    viewport.addEventListener("resize", updateVisibility);
+    viewport.addEventListener("scroll", updateVisibility);
+    return () => {
+      viewport.removeEventListener("resize", updateVisibility);
+      viewport.removeEventListener("scroll", updateVisibility);
+    };
+  }, []);
 
   return (
     <nav
-      className="glass-nav fixed bottom-0 left-0 right-0 z-30 border-t pb-[env(safe-area-inset-bottom,0px)] md:hidden"
+      className={`glass-nav fixed bottom-0 left-0 right-0 z-30 border-t pb-[env(safe-area-inset-bottom,0px)] transition-all duration-200 md:hidden ${
+        keyboardVisible ? "pointer-events-none translate-y-full opacity-0" : ""
+      }`}
       aria-label="Hoofdnavigatie"
     >
       <div className="mx-auto flex min-h-[72px] max-w-4xl items-center justify-around gap-1 px-2 pt-2.5 pb-2">

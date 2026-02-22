@@ -42,7 +42,7 @@ export default function EditEntryPage() {
 
   if (loading) {
     return (
-      <div className="space-y-6 py-5 pb-24 sm:py-6">
+      <div className="space-y-6 py-5 pb-8 sm:py-6 md:pb-10">
         <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-6 shadow-[var(--shadow-elevation)]">
           <div className="h-6 w-48 animate-pulse rounded-[var(--radius-control)] bg-[var(--interactive-hover)]" />
           <div className="mt-2 h-4 w-72 animate-pulse rounded bg-[var(--interactive-hover)]" />
@@ -54,7 +54,7 @@ export default function EditEntryPage() {
 
   if (notFound || !initialData) {
     return (
-      <div className="space-y-6 py-5 pb-24 sm:py-6">
+      <div className="space-y-6 py-5 pb-8 sm:py-6 md:pb-10">
         <p className="text-[var(--text-muted)]">Check-in niet gevonden.</p>
         <Link
           href="/dashboard"
@@ -71,7 +71,7 @@ export default function EditEntryPage() {
   }
 
   return (
-    <div className="space-y-6 py-5 pb-24 sm:py-6">
+    <div className="space-y-6 py-5 pb-8 sm:py-6 md:pb-10">
       <div className="flex items-center justify-between">
         <h1 className="text-[22px] font-semibold text-[var(--text-primary)]">
           Check-in bewerken

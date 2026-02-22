@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { RegisterSW } from "@/components/RegisterSW";
 import { WebVitalsReporter } from "@/components/WebVitalsReporter";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { themeInitScript } from "@/core/theme/theme";
 
 export const metadata: Metadata = {
   title: "Inchecken",
@@ -28,7 +28,7 @@ export default function RootLayout({
         <link rel="preload" href="/fonts/Satoshi-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preload" href="/fonts/Satoshi-Medium.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preload" href="/fonts/Satoshi-Bold.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <Script src="/theme-init.js" strategy="beforeInteractive" />
       </head>
       <body className="font-sans antialiased">
         <a

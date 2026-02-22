@@ -76,6 +76,8 @@
   --space-12: 3rem;
   --space-16: 4rem;
   --space-20: 5rem;
+  --mobile-nav-height: 72px;
+  --wizard-cta-height: 72px;
 }
 
 @theme inline {
@@ -169,6 +171,7 @@ select {
 }
 
 .ios-app-shell {
+  min-height: 100dvh;
   height: 100dvh;
   overflow: hidden;
 }
@@ -178,9 +181,15 @@ select {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-y: contain;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 @media (display-mode: standalone) {
+  .ios-app-shell {
+    height: 100svh;
+    min-height: 100svh;
+  }
+
   .ios-scroll-area {
     overscroll-behavior-y: none;
   }

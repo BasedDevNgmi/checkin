@@ -22,7 +22,7 @@ export function CheckinScreen() {
   const { refresh } = useCheckinsContext();
 
   return (
-    <div className="py-5 pb-24 sm:py-6">
+    <div className="py-5 pb-8 sm:py-6 md:pb-10">
       <div className="mb-6 flex items-center">
         <Link
           href="/dashboard"

@@ -1,9 +1,9 @@
-const CACHE = "inchecken-v2";
+const CACHE = "inchecken-v3";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE).then((cache) => {
-      return cache.addAll(["/", "/login", "/dashboard", "/checkin"]);
+      return cache.addAll(["/", "/login"]);
     })
   );
   self.skipWaiting();
@@ -23,6 +23,24 @@ self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
+  if (url.pathname.startsWith("/api/") || url.pathname.startsWith("/auth/")) return;
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request).catch(async () => {
+        const cachedHome = await caches.match("/");
+        return cachedHome ?? new Response("Offline", { status: 503 });
+      })
+    );
+    return;
+  }
+
+  const destination = event.request.destination;
+  const isStaticAsset =
+    destination === "style" ||
+    destination === "script" ||
+    destination === "font" ||
+    destination === "image";
+  if (!isStaticAsset) return;
 
   event.respondWith(
     fetch(event.request)

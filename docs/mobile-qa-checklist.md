@@ -16,6 +16,9 @@ Run this before each release on:
 - [ ] Wizard step transitions keep CTA location stable
 - [ ] No accidental pull-to-refresh in standalone mode
 - [ ] Content remains reachable with on-screen keyboard open
+- [ ] Bottom navigation hides while keyboard is open
+- [ ] Wizard CTA remains visible above keyboard in iPhone standalone
+- [ ] Edit-checkin flow keeps CTA visible with keyboard open
 
 ## Performance perception
 - [ ] Menu tap to route content feels instant on warm nav

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
@@ -92,11 +92,34 @@ export function CheckInWizard({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [keyboardInset, setKeyboardInset] = useState(0);
 
   const isFirst = step === 0;
   const isLast = step === STEPS.length - 1;
   const current = STEPS[step];
   const progress = ((step + 1) / STEPS.length) * 100;
+  const mobileCtaBottom = `calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + ${keyboardInset}px)`;
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.visualViewport) {
+      return;
+    }
+    const viewport = window.visualViewport;
+    const updateInset = () => {
+      const inset = Math.max(
+        0,
+        Math.round(window.innerHeight - viewport.height - viewport.offsetTop)
+      );
+      setKeyboardInset(inset > 80 ? inset : 0);
+    };
+    updateInset();
+    viewport.addEventListener("resize", updateInset);
+    viewport.addEventListener("scroll", updateInset);
+    return () => {
+      viewport.removeEventListener("resize", updateInset);
+      viewport.removeEventListener("scroll", updateInset);
+    };
+  }, []);
 
   function toggleEmotion(id: string) {
     setState((s) => ({
@@ -453,7 +476,7 @@ export function CheckInWizard({
   const primaryLabel = isLast ? (isSubmitting ? "Opslaan…" : "Afronden") : "Volgende";
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl min-h-[calc(100dvh-14rem)] flex-col md:min-h-[700px]">
+    <div className="mx-auto flex w-full max-w-5xl min-h-[560px] flex-col pb-[calc(var(--wizard-cta-height)+var(--mobile-nav-height)+env(safe-area-inset-bottom,0px))] md:min-h-[700px] md:pb-0">
       <div className="mb-8">
         <div
           className="h-0.5 w-full overflow-hidden rounded-full bg-[var(--surface-border)]"
@@ -503,25 +526,30 @@ export function CheckInWizard({
         </FormMessage>
       )}
 
-      <div className="mt-8 flex min-h-[64px] items-center justify-between gap-4 border-t border-[var(--surface-border)] pt-6">
-        <button
-          type="button"
-          onClick={handlePrev}
-          disabled={isFirst}
-          className="flex min-h-[44px] w-[112px] items-center gap-1 rounded-[var(--radius-control)] px-3 py-2.5 text-[15px] font-medium text-[var(--text-muted)] transition-colors duration-200 hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)] disabled:pointer-events-none disabled:opacity-40"
-          aria-label="Vorige stap"
-        >
-          <ChevronLeft className="h-5 w-5" />
-          Terug
-        </button>
-        <Button
-          onClick={isLast ? handleFinish : handleNext}
-          disabled={isSubmitting}
-          variant="primary"
-          className="min-h-[44px] w-[132px]"
-        >
-          {primaryLabel}
-        </Button>
+      <div
+        className="fixed inset-x-0 z-20 border-t border-[var(--surface-border)] bg-[var(--background)]/96 px-5 py-3 backdrop-blur-sm md:static md:mt-8 md:border-t md:bg-transparent md:px-0 md:py-6 md:backdrop-blur-0"
+        style={{ bottom: mobileCtaBottom }}
+      >
+        <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4">
+          <button
+            type="button"
+            onClick={handlePrev}
+            disabled={isFirst}
+            className="flex min-h-[44px] w-[112px] items-center gap-1 rounded-[var(--radius-control)] px-3 py-2.5 text-[15px] font-medium text-[var(--text-muted)] transition-colors duration-200 hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)] disabled:pointer-events-none disabled:opacity-40"
+            aria-label="Vorige stap"
+          >
+            <ChevronLeft className="h-5 w-5" />
+            Terug
+          </button>
+          <Button
+            onClick={isLast ? handleFinish : handleNext}
+            disabled={isSubmitting}
+            variant="primary"
+            className="min-h-[44px] w-[132px]"
+          >
+            {primaryLabel}
+          </Button>
+        </div>
       </div>
     </div>
   );

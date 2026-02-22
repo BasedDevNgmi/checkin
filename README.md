@@ -64,4 +64,5 @@ A mobile-first PWA for a psychological daily check-in exercise (Dutch). Built wi
 - `docs/design-system-contract.md` – visual/spacing consistency rules
 - `docs/performance-budget.md` – measurable speed targets and review cycle
 - `docs/security-and-data-checklist.md` – auth/data/privacy/offline verification
+- `docs/privacy-policy.md` – user-facing privacy policy and processing details
 - `docs/experiments-roadmap.md` – controlled growth experiments and success metrics
