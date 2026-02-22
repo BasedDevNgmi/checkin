@@ -32,3 +32,80 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: E2E test suite
+        run: npm run test:e2e:ci
+
+  pwa-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Route bundle budget checks
+        run: npm run perf:budget
+
+      - name: PWA lifecycle tests
+        run: npm run test:e2e:pwa
+
+      - name: Accessibility regression tests
+        run: npm run test:a11y
+
+      - name: Lighthouse quality gates
+        run: npm run perf:lighthouse
+
+  canary-healthcheck:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [validate, pwa-quality]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Canary healthcheck
+        run: npx start-server-and-test "NEXT_PUBLIC_DEV_PREVIEW=true npm run start" http://127.0.0.1:3000 "npm run ops:canary-healthcheck"

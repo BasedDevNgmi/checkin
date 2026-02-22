@@ -17,9 +17,20 @@
 ## Guardrails
 
 - Run `npm run validate` before release.
+- Run `npm run perf:budget` after each production build.
+- Run `npm run perf:lighthouse` and block release on failed assertions.
 - Keep dynamic imports for heavier analytics/chart surfaces.
 - Keep nav prefetch enabled for primary route links.
 - Investigate any sustained web-vitals degradation for two consecutive releases.
+
+## Enforced CI budgets
+
+- `/dashboard`: max 460KB route assets
+- `/checkin`: max 320KB route assets
+- `/analytics`: max 840KB route assets
+- `/profile`: max 460KB route assets
+
+CI command: `npm run perf:budget`
 
 ## Monthly review
 

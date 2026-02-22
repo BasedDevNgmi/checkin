@@ -9,6 +9,7 @@ import { ReminderScheduler } from "@/features/settings/components/ReminderSchedu
 import { CheckinsProvider } from "@/lib/CheckinsContext";
 import { listCheckInsServer } from "@/lib/checkin-server";
 import { MOCK_CHECKINS } from "@/lib/dev-mock-data";
+import { BackgroundSyncBridge } from "@/components/BackgroundSyncBridge";
 
 const isDevPreview = process.env.NEXT_PUBLIC_DEV_PREVIEW === "true";
 
@@ -35,6 +36,7 @@ export default async function ProtectedLayout({
   return (
     <div className="ios-app-shell min-h-screen md:pl-14">
       <ReminderScheduler />
+      <BackgroundSyncBridge />
       <Sidebar />
       <div className="flex h-full min-h-0 flex-col">
         <header

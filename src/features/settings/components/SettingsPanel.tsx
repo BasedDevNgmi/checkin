@@ -9,6 +9,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { useThemePreference } from "@/core/theme/useThemePreference";
 import { selectBase } from "@/components/ui/formControlStyles";
 import { FormMessage } from "@/components/ui/FormMessage";
+import { PwaControls } from "@/features/settings/components/PwaControls";
 
 interface SettingsPanelProps {
   preferences: UserPreferences | null;
@@ -180,6 +181,8 @@ export function SettingsPanel({
             </Button>
           </div>
         </div>
+
+        <PwaControls />
       </div>
 
       <input

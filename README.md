@@ -24,6 +24,9 @@ A mobile-first PWA for a psychological daily check-in exercise (Dutch). Built wi
    ```env
    NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your-publishable-or-anon-key
+   NEXT_PUBLIC_ENABLE_SW=false
+   NEXT_PUBLIC_ENABLE_PWA_EXPERIMENTS=false
+   NEXT_PUBLIC_VAPID_PUBLIC_KEY=your-web-push-public-key
    ```
 
 4. **PWA icons (optional)**
@@ -53,6 +56,13 @@ A mobile-first PWA for a psychological daily check-in exercise (Dutch). Built wi
 - `npm run lint` – lint checks
 - `npm run typecheck` – strict TypeScript checks
 - `npm run test` – unit tests
+- `npm run test:e2e:ci` – Playwright end-to-end suite (dev preview mode)
+- `npm run test:e2e:pwa` – PWA lifecycle assertions against production server
+- `npm run test:a11y` – accessibility regression checks (axe + Playwright)
+- `npm run perf:budget` – route asset budget gate
+- `npm run perf:lighthouse` – Lighthouse CI assertions
+- `npm run quality:pwa` – all PWA quality gates
+- `npm run ops:canary-healthcheck` – post-build route health checks
 - `npm run validate` – full local release gate (lint + typecheck + test + build)
 
 ## Operational docs
@@ -63,6 +73,7 @@ A mobile-first PWA for a psychological daily check-in exercise (Dutch). Built wi
 - `docs/ux-writing-guidelines.md` – copy and microcopy standards
 - `docs/design-system-contract.md` – visual/spacing consistency rules
 - `docs/performance-budget.md` – measurable speed targets and review cycle
+- `docs/pwa-slo-runbook.md` – SLO thresholds, alerts, and incident steps for PWA health
 - `docs/security-and-data-checklist.md` – auth/data/privacy/offline verification
 - `docs/privacy-policy.md` – user-facing privacy policy and processing details
 - `docs/experiments-roadmap.md` – controlled growth experiments and success metrics

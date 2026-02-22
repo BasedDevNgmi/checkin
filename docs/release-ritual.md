@@ -8,6 +8,10 @@ Use this checklist before every production release.
 - [ ] `npm run typecheck`
 - [ ] `npm run test`
 - [ ] `npm run build`
+- [ ] `npm run perf:budget`
+- [ ] `npm run test:e2e:pwa`
+- [ ] `npm run test:a11y`
+- [ ] `npm run perf:lighthouse`
 - [ ] Confirm no new high-severity accessibility regressions
 
 ## 2) Product-critical smoke pass
@@ -30,6 +34,7 @@ Use this checklist before every production release.
 - [ ] Verify web-vitals telemetry appears in production logs
 - [ ] Confirm no spike in route errors after deploy
 - [ ] Confirm no auth redirect loops in middleware/proxy logs
+- [ ] Run `npm run ops:canary-healthcheck` on canary deployment
 
 ## 5) Rollback readiness
 
