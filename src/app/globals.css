@@ -147,6 +147,41 @@ body {
   min-height: 100vh;
 }
 
+html,
+body {
+  overscroll-behavior-y: none;
+}
+
+/* Keep form controls at native iOS-friendly size to prevent zoom/jumps. */
+input,
+textarea,
+select {
+  font-size: 16px;
+}
+
+.ios-app-shell {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.ios-scroll-area {
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
+
+@media (min-width: 768px) {
+  .ios-app-shell {
+    height: auto;
+    overflow: visible;
+  }
+
+  .ios-scroll-area {
+    overflow: visible;
+  }
+}
+
 .dashboard-calm-shell {
   position: relative;
 }

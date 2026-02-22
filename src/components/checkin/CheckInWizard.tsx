@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
+import { FormMessage } from "@/components/ui/FormMessage";
+import { textareaBase } from "@/components/ui/formControlStyles";
 import type { BodyPartId, CheckInFormState } from "@/types/checkin";
 import { Check, ChevronLeft } from "lucide-react";
 import { EMOTION_OPTIONS } from "@/types/checkin";
@@ -152,8 +154,7 @@ export function CheckInWizard({
       ? "border-[var(--accent)] bg-[var(--interactive-active)] text-[var(--text-primary)]"
       : "border-[var(--surface-border)] text-[var(--text-muted)] hover:bg-[var(--interactive-hover)]";
 
-  const textareaClass =
-    "w-full resize-none rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface-elevated)] px-4 py-3 text-[15px] leading-relaxed text-[var(--text-primary)] placeholder:text-[var(--text-soft)] shadow-[var(--shadow-elevation)] focus-visible:outline-none focus-visible:border-[var(--focus-ring)] focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition";
+  const textareaClass = textareaBase;
 
   function renderStepContent() {
     if (step === 0) {
@@ -452,7 +453,7 @@ export function CheckInWizard({
   const primaryLabel = isLast ? (isSubmitting ? "Opslaan…" : "Afronden") : "Volgende";
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl min-h-[700px] flex-col">
+    <div className="mx-auto flex w-full max-w-5xl min-h-[calc(100dvh-14rem)] flex-col md:min-h-[700px]">
       <div className="mb-8">
         <div
           className="h-0.5 w-full overflow-hidden rounded-full bg-[var(--surface-border)]"
@@ -494,15 +495,12 @@ export function CheckInWizard({
       </AnimatePresence>
 
       {message && (
-        <p
-          className={`mt-4 text-[13px] ${
-            message.includes("Opgeslagen") || message === "Check-in opgeslagen"
-              ? "text-[var(--text-success)]"
-              : "text-[var(--text-error)]"
-          }`}
+        <FormMessage
+          tone={message.includes("Opgeslagen") || message === "Check-in opgeslagen" ? "success" : "error"}
+          className="mt-4"
         >
           {message}
-        </p>
+        </FormMessage>
       )}
 
       <div className="mt-8 flex min-h-[64px] items-center justify-between gap-4 border-t border-[var(--surface-border)] pt-6">

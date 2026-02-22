@@ -1,0 +1,8 @@
+export const textInputBase =
+  "w-full rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface-elevated)] px-4 py-3 text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-soft)] shadow-[var(--shadow-elevation)] focus-visible:border-[var(--surface-border-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none";
+
+export const textareaBase =
+  "w-full resize-none rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface-elevated)] px-4 py-3 text-[15px] leading-relaxed text-[var(--text-primary)] placeholder:text-[var(--text-soft)] shadow-[var(--shadow-elevation)] focus-visible:outline-none focus-visible:border-[var(--surface-border-strong)] focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none";
+
+export const selectBase =
+  "w-full rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface-elevated)] px-4 py-3 text-[15px] text-[var(--text-primary)] shadow-[var(--shadow-elevation)] focus-visible:border-[var(--surface-border-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none";

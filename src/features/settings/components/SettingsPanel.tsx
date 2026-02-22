@@ -6,9 +6,9 @@ import type { CheckInRow } from "@/types/checkin";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { ThemeToggle } from "@/components/ThemeToggle";
-
-const selectClass =
-  "w-full rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface-elevated)] px-4 py-3 text-[15px] text-[var(--text-primary)] shadow-[var(--shadow-elevation)] focus-visible:border-[var(--focus-ring)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition disabled:opacity-50";
+import { useThemePreference } from "@/core/theme/useThemePreference";
+import { selectBase } from "@/components/ui/formControlStyles";
+import { FormMessage } from "@/components/ui/FormMessage";
 
 interface SettingsPanelProps {
   preferences: UserPreferences | null;
@@ -31,6 +31,7 @@ export function SettingsPanel({
   listCheckIns,
   restoreCheckIns,
 }: SettingsPanelProps) {
+  const { preference: themePreference, setPreference: setThemePreference } = useThemePreference();
   const [name, setName] = useState(preferences?.name ?? "");
   const [timezone, setTimezone] = useState(
     preferences?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -41,25 +42,13 @@ export function SettingsPanel({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   async function saveSettings() {
-    const selectedTheme =
-      (document.documentElement.getAttribute("data-theme-preference") as "light" | "dark" | "system" | null) ??
-      preferences?.theme ??
-      "system";
     await onSavePreferences({
       name: name.trim() || "Jij",
       timezone,
-      theme: selectedTheme,
+      theme: themePreference,
       reminderEnabled,
       reminderTime: reminderEnabled ? reminderTime : null,
     });
-    if (selectedTheme === "system") {
-      const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
-    } else {
-      document.documentElement.setAttribute("data-theme", selectedTheme);
-    }
-    document.documentElement.setAttribute("data-theme-preference", selectedTheme);
-    window.localStorage.setItem("inchecken-theme-preference", selectedTheme);
     setStatus("Instellingen opgeslagen.");
   }
 
@@ -115,9 +104,9 @@ export function SettingsPanel({
 
   return (
     <section className="space-y-8">
-      <div>
+      <div className="space-y-1.5">
         <h1 className="text-[17px] font-semibold text-[var(--text-primary)]">Instellingen</h1>
-        <p className="mt-1 text-[13px] text-[var(--text-muted)]">Beheer je profiel en voorkeuren</p>
+        <p className="text-[13px] text-[var(--text-muted)]">Beheer je profiel en voorkeuren</p>
       </div>
 
       <div className="glass-card space-y-6 rounded-[var(--radius-card)] p-5 sm:p-6">
@@ -138,7 +127,7 @@ export function SettingsPanel({
 
         <div className="border-t border-[var(--surface-border)] pt-6">
           <p className="text-[13px] font-medium text-[var(--text-primary)] mb-3">Thema</p>
-          <ThemeToggle />
+          <ThemeToggle value={themePreference} onChange={setThemePreference} />
         </div>
 
         <div className="border-t border-[var(--surface-border)] pt-6">
@@ -158,7 +147,7 @@ export function SettingsPanel({
               value={reminderTime}
               onChange={(event) => setReminderTime(event.target.value)}
               disabled={!reminderEnabled}
-              className={selectClass}
+              className={selectBase}
             />
             <Button
               type="button"
@@ -173,11 +162,11 @@ export function SettingsPanel({
         </div>
 
         <div className="border-t border-[var(--surface-border)] pt-6">
-          <div className="flex flex-wrap gap-2">
-            <Button type="button" variant="primary" size="sm" onClick={saveSettings}>
+          <div className="grid gap-2 sm:flex sm:flex-wrap">
+            <Button type="button" variant="primary" size="sm" onClick={saveSettings} className="w-full sm:w-auto">
               Instellingen opslaan
             </Button>
-            <Button type="button" variant="secondary" size="sm" onClick={handleExport}>
+            <Button type="button" variant="secondary" size="sm" onClick={handleExport} className="w-full sm:w-auto">
               Backup exporteren
             </Button>
             <Button
@@ -185,6 +174,7 @@ export function SettingsPanel({
               variant="secondary"
               size="sm"
               onClick={() => fileInputRef.current?.click()}
+              className="w-full sm:w-auto"
             >
               Backup importeren
             </Button>
@@ -201,15 +191,9 @@ export function SettingsPanel({
       />
 
       {status ? (
-        <p
-          className={`text-[13px] ${
-            /Ongeldig|geweigerd|kon niet|niet ondersteund/i.test(status)
-              ? "text-[var(--text-error)]"
-              : "text-[var(--text-success)]"
-          }`}
-        >
+        <FormMessage tone={/Ongeldig|geweigerd|kon niet|niet ondersteund/i.test(status) ? "error" : "success"}>
           {status}
-        </p>
+        </FormMessage>
       ) : null}
     </section>
   );

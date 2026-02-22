@@ -15,7 +15,7 @@ export function ProfileScreen() {
   } = useMindJournal();
 
   return (
-    <div className="space-y-10 py-6 pb-24 sm:py-8">
+    <div className="space-y-8 py-6 pb-28 sm:py-8 md:pb-10">
       <SettingsPanel
         preferences={preferences}
         onSavePreferences={savePreferences}

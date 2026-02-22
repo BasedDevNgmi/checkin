@@ -2,26 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { RegisterSW } from "@/components/RegisterSW";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-
-const themeInitScript = `
-(() => {
-  try {
-    const key = "inchecken-theme-preference";
-    const stored = window.localStorage.getItem(key);
-    const preference =
-      stored === "light" || stored === "dark" || stored === "system"
-        ? stored
-        : "system";
-    const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const resolved = preference === "system" ? (isDark ? "dark" : "light") : preference;
-    document.documentElement.setAttribute("data-theme-preference", preference);
-    document.documentElement.setAttribute("data-theme", resolved);
-  } catch {
-    document.documentElement.setAttribute("data-theme-preference", "system");
-    document.documentElement.setAttribute("data-theme", "light");
-  }
-})();
-`;
+import { themeInitScript } from "@/core/theme/theme";
 
 export const metadata: Metadata = {
   title: "Inchecken",

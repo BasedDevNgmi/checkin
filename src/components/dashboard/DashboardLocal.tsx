@@ -39,9 +39,9 @@ export function DashboardLocal() {
   ].filter(Boolean) as { label: string; icon: boolean }[];
 
   return (
-    <div className="dashboard-calm-shell min-h-full pb-24">
+    <div className="dashboard-calm-shell min-h-full pb-28 md:pb-10">
       <div className="w-full">
-        <header className="mb-6">
+        <header className="mb-7 md:mb-8">
           <div className="glass-card rounded-[var(--radius-card)] p-5 sm:p-6">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>

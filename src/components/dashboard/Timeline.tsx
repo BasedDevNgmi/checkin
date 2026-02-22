@@ -6,6 +6,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { EASE_SMOOTH } from "@/lib/motion";
 import { EMOTION_OPTIONS, type CheckInRow } from "@/types/checkin";
 import { Search, SlidersHorizontal } from "lucide-react";
+import { textInputBase } from "@/components/ui/formControlStyles";
 
 const EMOJI_MAP: Map<string, string> = new Map(EMOTION_OPTIONS.map((e) => [e.id, e.emoji]));
 
@@ -148,8 +149,8 @@ export function Timeline({ checkins }: TimelineProps) {
   if (checkins.length === 0) return null;
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="glass-panel inline-flex rounded-[var(--radius-control)] p-0.5" aria-label="Periode">
           {DATE_RANGE_OPTIONS.map(({ value, label }) => (
             <button
@@ -197,7 +198,7 @@ export function Timeline({ checkins }: TimelineProps) {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Zoek in gedachten of gedrag"
-              className="w-full rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface-elevated)] py-2.5 pl-10 pr-4 text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus-visible:border-[var(--focus-ring)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition"
+              className={`${textInputBase} py-2.5 pl-10 pr-4`}
               aria-label="Zoek entries"
             />
           </div>
@@ -252,13 +253,13 @@ export function Timeline({ checkins }: TimelineProps) {
           </p>
         </div>
       ) : (
-        <ul className="space-y-7">
+        <ul className="space-y-6">
           {groupsWithStaggerIndex.map(({ dayKey, items }) => (
             <li key={dayKey}>
               <p className="mb-3 mt-1 first:mt-0 text-[12px] font-medium text-[var(--text-soft)]">
                 {dayDividerLabel(dayKey)}
               </p>
-              <ul className="space-y-2.5">
+              <ul className="space-y-3">
                 {items.map(({ entry: c, staggerIndex }) => (
                   <motion.li
                     key={c.id}
@@ -272,7 +273,7 @@ export function Timeline({ checkins }: TimelineProps) {
                   >
                     <Link
                       href={`/entries/${c.id}`}
-                      className="glass-card block rounded-[var(--radius-card)] px-4 py-3.5 sm:px-5 transition-colors duration-200 hover:border-[var(--surface-border-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
+                      className="glass-card block rounded-[var(--radius-card)] px-4 py-4 sm:px-5 transition-colors duration-200 hover:border-[var(--surface-border-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
                     >
                       <div className="flex items-center justify-between gap-3">
                         <p suppressHydrationWarning className="text-[13px] font-medium text-[var(--text-muted)]">

@@ -7,7 +7,8 @@ import { createClient } from "@/lib/supabase/client";
 import { motion, useReducedMotion } from "framer-motion";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { BrandLogo } from "@/components/BrandLogo";
+import { FormMessage } from "@/components/ui/FormMessage";
+import { AuthCardShell } from "@/features/auth/components/AuthCardShell";
 
 export default function UpdatePasswordPage() {
   const router = useRouter();
@@ -92,16 +93,12 @@ export default function UpdatePasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6">
+    <AuthCardShell reducedMotion={reducedMotion}>
       <motion.div
         initial={reducedMotion ? false : { opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={fadeTransition}
-        className="w-full max-w-sm"
       >
-        <div className="mb-6 flex justify-center">
-          <BrandLogo />
-        </div>
         <div className="glass-card rounded-[var(--radius-card)] p-5 sm:p-6">
         <h1 className="text-[22px] font-semibold text-[var(--text-primary)] text-center mb-1">
           Nieuw wachtwoord
@@ -131,15 +128,9 @@ export default function UpdatePasswordPage() {
           />
 
           {message && (
-            <p
-              role="alert"
-              aria-live="polite"
-              className={`text-[13px] ${
-                message.type === "success" ? "text-[var(--text-success)]" : "text-[var(--text-error)]"
-              }`}
-            >
+            <FormMessage tone={message.type}>
               {message.text}
-            </p>
+            </FormMessage>
           )}
 
           <Button type="submit" variant="primary" disabled={loading} className="w-full">
@@ -154,6 +145,6 @@ export default function UpdatePasswordPage() {
         </p>
         </div>
       </motion.div>
-    </div>
+    </AuthCardShell>
   );
 }

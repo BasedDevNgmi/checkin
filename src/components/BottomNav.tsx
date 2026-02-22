@@ -19,7 +19,7 @@ export function BottomNav() {
       className="glass-nav fixed bottom-0 left-0 right-0 z-30 border-t pb-[env(safe-area-inset-bottom,0px)] md:hidden"
       aria-label="Hoofdnavigatie"
     >
-      <div className="mx-auto flex max-w-4xl items-center justify-around gap-1 px-2 pt-3 pb-2">
+      <div className="mx-auto flex min-h-[72px] max-w-4xl items-center justify-around gap-1 px-2 pt-2.5 pb-2">
         {tabs.map(({ href, label, icon: Icon }) => {
           const isActive =
             href === "/dashboard"

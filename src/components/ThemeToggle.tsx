@@ -1,65 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { EASE_SMOOTH } from "@/lib/motion";
 import { Laptop, Moon, Sun } from "lucide-react";
+import { useThemePreference } from "@/core/theme/useThemePreference";
+import type { ThemePreference } from "@/core/theme/theme";
 
-type ThemePreference = "system" | "light" | "dark";
-
-const STORAGE_KEY = "inchecken-theme-preference";
-
-const OPTIONS: {
+const OPTIONS: Array<{
   id: ThemePreference;
   label: string;
   Icon: typeof Sun;
-}[] = [
+}> = [
   { id: "light", label: "Licht", Icon: Sun },
   { id: "dark", label: "Donker", Icon: Moon },
   { id: "system", label: "Systeem", Icon: Laptop },
 ];
 
-function resolveTheme(preference: ThemePreference): "light" | "dark" {
-  if (preference === "system") {
-    return window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light";
-  }
-  return preference;
+interface ThemeToggleProps {
+  value?: ThemePreference;
+  onChange?: (value: ThemePreference) => void;
 }
 
-function applyTheme(preference: ThemePreference) {
-  const resolved = resolveTheme(preference);
-  document.documentElement.setAttribute("data-theme-preference", preference);
-  document.documentElement.setAttribute("data-theme", resolved);
-}
-
-export function ThemeToggle() {
-  const [preference, setPreference] = useState<ThemePreference>(() => {
-    if (typeof window === "undefined") return "system";
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored === "light" || stored === "dark" || stored === "system") {
-      return stored;
-    }
-    return "system";
-  });
-
-  useEffect(() => {
-    applyTheme(preference);
-    window.localStorage.setItem(STORAGE_KEY, preference);
-  }, [preference]);
-
-  useEffect(() => {
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const handleChange = () => {
-      if (preference === "system") {
-        applyTheme("system");
-      }
-    };
-
-    media.addEventListener("change", handleChange);
-    return () => media.removeEventListener("change", handleChange);
-  }, [preference]);
+export function ThemeToggle({ value, onChange }: ThemeToggleProps) {
+  const theme = useThemePreference();
+  const preference = value ?? theme.preference;
+  const setPreference = onChange ?? theme.setPreference;
 
   const activeIndex = OPTIONS.findIndex((o) => o.id === preference);
 
