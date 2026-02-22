@@ -26,7 +26,7 @@ describe("computeStreaks", () => {
   it("calculates current and longest streak correctly", () => {
     const rows = [row("2026-02-21"), row("2026-02-20"), row("2026-02-18"), row("2026-02-17"), row("2026-02-16")];
     expect(computeStreaks(rows, new Date("2026-02-21T10:00:00.000Z"))).toEqual({
-      current: 1,
+      current: 2,
       longest: 3,
     });
   });

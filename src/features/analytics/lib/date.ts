@@ -4,6 +4,7 @@ export function toDayKey(date: Date) {
 
 export function startOfDay(date: Date) {
   const copy = new Date(date);
-  copy.setHours(0, 0, 0, 0);
+  // Keep day boundaries in UTC to match toDayKey().
+  copy.setUTCHours(0, 0, 0, 0);
   return copy;
 }
