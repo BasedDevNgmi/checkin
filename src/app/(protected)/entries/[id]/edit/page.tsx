@@ -22,14 +22,13 @@ export default function EditEntryPage() {
   const params = useParams();
   const { refresh } = useCheckinsContext();
   const id = typeof params.id === "string" ? params.id : "";
+  const hasValidId = id.length > 0;
   const [initialData, setInitialData] = useState<CheckInFormState | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
+  const [loading, setLoading] = useState(hasValidId);
+  const [notFound, setNotFound] = useState(!hasValidId);
 
   useEffect(() => {
-    if (!id) {
-      setLoading(false);
-      setNotFound(true);
+    if (!hasValidId) {
       return;
     }
     getCheckIn(id)
@@ -39,7 +38,7 @@ export default function EditEntryPage() {
       })
       .catch(() => setNotFound(true))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [hasValidId, id]);
 
   if (loading) {
     return (

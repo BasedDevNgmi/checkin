@@ -14,8 +14,15 @@ export function useMindJournal() {
   }, []);
 
   useEffect(() => {
-    void refresh();
-  }, [refresh]);
+    let active = true;
+    const repositories = getRepositoryBundle();
+    void repositories.preferences.get().then((prefs) => {
+      if (active) setPreferences(prefs);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const savePreferences = useCallback(
     async (input: Omit<UserPreferences, "id" | "createdAt" | "updatedAt">) => {

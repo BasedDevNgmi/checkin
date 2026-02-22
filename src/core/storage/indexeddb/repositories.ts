@@ -3,7 +3,7 @@ import type {
   BackupRepository,
   PreferencesRepository,
 } from "@/core/storage/contracts";
-import type { BackupPayload, UserPreferences } from "@/core/storage/models";
+import type { UserPreferences } from "@/core/storage/models";
 import {
   clearStores,
   getStoreItem,

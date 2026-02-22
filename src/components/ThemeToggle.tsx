@@ -35,14 +35,14 @@ function applyTheme(preference: ThemePreference) {
 }
 
 export function ThemeToggle() {
-  const [preference, setPreference] = useState<ThemePreference>("system");
-
-  useEffect(() => {
+  const [preference, setPreference] = useState<ThemePreference>(() => {
+    if (typeof window === "undefined") return "system";
     const stored = window.localStorage.getItem(STORAGE_KEY);
     if (stored === "light" || stored === "dark" || stored === "system") {
-      setPreference(stored);
+      return stored;
     }
-  }, []);
+    return "system";
+  });
 
   useEffect(() => {
     applyTheme(preference);
