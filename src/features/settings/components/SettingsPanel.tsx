@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 const selectClass =
-  "w-full rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface)] px-4 py-3 text-[15px] text-[var(--text-primary)] focus-visible:border-[var(--focus-ring)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition disabled:opacity-50";
+  "w-full rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface-elevated)] px-4 py-3 text-[15px] text-[var(--text-primary)] shadow-[var(--shadow-elevation)] focus-visible:border-[var(--focus-ring)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition disabled:opacity-50";
 
 interface SettingsPanelProps {
   preferences: UserPreferences | null;
@@ -35,28 +35,31 @@ export function SettingsPanel({
   const [timezone, setTimezone] = useState(
     preferences?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone
   );
-  const [theme, setTheme] = useState<"light" | "dark" | "system">(preferences?.theme ?? "system");
   const [reminderEnabled, setReminderEnabled] = useState(preferences?.reminderEnabled ?? false);
   const [reminderTime, setReminderTime] = useState(preferences?.reminderTime ?? "20:30");
   const [status, setStatus] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   async function saveSettings() {
+    const selectedTheme =
+      (document.documentElement.getAttribute("data-theme-preference") as "light" | "dark" | "system" | null) ??
+      preferences?.theme ??
+      "system";
     await onSavePreferences({
       name: name.trim() || "Jij",
       timezone,
-      theme,
+      theme: selectedTheme,
       reminderEnabled,
       reminderTime: reminderEnabled ? reminderTime : null,
     });
-    if (theme === "system") {
+    if (selectedTheme === "system") {
       const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
     } else {
-      document.documentElement.setAttribute("data-theme", theme);
+      document.documentElement.setAttribute("data-theme", selectedTheme);
     }
-    document.documentElement.setAttribute("data-theme-preference", theme);
-    window.localStorage.setItem("inchecken-theme-preference", theme);
+    document.documentElement.setAttribute("data-theme-preference", selectedTheme);
+    window.localStorage.setItem("inchecken-theme-preference", selectedTheme);
     setStatus("Instellingen opgeslagen.");
   }
 
@@ -117,7 +120,7 @@ export function SettingsPanel({
         <p className="mt-1 text-[13px] text-[var(--text-muted)]">Beheer je profiel en voorkeuren</p>
       </div>
 
-      <div className="space-y-6">
+      <div className="glass-card space-y-6 rounded-[var(--radius-card)] p-5 sm:p-6">
         <div className="grid gap-4 sm:grid-cols-2">
           <Input
             label="Naam"

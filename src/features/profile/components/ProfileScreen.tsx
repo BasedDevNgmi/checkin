@@ -29,7 +29,9 @@ export function ProfileScreen() {
         <h2 id="account-heading" className="text-[17px] font-semibold text-[var(--text-primary)] mb-4">
           Account
         </h2>
-        <SignOutButton />
+        <div className="glass-card rounded-[var(--radius-card)] p-4">
+          <SignOutButton />
+        </div>
       </section>
     </div>
   );

@@ -4,7 +4,7 @@ import { forwardRef, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
 const inputBase =
-  "w-full rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface)] px-4 py-3 text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus-visible:border-[var(--surface-border-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition-colors duration-200 disabled:opacity-50 disabled:pointer-events-none";
+  "w-full rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface-elevated)] px-4 py-3 text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-soft)] shadow-[var(--shadow-elevation)] focus-visible:border-[var(--surface-border-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -20,7 +20,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="space-y-1.5">
         {label ? (
-          <label htmlFor={id} className="block text-[13px] font-medium text-[var(--text-primary)]">
+          <label htmlFor={id} className="block text-[13px] font-medium text-[var(--text-muted)]">
             {label}
           </label>
         ) : null}

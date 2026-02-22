@@ -45,7 +45,7 @@ export function BrandLogo({ compact = false }: BrandLogoProps) {
         <LogoIcon className="h-6 w-6" />
       </span>
       {!compact ? (
-        <span className="text-[17px] font-semibold tracking-[-0.025em] text-[var(--text-primary)]">
+        <span className="text-[17px] font-semibold tracking-[-0.03em] text-[var(--text-primary)]">
           Inchecken
         </span>
       ) : null}

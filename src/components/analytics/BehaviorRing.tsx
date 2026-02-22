@@ -29,7 +29,7 @@ const COLORS = [
 function CustomTooltip({ active, payload }: { active?: boolean; payload?: { name: string; value: number }[] }) {
   if (!active || !payload?.[0]) return null;
   return (
-    <div className="rounded-[var(--radius-small)] border border-[var(--surface-border)] bg-[var(--surface)] px-3 py-2 shadow-[var(--shadow-zen)] text-[13px]">
+    <div className="rounded-[var(--radius-small)] border border-[var(--surface-border)] bg-[var(--surface-elevated)] px-3 py-2 shadow-[var(--shadow-zen)] text-[13px]">
       <p className="font-medium text-[var(--text-primary)]">{payload[0].name}</p>
       <p className="text-[var(--text-muted)]">{payload[0].value}x</p>
     </div>
@@ -42,7 +42,7 @@ export function BehaviorRing({ data }: BehaviorRingProps) {
   if (data.length === 0) return null;
 
   return (
-    <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-elevation)]">
+    <div className="glass-card rounded-[var(--radius-card)] p-5">
       <h3 className="text-[15px] font-semibold text-[var(--text-primary)]">Gedrag</h3>
       <p className="mt-1 text-xs text-[var(--text-soft)]">Bewust vs. automatisch</p>
       <div className="mt-4 flex items-center gap-4">

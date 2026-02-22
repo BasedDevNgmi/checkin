@@ -5,8 +5,8 @@ import { BookOpenCheck } from "lucide-react";
 
 export function EmptyState() {
   return (
-    <section className="rounded-[var(--radius-card)] border border-[var(--surface-border)]/70 bg-[var(--surface)] p-8 text-center shadow-[var(--shadow-elevation)]">
-      <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--interactive-hover)]">
+    <section className="glass-card rounded-[var(--radius-card)] p-8 text-center">
+      <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-elevated)]">
         <BookOpenCheck className="h-5 w-5 text-[var(--text-primary)]" aria-hidden />
       </div>
       <p className="mt-4 text-[19px] font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
@@ -17,7 +17,7 @@ export function EmptyState() {
       </p>
       <Link
         href="/checkin"
-        className="mt-7 inline-flex min-h-[44px] items-center rounded-[var(--radius-control)] bg-[var(--accent)] px-5 py-2.5 text-[15px] font-medium text-white transition-colors duration-200 hover:bg-[var(--accent-soft)] active:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
+        className="mt-7 inline-flex min-h-[44px] items-center rounded-[var(--radius-control)] bg-[var(--accent)] px-5 py-2.5 text-[15px] font-medium text-white shadow-[var(--shadow-elevation)] transition-colors duration-200 hover:brightness-[1.04] active:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
       >
         Start je eerste check-in
       </Link>

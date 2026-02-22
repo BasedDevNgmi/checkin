@@ -323,8 +323,8 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
   if (checkins.length === 0) {
     return (
       <div className="space-y-6 pb-24">
-        <section className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-6 shadow-[var(--shadow-elevation)] text-center">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--interactive-hover)]">
+        <section className="glass-card rounded-[var(--radius-card)] p-6 text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-elevated)]">
             <Sparkles className="h-7 w-7 text-[var(--accent)]" />
           </div>
           <h2 className="mt-4 text-[22px] font-semibold text-[var(--text-primary)]">
@@ -335,7 +335,7 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
           </p>
           <Link
             href="/checkin"
-            className="mt-6 inline-flex min-h-[44px] items-center gap-2 rounded-[var(--radius-control)] bg-[var(--accent)] px-5 py-2.5 text-[15px] font-medium text-white shadow-[var(--shadow-elevation)] transition hover:opacity-95 active:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
+            className="mt-6 inline-flex min-h-[44px] items-center gap-2 rounded-[var(--radius-control)] bg-[var(--accent)] px-5 py-2.5 text-[15px] font-medium text-white shadow-[var(--shadow-elevation)] transition hover:brightness-[1.04] active:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
           >
             Eerste check-in doen <ChevronRight className="h-4 w-4" />
           </Link>
@@ -352,7 +352,7 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
           <h1 className="text-[1.35rem] font-semibold text-[var(--text-primary)] tracking-tight">Inzichten</h1>
           <p className="text-xs text-[var(--text-muted)]">Patronen in energie, emoties en gedrag</p>
         </div>
-        <div className="inline-flex rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--interactive-hover)] p-0.5">
+        <div className="glass-panel inline-flex rounded-[var(--radius-card)] p-0.5">
           {periods.map((option) => (
             <button
               key={option.value}
@@ -360,7 +360,7 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
               onClick={() => setPeriod(option.value)}
               className={`rounded-[var(--radius-control)] px-3 py-1.5 text-[13px] font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] ${
                 option.value === period
-                  ? "bg-[var(--surface)] text-[var(--text-primary)] shadow-[var(--shadow-zen)]"
+                  ? "bg-[var(--surface-elevated)] text-[var(--text-primary)] shadow-[var(--shadow-elevation)]"
                   : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
               }`}
               aria-pressed={option.value === period}
@@ -378,7 +378,7 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
         transition={{ duration: 0.35, ease: EASE_SMOOTH }}
         className="grid gap-3 grid-cols-2 lg:grid-cols-4"
       >
-        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-4 shadow-[var(--shadow-elevation)]">
+        <div className="glass-card rounded-[var(--radius-card)] p-4">
           <div className="flex items-center gap-1.5 text-[var(--text-soft)]">
             <Flame className="h-3.5 w-3.5 text-[var(--accent)]" />
             <span className="text-[11px] font-medium uppercase tracking-wider">Reeks</span>
@@ -387,7 +387,7 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
             {currentStreak} <span className="text-[13px] font-normal text-[var(--text-muted)]">{currentStreak === 1 ? "dag" : "dagen"}</span>
           </p>
         </div>
-        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-4 shadow-[var(--shadow-elevation)]">
+        <div className="glass-card rounded-[var(--radius-card)] p-4">
           <div className="flex items-center gap-1.5 text-[var(--text-soft)]">
             <TrendingUp className="h-3.5 w-3.5" />
             <span className="text-[11px] font-medium uppercase tracking-wider">Record</span>
@@ -396,13 +396,13 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
             {longestStreak} <span className="text-[13px] font-normal text-[var(--text-muted)]">{longestStreak === 1 ? "dag" : "dagen"}</span>
           </p>
         </div>
-        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-4 shadow-[var(--shadow-elevation)]">
+        <div className="glass-card rounded-[var(--radius-card)] p-4">
           <span className="text-[11px] font-medium uppercase tracking-wider text-[var(--text-soft)]">Gem. energie</span>
           <p className="mt-1.5 text-xl font-semibold text-[var(--text-primary)] tabular-nums">
             {avgEnergy == null ? "—" : `${avgEnergy}%`}
           </p>
         </div>
-        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-4 shadow-[var(--shadow-elevation)]">
+        <div className="glass-card rounded-[var(--radius-card)] p-4">
           <span className="text-[11px] font-medium uppercase tracking-wider text-[var(--text-soft)]">Consistentie</span>
           <p className="mt-1.5 text-xl font-semibold text-[var(--text-primary)] tabular-nums">
             {Math.round((completedDays / period) * 100)}%
@@ -438,7 +438,7 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.4, ease: EASE_SMOOTH }}
-          className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-elevation)]"
+          className="glass-card rounded-[var(--radius-card)] p-5"
         >
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-[var(--accent)]" />

@@ -8,7 +8,7 @@ const AnalyticsView = dynamic(
   {
     loading: () => (
       <div className="space-y-6">
-        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-6 shadow-[var(--shadow-elevation)]">
+        <div className="glass-card rounded-[var(--radius-card)] p-6">
           <div className="h-6 w-48 animate-pulse rounded-[var(--radius-control)] bg-[var(--interactive-hover)]" />
           <div className="mt-2 h-4 w-72 animate-pulse rounded bg-[var(--interactive-hover)]" />
         </div>
@@ -24,7 +24,7 @@ export function AnalyticsScreen() {
   if (loading) {
     return (
       <div className="space-y-6 py-5 pb-24 sm:py-6">
-        <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-6 shadow-[var(--shadow-elevation)]">
+        <div className="glass-card rounded-[var(--radius-card)] p-6">
           <div className="h-6 w-48 animate-pulse rounded-[var(--radius-control)] bg-[var(--interactive-hover)]" />
           <div className="mt-2 h-4 w-72 animate-pulse rounded bg-[var(--interactive-hover)]" />
         </div>

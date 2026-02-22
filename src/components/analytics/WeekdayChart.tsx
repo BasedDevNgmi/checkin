@@ -33,7 +33,7 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
   if (!active || !payload?.[0]) return null;
   const d = payload[0].payload;
   return (
-    <div className="rounded-[var(--radius-small)] border border-[var(--surface-border)] bg-[var(--surface)] px-3 py-2 shadow-[var(--shadow-zen)] text-[13px]">
+    <div className="rounded-[var(--radius-small)] border border-[var(--surface-border)] bg-[var(--surface-elevated)] px-3 py-2 shadow-[var(--shadow-zen)] text-[13px]">
       <p className="font-medium text-[var(--text-primary)]">{label}</p>
       <p className="text-[var(--text-muted)]">Gem. {Math.round(d.avg)}% ({d.count}x)</p>
     </div>
@@ -44,7 +44,7 @@ export function WeekdayChart({ data }: WeekdayChartProps) {
   const reduceMotion = useReducedMotion();
 
   return (
-    <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-elevation)]">
+    <div className="glass-card rounded-[var(--radius-card)] p-5">
       <h3 className="text-[15px] font-semibold text-[var(--text-primary)]">Energie per dag</h3>
       <p className="mt-1 text-xs text-[var(--text-soft)]">Gemiddelde per weekdag</p>
       <div className="mt-4 h-40">

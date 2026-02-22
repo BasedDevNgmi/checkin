@@ -3,10 +3,11 @@
 import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { BrandLogo } from "@/components/BrandLogo";
 
 function LoginContent() {
   const [email, setEmail] = useState("");
@@ -21,12 +22,11 @@ function LoginContent() {
     process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
     (typeof window !== "undefined" ? window.location.origin : "");
 
-  useEffect(() => {
-    const error = searchParams.get("error");
-    if (error === "auth") {
-      setMessage({ type: "error", text: "Inloggen mislukt of link verlopen. Probeer opnieuw." });
-    }
-  }, [searchParams]);
+  const authErrorMessage =
+    searchParams.get("error") === "auth"
+      ? { type: "error" as const, text: "Inloggen mislukt of link verlopen. Probeer opnieuw." }
+      : null;
+  const resolvedMessage = message ?? authErrorMessage;
 
   async function handlePasswordLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -138,6 +138,9 @@ function LoginContent() {
         transition={fadeTransition}
         className="w-full max-w-sm"
       >
+        <div className="mb-6 flex justify-center">
+          <BrandLogo />
+        </div>
         <AnimatePresence mode="wait">
           {mode === "forgot" ? (
             <motion.div
@@ -146,7 +149,7 @@ function LoginContent() {
               animate={{ opacity: 1 }}
               exit={reducedMotion ? undefined : { opacity: 0 }}
               transition={panelTransition}
-              className="space-y-5"
+              className="glass-card space-y-5 rounded-[var(--radius-card)] p-5 sm:p-6"
             >
               <h1 className="text-[22px] font-semibold text-[var(--text-primary)] text-center">
                 Wachtwoord vergeten?
@@ -164,17 +167,17 @@ function LoginContent() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="jouw@email.nl"
                 />
-                {message && (
+                {resolvedMessage && (
                   <p
                     role="alert"
                     aria-live="polite"
                     className={`text-[13px] ${
-                      message.type === "success"
+                      resolvedMessage.type === "success"
                         ? "text-[var(--text-success)]"
                         : "text-[var(--text-error)]"
                     }`}
                   >
-                    {message.text}
+                    {resolvedMessage.text}
                   </p>
                 )}
                 <Button type="submit" variant="primary" disabled={isLoading} className="w-full">
@@ -201,6 +204,7 @@ function LoginContent() {
               animate={{ opacity: 1 }}
               exit={reducedMotion ? undefined : { opacity: 0 }}
               transition={panelTransition}
+              className="glass-card rounded-[var(--radius-card)] p-5 sm:p-6"
             >
               <h1 className="text-[22px] font-semibold text-[var(--text-primary)] text-center tracking-[-0.02em]">
                 Inloggen
@@ -245,17 +249,17 @@ function LoginContent() {
                   />
                 </div>
 
-                {message && (
+                {resolvedMessage && (
                   <p
                     role="alert"
                     aria-live="polite"
                     className={`text-[13px] ${
-                      message.type === "success"
+                      resolvedMessage.type === "success"
                         ? "text-[var(--text-success)]"
                         : "text-[var(--text-error)]"
                     }`}
                   >
-                    {message.text}
+                    {resolvedMessage.text}
                   </p>
                 )}
 
@@ -303,7 +307,9 @@ export default function LoginPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center p-6">
-          <p className="text-[13px] text-[var(--text-soft)]">Laden…</p>
+          <p className="glass-card rounded-[var(--radius-card)] px-4 py-3 text-[13px] text-[var(--text-soft)]">
+            Laden…
+          </p>
         </div>
       }
     >

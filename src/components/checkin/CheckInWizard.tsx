@@ -153,7 +153,7 @@ export function CheckInWizard({
       : "border-[var(--surface-border)] text-[var(--text-muted)] hover:bg-[var(--interactive-hover)]";
 
   const textareaClass =
-    "w-full resize-none rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface)] px-4 py-3 text-[15px] leading-relaxed text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus-visible:outline-none focus-visible:border-[var(--focus-ring)] focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition";
+    "w-full resize-none rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface-elevated)] px-4 py-3 text-[15px] leading-relaxed text-[var(--text-primary)] placeholder:text-[var(--text-soft)] shadow-[var(--shadow-elevation)] focus-visible:outline-none focus-visible:border-[var(--focus-ring)] focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition";
 
   function renderStepContent() {
     if (step === 0) {
@@ -211,7 +211,7 @@ export function CheckInWizard({
     if (step === 2) {
       return (
         <div className="mx-auto max-w-3xl space-y-4">
-          <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-3.5">
+          <div className="glass-card rounded-[var(--radius-card)] p-3.5">
             <div className="mb-2.5 flex items-center justify-between gap-2">
               <p className="text-[13px] font-medium text-[var(--text-primary)]">
                 Kies plekken

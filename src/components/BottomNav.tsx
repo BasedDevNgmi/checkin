@@ -16,7 +16,7 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-30 border-t border-[var(--surface-border)] bg-[var(--background)] pb-[env(safe-area-inset-bottom,0px)] md:hidden"
+      className="glass-nav fixed bottom-0 left-0 right-0 z-30 border-t pb-[env(safe-area-inset-bottom,0px)] md:hidden"
       aria-label="Hoofdnavigatie"
     >
       <div className="mx-auto flex max-w-4xl items-center justify-around gap-1 px-2 pt-3 pb-2">

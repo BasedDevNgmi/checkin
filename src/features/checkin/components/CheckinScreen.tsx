@@ -26,7 +26,7 @@ export function CheckinScreen() {
       <div className="mb-6 flex items-center">
         <Link
           href="/dashboard"
-          className="link-muted -m-2 flex min-h-[44px] items-center gap-1 rounded-[var(--radius-control)] px-2 py-2 text-[15px] font-medium transition-colors duration-200 hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
+          className="link-muted -m-2 flex min-h-[44px] items-center gap-1 rounded-[var(--radius-control)] bg-[var(--surface-elevated)] px-2 py-2 text-[15px] font-medium shadow-[var(--shadow-elevation)] transition-colors duration-200 hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
           aria-label="Terug naar overzicht"
         >
           <ChevronLeft className="h-5 w-5" />

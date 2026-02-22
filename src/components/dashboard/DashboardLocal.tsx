@@ -42,7 +42,7 @@ export function DashboardLocal() {
     <div className="dashboard-calm-shell min-h-full pb-24">
       <div className="w-full">
         <header className="mb-6">
-          <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)]/70 bg-[var(--surface)] p-5 shadow-[var(--shadow-elevation)] sm:p-6">
+          <div className="glass-card rounded-[var(--radius-card)] p-5 sm:p-6">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-[var(--text-soft)]">
@@ -64,14 +64,14 @@ export function DashboardLocal() {
               {hasTodayEntry ? (
                 <Link
                   href={`/entries/${todayEntry.id}`}
-                  className="inline-flex min-h-[44px] items-center gap-1.5 rounded-[var(--radius-control)] border border-[var(--surface-border)] px-4 py-2.5 text-[14px] font-medium text-[var(--text-primary)] transition-colors duration-200 hover:bg-[var(--interactive-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
+                  className="inline-flex min-h-[44px] items-center gap-1.5 rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface-elevated)] px-4 py-2.5 text-[14px] font-medium text-[var(--text-primary)] transition-colors duration-200 hover:bg-[var(--interactive-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
                 >
                   Bekijk vandaag <ArrowRight className="h-4 w-4" aria-hidden />
                 </Link>
               ) : (
                 <Link
                   href="/checkin"
-                  className="inline-flex min-h-[44px] items-center rounded-[var(--radius-control)] bg-[var(--accent)] px-4 py-2.5 text-[14px] font-medium text-white transition-colors duration-200 hover:bg-[var(--accent-soft)] active:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
+                  className="inline-flex min-h-[44px] items-center rounded-[var(--radius-control)] bg-[var(--accent)] px-4 py-2.5 text-[14px] font-medium text-white shadow-[var(--shadow-elevation)] transition-colors duration-200 hover:brightness-[1.04] active:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
                 >
                   Start check-in
                 </Link>
@@ -83,7 +83,7 @@ export function DashboardLocal() {
                 {stats.map((stat, i) => (
                   <span
                     key={i}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-[var(--surface-border)] px-3 py-1 text-[var(--text-muted)]"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-[var(--surface-border)] bg-[var(--surface-elevated)] px-3 py-1 text-[var(--text-muted)]"
                   >
                     {stat.icon && <Flame className="h-3.5 w-3.5 text-[var(--accent)]" aria-hidden />}
                     {stat.label}
@@ -91,7 +91,7 @@ export function DashboardLocal() {
                 ))}
                 <Link
                   href="/analytics"
-                  className="inline-flex items-center rounded-full border border-[var(--surface-border)] px-3 py-1 font-medium text-[var(--text-primary)] transition-colors duration-200 hover:bg-[var(--interactive-hover)]"
+                  className="inline-flex items-center rounded-full border border-[var(--surface-border)] bg-[var(--surface-elevated)] px-3 py-1 font-medium text-[var(--text-primary)] transition-colors duration-200 hover:bg-[var(--interactive-hover)]"
                 >
                   Bekijk trends
                 </Link>
@@ -100,7 +100,7 @@ export function DashboardLocal() {
           </div>
 
           {preferences == null && (
-            <div className="mt-3 rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface)]/90 px-4 py-2.5">
+            <div className="glass-panel mt-3 rounded-[var(--radius-control)] px-4 py-2.5">
               <p className="text-[13px] text-[var(--text-muted)]">
                 Rond je profiel af voor herinneringen.{" "}
                 <Link href="/onboarding" className="link-accent font-medium">

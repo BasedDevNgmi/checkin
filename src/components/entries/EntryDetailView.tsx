@@ -88,7 +88,7 @@ export function EntryDetailView({ checkin }: EntryDetailViewProps) {
             </Button>
           </>
         ) : (
-          <div className="flex flex-wrap items-center gap-2 rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface)] px-3 py-2">
+          <div className="glass-panel flex flex-wrap items-center gap-2 rounded-[var(--radius-control)] px-3 py-2">
             <span className="text-[13px] text-[var(--text-muted)]">Verwijderen?</span>
             <Button
               type="button"
@@ -114,8 +114,8 @@ export function EntryDetailView({ checkin }: EntryDetailViewProps) {
       {deleteError && (
         <p className="mb-4 text-[13px] text-[var(--text-error)]">{deleteError}</p>
       )}
-      <article className="max-w-2xl space-y-10">
-        <header>
+      <article className="max-w-3xl space-y-4">
+        <header className="glass-card rounded-[var(--radius-card)] p-5">
           <p suppressHydrationWarning className="text-[13px] font-medium text-[var(--text-muted)]">{formatDate(checkin.created_at)}</p>
           {checkin.energy_level != null && (
             <div className="mt-2 flex items-center gap-2.5">
@@ -136,7 +136,7 @@ export function EntryDetailView({ checkin }: EntryDetailViewProps) {
         </header>
 
         {checkin.thoughts ? (
-          <section>
+          <section className="glass-card rounded-[var(--radius-card)] p-5">
             <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-soft)]">
               Gedachten
             </h3>
@@ -147,7 +147,7 @@ export function EntryDetailView({ checkin }: EntryDetailViewProps) {
         ) : null}
 
         {checkin.emotions?.length > 0 ? (
-          <section>
+          <section className="glass-card rounded-[var(--radius-card)] p-5">
             <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-soft)]">
               Gevoel
             </h3>
@@ -166,7 +166,7 @@ export function EntryDetailView({ checkin }: EntryDetailViewProps) {
         ) : null}
 
         {checkin.body_parts?.length > 0 ? (
-          <section>
+          <section className="glass-card rounded-[var(--radius-card)] p-5">
             <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-soft)]">
               Lichaam
             </h3>
@@ -187,7 +187,7 @@ export function EntryDetailView({ checkin }: EntryDetailViewProps) {
             checkin.behavior_meta.activity_now ||
             checkin.behavior_meta.values_reason ||
             checkin.behavior_meta.behavior_next) ? (
-          <section>
+          <section className="glass-card rounded-[var(--radius-card)] p-5">
             <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-soft)]">
               Gedrag
             </h3>

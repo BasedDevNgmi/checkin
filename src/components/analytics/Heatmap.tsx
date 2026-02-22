@@ -49,7 +49,7 @@ export function Heatmap({ dayData, weeks = 16 }: HeatmapProps) {
   const dayLabels = ["Ma", "", "Wo", "", "Vr", "", ""];
 
   return (
-    <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-elevation)]">
+    <div className="glass-card rounded-[var(--radius-card)] p-5">
       <h3 className="text-[15px] font-semibold text-[var(--text-primary)]">Activiteit</h3>
       <p className="mt-1 text-xs text-[var(--text-soft)]">Check-in heatmap</p>
       <div className="mt-4 overflow-x-auto pb-1">

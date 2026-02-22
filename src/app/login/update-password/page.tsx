@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { motion, useReducedMotion } from "framer-motion";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { BrandLogo } from "@/components/BrandLogo";
 
 export default function UpdatePasswordPage() {
   const router = useRouter();
@@ -14,21 +15,22 @@ export default function UpdatePasswordPage() {
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
-  const [hasRecovery, setHasRecovery] = useState<boolean | null>(null);
+  const [hasRecovery, setHasRecovery] = useState<boolean | null>(() => {
+    if (typeof window === "undefined") return null;
+    return window.location.hash.includes("type=recovery") ? true : null;
+  });
   const reducedMotion = useReducedMotion();
   const easing: [number, number, number, number] = [0.4, 0, 0.2, 1];
 
   useEffect(() => {
-    const hash = window.location.hash;
-    if (hash.includes("type=recovery")) {
-      setHasRecovery(true);
+    if (hasRecovery != null) {
       return;
     }
     const supabase = createClient();
     supabase.auth.getUser().then(({ data }) => {
       setHasRecovery(!!data.user);
     });
-  }, []);
+  }, [hasRecovery]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -59,7 +61,9 @@ export default function UpdatePasswordPage() {
   if (hasRecovery === null) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6">
-        <p className="text-[13px] text-[var(--text-soft)]">Laden…</p>
+        <p className="glass-card rounded-[var(--radius-card)] px-4 py-3 text-[13px] text-[var(--text-soft)]">
+          Laden…
+        </p>
       </div>
     );
   }
@@ -71,7 +75,7 @@ export default function UpdatePasswordPage() {
           initial={reducedMotion ? false : { opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={fadeTransition}
-          className="w-full max-w-sm text-center"
+          className="glass-card w-full max-w-sm rounded-[var(--radius-card)] p-5 text-center sm:p-6"
         >
           <p className="text-[var(--text-muted)] text-[13px] mb-6">
             Deze link is ongeldig of verlopen. Vraag een nieuwe resetlink aan.
@@ -95,6 +99,10 @@ export default function UpdatePasswordPage() {
         transition={fadeTransition}
         className="w-full max-w-sm"
       >
+        <div className="mb-6 flex justify-center">
+          <BrandLogo />
+        </div>
+        <div className="glass-card rounded-[var(--radius-card)] p-5 sm:p-6">
         <h1 className="text-[22px] font-semibold text-[var(--text-primary)] text-center mb-1">
           Nieuw wachtwoord
         </h1>
@@ -144,6 +152,7 @@ export default function UpdatePasswordPage() {
             Terug naar inloggen
           </Link>
         </p>
+        </div>
       </motion.div>
     </div>
   );

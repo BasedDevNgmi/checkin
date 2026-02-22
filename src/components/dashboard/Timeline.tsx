@@ -150,10 +150,7 @@ export function Timeline({ checkins }: TimelineProps) {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div
-          className="inline-flex rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--interactive-hover)] p-0.5"
-          aria-label="Periode"
-        >
+        <div className="glass-panel inline-flex rounded-[var(--radius-control)] p-0.5" aria-label="Periode">
           {DATE_RANGE_OPTIONS.map(({ value, label }) => (
             <button
               key={value}
@@ -161,7 +158,7 @@ export function Timeline({ checkins }: TimelineProps) {
               onClick={() => setDateRange(value)}
               className={`rounded-[var(--radius-small)] px-3 py-1.5 text-[13px] font-medium transition-colors duration-200 ${
                 dateRange === value
-                  ? "bg-[var(--surface)] text-[var(--text-primary)]"
+                  ? "bg-[var(--surface-elevated)] text-[var(--text-primary)]"
                   : "text-[var(--text-soft)] hover:text-[var(--text-primary)]"
               }`}
               aria-pressed={dateRange === value}
@@ -178,7 +175,7 @@ export function Timeline({ checkins }: TimelineProps) {
           className={`inline-flex min-h-[38px] items-center gap-1.5 rounded-[var(--radius-control)] border px-3 text-[13px] font-medium transition-colors duration-200 ${
             showFilters || query || emotionFilter
               ? "border-[var(--accent)] text-[var(--accent)]"
-              : "border-[var(--surface-border)] text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+              : "border-[var(--surface-border)] bg-[var(--surface-elevated)] text-[var(--text-muted)] hover:text-[var(--text-primary)]"
           }`}
         >
           <SlidersHorizontal className="h-3.5 w-3.5" aria-hidden />
@@ -189,7 +186,7 @@ export function Timeline({ checkins }: TimelineProps) {
       {(showFilters || query || emotionFilter) && (
         <div
           id={filtersPanelId}
-          className="space-y-3 rounded-[var(--radius-control)] border border-[var(--surface-border)]/80 bg-[var(--surface)]/80 p-3.5"
+          className="glass-panel space-y-3 rounded-[var(--radius-control)] p-3.5"
         >
           <div className="relative">
             <Search
@@ -200,7 +197,7 @@ export function Timeline({ checkins }: TimelineProps) {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Zoek in gedachten of gedrag"
-              className="w-full rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface)] py-2.5 pl-10 pr-4 text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus-visible:border-[var(--focus-ring)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition"
+              className="w-full rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface-elevated)] py-2.5 pl-10 pr-4 text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-soft)] focus-visible:border-[var(--focus-ring)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition"
               aria-label="Zoek entries"
             />
           </div>
@@ -275,7 +272,7 @@ export function Timeline({ checkins }: TimelineProps) {
                   >
                     <Link
                       href={`/entries/${c.id}`}
-                      className="block rounded-[var(--radius-card)] border border-[var(--surface-border)]/70 bg-[var(--surface)] px-4 py-3.5 sm:px-5 transition-colors duration-200 hover:border-[var(--surface-border-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
+                      className="glass-card block rounded-[var(--radius-card)] px-4 py-3.5 sm:px-5 transition-colors duration-200 hover:border-[var(--surface-border-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
                     >
                       <div className="flex items-center justify-between gap-3">
                         <p suppressHydrationWarning className="text-[13px] font-medium text-[var(--text-muted)]">

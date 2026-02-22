@@ -58,7 +58,7 @@ export function Sidebar() {
 
   return (
     <aside
-      className="group/sidebar hidden md:flex fixed left-0 top-0 bottom-0 z-30 w-14 hover:w-[220px] flex-col border-r border-[var(--surface-border)] bg-[var(--background)]/72 backdrop-blur-lg backdrop-saturate-150 transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden"
+      className="glass-nav group/sidebar hidden md:flex fixed left-0 top-0 bottom-0 z-30 w-14 hover:w-[220px] flex-col border-r transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-hidden"
       aria-label="Hoofdnavigatie"
     >
       <div className="flex h-14 shrink-0 items-center px-3">

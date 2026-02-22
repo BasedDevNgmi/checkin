@@ -37,7 +37,7 @@ export default async function ProtectedLayout({
       <ReminderScheduler />
       <Sidebar />
       <header
-        className="sticky top-0 z-20 border-b border-[var(--surface-border)]/60 bg-[var(--background)]/80 backdrop-blur-xl backdrop-saturate-150 pt-[env(safe-area-inset-top,0px)] md:hidden"
+        className="glass-nav sticky top-0 z-20 border-b pt-[env(safe-area-inset-top,0px)] md:hidden"
         role="banner"
       >
         <div className="flex h-[52px] min-h-[52px] items-center px-5 sm:h-14 sm:min-h-14 sm:px-6">
@@ -52,7 +52,9 @@ export default async function ProtectedLayout({
       </header>
       <OfflineBanner />
       <CheckinsProvider initialCheckins={initialCheckins}>
-        <main className="mx-auto max-w-5xl px-5 py-6 pb-[calc(7.25rem+env(safe-area-inset-bottom,0px))] sm:px-6 sm:py-8 md:pb-10">{children}</main>
+        <main className="mx-auto max-w-5xl px-5 py-6 pb-[calc(7.25rem+env(safe-area-inset-bottom,0px))] sm:px-6 sm:py-8 md:pb-10">
+          {children}
+        </main>
       </CheckinsProvider>
       <BottomNav />
     </div>

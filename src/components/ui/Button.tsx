@@ -9,12 +9,12 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ variant = "primary", size = "default", className = "", children, ...props }, ref) => {
     const base =
-      "inline-flex items-center justify-center rounded-[var(--radius-control)] font-medium tracking-[-0.01em] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed";
+      "inline-flex items-center justify-center rounded-[var(--radius-control)] font-medium tracking-[-0.01em] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed";
     const variants = {
       primary:
-        "bg-[var(--accent)] text-white shadow-[var(--shadow-elevation)] hover:opacity-95 active:opacity-90",
+        "bg-[var(--accent)] text-white shadow-[var(--shadow-elevation)] hover:brightness-[1.05] hover:shadow-[var(--shadow-zen)] active:opacity-90",
       secondary:
-        "border border-[var(--surface-border)] bg-[var(--surface)] text-[var(--text-primary)] hover:bg-[var(--interactive-hover)] active:bg-[var(--interactive-active)]",
+        "border border-[var(--surface-border)] bg-[var(--surface-elevated)] text-[var(--text-primary)] hover:bg-[var(--interactive-hover)] hover:border-[var(--surface-border-strong)] active:bg-[var(--interactive-active)]",
       ghost:
         "text-[var(--text-muted)] hover:bg-[var(--interactive-hover)] hover:text-[var(--text-primary)] active:bg-[var(--interactive-active)]",
     };

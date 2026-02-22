@@ -26,7 +26,7 @@ export function EmotionBars({ data }: EmotionBarsProps) {
   const max = Math.max(...data.map((d) => d.count), 1);
 
   return (
-    <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-elevation)]">
+    <div className="glass-card rounded-[var(--radius-card)] p-5">
       <h3 className="text-[15px] font-semibold text-[var(--text-primary)]">Emoties</h3>
       <p className="mt-1 text-xs text-[var(--text-soft)]">Frequentie &amp; gemiddelde energie</p>
       <div className="mt-4 space-y-3">
