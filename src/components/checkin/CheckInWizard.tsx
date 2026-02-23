@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
@@ -10,6 +10,7 @@ import type { BodyPartId, CheckInFormState } from "@/types/checkin";
 import { Check, ChevronLeft } from "lucide-react";
 import { EMOTION_OPTIONS } from "@/types/checkin";
 import { EASE_SMOOTH } from "@/lib/motion";
+import { BodyMapSVG } from "@/components/checkin/BodyMapSVG";
 
 const STEPS = [
   {
@@ -93,33 +94,70 @@ export function CheckInWizard({
   const [message, setMessage] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [keyboardInset, setKeyboardInset] = useState(0);
+  const ctaRef = useRef<HTMLDivElement | null>(null);
 
   const isFirst = step === 0;
   const isLast = step === STEPS.length - 1;
   const current = STEPS[step];
   const progress = ((step + 1) / STEPS.length) * 100;
-  const mobileCtaBottom = `calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + ${keyboardInset}px)`;
+  const isKeyboardOpen = keyboardInset > 0;
+  const mobileCtaBottom = isKeyboardOpen
+    ? `calc(env(safe-area-inset-bottom, 0px) + ${keyboardInset}px + 8px)`
+    : `calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + ${keyboardInset}px)`;
 
   useEffect(() => {
     if (typeof window === "undefined" || !window.visualViewport) {
       return;
     }
     const viewport = window.visualViewport;
+    let frameId: number | null = null;
     const updateInset = () => {
-      const inset = Math.max(
-        0,
-        Math.round(window.innerHeight - viewport.height - viewport.offsetTop)
-      );
-      setKeyboardInset(inset > 80 ? inset : 0);
+      if (frameId != null) return;
+      frameId = window.requestAnimationFrame(() => {
+        frameId = null;
+        const inset = Math.max(
+          0,
+          Math.round(window.innerHeight - viewport.height - viewport.offsetTop)
+        );
+        const nextInset = inset > 80 ? inset : 0;
+        setKeyboardInset((prev) => (prev === nextInset ? prev : nextInset));
+      });
     };
     updateInset();
     viewport.addEventListener("resize", updateInset);
     viewport.addEventListener("scroll", updateInset);
     return () => {
+      if (frameId != null) window.cancelAnimationFrame(frameId);
       viewport.removeEventListener("resize", updateInset);
       viewport.removeEventListener("scroll", updateInset);
     };
   }, []);
+
+  useEffect(() => {
+    if (!isKeyboardOpen) return;
+    const onFocusIn = (event: FocusEvent) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      const isInputLike =
+        target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
+        target.getAttribute("contenteditable") === "true";
+      if (!isInputLike) return;
+
+      const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
+      const ctaHeight = ctaRef.current?.getBoundingClientRect().height ?? 0;
+      const safeBottom = viewportHeight - ctaHeight - 14;
+      const targetRect = target.getBoundingClientRect();
+      if (targetRect.bottom <= safeBottom) return;
+
+      window.requestAnimationFrame(() => {
+        target.scrollIntoView({ block: "center", behavior: "smooth" });
+      });
+    };
+
+    document.addEventListener("focusin", onFocusIn);
+    return () => document.removeEventListener("focusin", onFocusIn);
+  }, [isKeyboardOpen]);
 
   function toggleEmotion(id: string) {
     setState((s) => ({
@@ -243,6 +281,9 @@ export function CheckInWizard({
               <p className="text-[12px] text-[var(--text-muted)]">
                 {state.bodyParts.length} geselecteerd
               </p>
+            </div>
+            <div className="mb-3 rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface-elevated)] p-2.5 sm:p-3">
+              <BodyMapSVG selectedParts={state.bodyParts} onTogglePart={toggleBodyPart} />
             </div>
             <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4">
               {BODY_PART_OPTIONS.map(({ id, label }) => {
@@ -527,7 +568,12 @@ export function CheckInWizard({
       )}
 
       <div
-        className="fixed inset-x-0 z-20 border-t border-[var(--surface-border)] bg-[var(--background)]/96 px-5 py-3 backdrop-blur-sm md:static md:mt-8 md:border-t md:bg-transparent md:px-0 md:py-6 md:backdrop-blur-0"
+        ref={ctaRef}
+        className={`fixed inset-x-0 z-30 border-t border-[var(--surface-border)] bg-[var(--background)]/96 px-5 py-3 backdrop-blur-sm md:static md:mt-8 md:z-auto md:border-t md:bg-transparent md:px-0 md:py-6 md:backdrop-blur-0 ${
+          isKeyboardOpen
+            ? "mx-auto w-[calc(100%-1rem)] max-w-[32rem] rounded-[var(--radius-card)] border shadow-[var(--shadow-zen)]"
+            : ""
+        }`}
         style={{ bottom: mobileCtaBottom }}
       >
         <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4">

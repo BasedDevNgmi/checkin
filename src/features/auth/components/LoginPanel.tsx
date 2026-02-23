@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { FormMessage } from "@/components/ui/FormMessage";
+import { Card } from "@/components/ui/Card";
 
 interface LoginPanelProps {
   email: string;
@@ -30,7 +31,7 @@ export function LoginPanel({
   onForgotClick,
 }: LoginPanelProps) {
   return (
-    <div className="glass-card rounded-[var(--radius-card)] p-5 sm:p-6">
+    <Card variant="glass" className="space-y-0">
       <h1 className="text-[22px] font-semibold text-[var(--text-primary)] text-center tracking-[-0.02em]">
         Inloggen
       </h1>
@@ -56,7 +57,7 @@ export function LoginPanel({
             <button
               type="button"
               onClick={onForgotClick}
-              className="text-xs link-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] rounded"
+              className="text-xs link-accent rounded-[var(--radius-small)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
             >
               Wachtwoord vergeten?
             </button>
@@ -85,6 +86,6 @@ export function LoginPanel({
           </Button>
         </div>
       </form>
-    </div>
+    </Card>
   );
 }

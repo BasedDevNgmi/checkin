@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { EASE_SMOOTH } from "@/lib/motion";
+import { EASE_SMOOTH, MOTION_DURATION } from "@/lib/motion";
 import { Laptop, Moon, Sun } from "lucide-react";
 import { useThemePreference } from "@/core/theme/useThemePreference";
 import type { ThemePreference } from "@/core/theme/theme";
@@ -37,7 +37,7 @@ export function ThemeToggle({ value, onChange }: ThemeToggleProps) {
       <motion.div
         className="absolute top-0.5 bottom-0.5 w-[calc((100%-4px)/3)] rounded-[var(--radius-small)] bg-[var(--interactive-active)]"
         style={{ left: "2px" }}
-        transition={{ duration: 0.25, ease: EASE_SMOOTH }}
+        transition={{ duration: MOTION_DURATION.base, ease: EASE_SMOOTH }}
         initial={false}
         animate={{
           x: `calc(${activeIndex * 100}% + ${activeIndex * 2}px)`,
@@ -51,13 +51,13 @@ export function ThemeToggle({ value, onChange }: ThemeToggleProps) {
             key={id}
             type="button"
             onClick={() => setPreference(id)}
-            className="relative z-10 flex min-h-[36px] flex-1 items-center justify-center rounded-[var(--radius-small)] p-1.5 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
+            className="relative z-10 flex min-h-[36px] flex-1 items-center justify-center rounded-[var(--radius-small)] p-1.5 transition-colors duration-[var(--motion-base)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
             aria-pressed={isActive}
             aria-label={`Thema: ${label}`}
             title={label}
           >
             <span
-              className={`flex items-center justify-center transition-colors duration-200 ${
+              className={`flex items-center justify-center transition-colors duration-[var(--motion-base)] ${
                 isActive
                   ? "text-[var(--text-primary)]"
                   : "text-[var(--text-soft)] hover:text-[var(--text-primary)]"

@@ -5,11 +5,7 @@ import { OfflineBanner } from "@/components/OfflineBanner";
 import { BottomNav } from "@/components/BottomNav";
 import { BrandLogo } from "@/components/BrandLogo";
 import { Sidebar } from "@/components/Sidebar";
-import { ReminderScheduler } from "@/features/settings/components/ReminderScheduler";
-import { CheckinsProvider } from "@/lib/CheckinsContext";
-import { listCheckInsServer } from "@/lib/checkin-server";
-import { MOCK_CHECKINS } from "@/lib/dev-mock-data";
-import { BackgroundSyncBridge } from "@/components/BackgroundSyncBridge";
+import { ProtectedRuntimeBridges } from "@/components/ProtectedRuntimeBridges";
 import { isDevPreview } from "@/config/flags";
 
 export default async function ProtectedLayout({
@@ -17,11 +13,7 @@ export default async function ProtectedLayout({
 }: {
   children: React.ReactNode;
 }) {
-  let initialCheckins;
-
-  if (isDevPreview) {
-    initialCheckins = MOCK_CHECKINS;
-  } else {
+  if (!isDevPreview) {
     const supabase = await createClient();
     const {
       data: { user },
@@ -29,13 +21,11 @@ export default async function ProtectedLayout({
     if (!user) {
       redirect("/");
     }
-    initialCheckins = await listCheckInsServer(user.id);
   }
 
   return (
     <div className="ios-app-shell min-h-screen md:pl-14">
-      <ReminderScheduler />
-      <BackgroundSyncBridge />
+      <ProtectedRuntimeBridges />
       <Sidebar />
       <div className="flex h-full min-h-0 flex-col">
         <header
@@ -53,14 +43,12 @@ export default async function ProtectedLayout({
           </div>
         </header>
         <OfflineBanner />
-        <CheckinsProvider initialCheckins={initialCheckins}>
-          <main
-            id="main-content"
-            className="ios-scroll-area mx-auto w-full max-w-5xl flex-1 px-5 py-6 pb-[calc(8.5rem+env(safe-area-inset-bottom,0px))] sm:px-6 sm:py-8 md:pb-10"
-          >
-            {children}
-          </main>
-        </CheckinsProvider>
+        <main
+          id="main-content"
+          className="ios-scroll-area mx-auto w-full max-w-5xl flex-1 px-5 py-6 pb-[calc(8.5rem+env(safe-area-inset-bottom,0px))] sm:px-6 sm:py-8 md:pb-10"
+        >
+          {children}
+        </main>
         <BottomNav />
       </div>
     </div>

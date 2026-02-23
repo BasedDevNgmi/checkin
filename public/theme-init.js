@@ -1,12 +1,13 @@
 (() => {
   try {
     const key = "inchecken-theme-preference";
+    const mediaQuery = "(prefers-color-scheme: dark)";
     const stored = window.localStorage.getItem(key);
     const preference =
       stored === "light" || stored === "dark" || stored === "system"
         ? stored
         : "system";
-    const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const isDark = window.matchMedia(mediaQuery).matches;
     const resolved = preference === "system" ? (isDark ? "dark" : "light") : preference;
     document.documentElement.setAttribute("data-theme-preference", preference);
     document.documentElement.setAttribute("data-theme", resolved);

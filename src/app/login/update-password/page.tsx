@@ -9,6 +9,9 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { FormMessage } from "@/components/ui/FormMessage";
 import { AuthCardShell } from "@/features/auth/components/AuthCardShell";
+import { Card } from "@/components/ui/Card";
+import { LinkButton } from "@/components/ui/LinkButton";
+import { EASE_SMOOTH, MOTION_DURATION } from "@/lib/motion";
 
 export default function UpdatePasswordPage() {
   const router = useRouter();
@@ -21,7 +24,6 @@ export default function UpdatePasswordPage() {
     return window.location.hash.includes("type=recovery") ? true : null;
   });
   const reducedMotion = useReducedMotion();
-  const easing: [number, number, number, number] = [0.4, 0, 0.2, 1];
 
   useEffect(() => {
     if (hasRecovery != null) {
@@ -57,7 +59,7 @@ export default function UpdatePasswordPage() {
     router.refresh();
   }
 
-  const fadeTransition = reducedMotion ? { duration: 0 } : { duration: 0.4, ease: easing };
+  const fadeTransition = reducedMotion ? { duration: 0 } : { duration: MOTION_DURATION.enter, ease: EASE_SMOOTH };
 
   if (hasRecovery === null) {
     return (
@@ -76,17 +78,16 @@ export default function UpdatePasswordPage() {
           initial={reducedMotion ? false : { opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={fadeTransition}
-          className="glass-card w-full max-w-sm rounded-[var(--radius-card)] p-5 text-center sm:p-6"
+          className="w-full max-w-sm text-center"
         >
+          <Card variant="glass" className="text-center">
           <p className="text-[var(--text-muted)] text-[13px] mb-6">
             Deze link is ongeldig of verlopen. Vraag een nieuwe resetlink aan.
           </p>
-          <Link
-            href="/"
-            className="inline-flex items-center justify-center rounded-[var(--radius-control)] bg-[var(--accent)] px-5 py-3 text-[15px] font-medium text-white transition-colors duration-200 hover:bg-[var(--accent-soft)] active:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
-          >
+          <LinkButton href="/">
             Naar inloggen
-          </Link>
+          </LinkButton>
+          </Card>
         </motion.div>
       </div>
     );
@@ -99,7 +100,7 @@ export default function UpdatePasswordPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={fadeTransition}
       >
-        <div className="glass-card rounded-[var(--radius-card)] p-5 sm:p-6">
+        <Card variant="glass">
         <h1 className="text-[22px] font-semibold text-[var(--text-primary)] text-center mb-1">
           Nieuw wachtwoord
         </h1>
@@ -143,7 +144,7 @@ export default function UpdatePasswordPage() {
             Terug naar inloggen
           </Link>
         </p>
-        </div>
+        </Card>
       </motion.div>
     </AuthCardShell>
   );

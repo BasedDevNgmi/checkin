@@ -8,6 +8,7 @@ import { useAuthActions } from "@/features/auth/hooks/useAuthActions";
 import { LoginPanel } from "@/features/auth/components/LoginPanel";
 import { ForgotPasswordPanel } from "@/features/auth/components/ForgotPasswordPanel";
 import { AuthCardShell } from "@/features/auth/components/AuthCardShell";
+import { EASE_SMOOTH, MOTION_DURATION } from "@/lib/motion";
 
 function LoginContent() {
   const [email, setEmail] = useState("");
@@ -98,8 +99,7 @@ function LoginContent() {
   }
 
   const reducedMotion = useReducedMotion();
-  const easing: [number, number, number, number] = [0.4, 0, 0.2, 1];
-  const panelTransition = reducedMotion ? { duration: 0 } : { duration: 0.25, ease: easing };
+  const panelTransition = reducedMotion ? { duration: 0 } : { duration: MOTION_DURATION.base, ease: EASE_SMOOTH };
 
   return (
     <AuthCardShell reducedMotion={reducedMotion}>
@@ -161,7 +161,7 @@ export default function LoginPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center p-6">
-          <p className="glass-card rounded-[var(--radius-card)] px-4 py-3 text-[13px] text-[var(--text-soft)]">
+          <p className="surface-card rounded-[var(--radius-card)] px-4 py-3 text-[13px] text-[var(--text-soft)]">
             Laden…
           </p>
         </div>

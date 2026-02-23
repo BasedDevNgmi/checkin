@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { isProduction, isServiceWorkerEnabled } from "@/config/flags";
+import { Button } from "@/components/ui/Button";
 
 export function RegisterSW() {
   const [waitingWorker, setWaitingWorker] = useState<ServiceWorker | null>(null);
+  const allowReloadRef = useRef(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -29,6 +31,7 @@ export function RegisterSW() {
     let isMounted = true;
 
     const onControllerChange = () => {
+      if (!allowReloadRef.current) return;
       window.location.reload();
     };
 
@@ -40,28 +43,61 @@ export function RegisterSW() {
 
     navigator.serviceWorker.addEventListener("controllerchange", onControllerChange);
 
-    navigator.serviceWorker
-      .register("/sw.js")
-      .then((registration) => {
-        listenForWaitingServiceWorker(registration);
+    const registerServiceWorker = () =>
+      navigator.serviceWorker
+        .register("/sw.js")
+        .then((registration) => {
+          listenForWaitingServiceWorker(registration);
 
-        registration.addEventListener("updatefound", () => {
-          const installingWorker = registration.installing;
-          if (!installingWorker) return;
-          installingWorker.addEventListener("statechange", () => {
-            if (
-              installingWorker.state === "installed" &&
-              navigator.serviceWorker.controller
-            ) {
-              listenForWaitingServiceWorker(registration);
-            }
+          registration.addEventListener("updatefound", () => {
+            const installingWorker = registration.installing;
+            if (!installingWorker) return;
+            installingWorker.addEventListener("statechange", () => {
+              if (
+                installingWorker.state === "installed" &&
+                navigator.serviceWorker.controller
+              ) {
+                listenForWaitingServiceWorker(registration);
+              }
+            });
           });
-        });
-      })
-      .catch(() => {});
+        })
+        .catch(() => {});
+
+    const idleWindow = window as Window & {
+      requestIdleCallback?: (callback: () => void, options?: { timeout?: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+
+    let idleId: number | null = null;
+    const scheduleRegistration = () => {
+      if (typeof idleWindow.requestIdleCallback === "function") {
+        idleId = idleWindow.requestIdleCallback(() => {
+          void registerServiceWorker();
+        }, { timeout: 1200 });
+        return;
+      }
+      idleId = window.setTimeout(() => {
+        void registerServiceWorker();
+      }, 300);
+    };
+
+    if (document.readyState === "complete") {
+      scheduleRegistration();
+    } else {
+      window.addEventListener("load", scheduleRegistration, { once: true });
+    }
 
     return () => {
       isMounted = false;
+      if (idleId != null) {
+        if (typeof idleWindow.cancelIdleCallback === "function") {
+          idleWindow.cancelIdleCallback(idleId);
+        } else {
+          window.clearTimeout(idleId);
+        }
+      }
+      window.removeEventListener("load", scheduleRegistration);
       navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange);
     };
   }, []);
@@ -69,17 +105,21 @@ export function RegisterSW() {
   if (!waitingWorker) return null;
 
   return (
-    <div className="fixed inset-x-3 bottom-[calc(5.5rem+env(safe-area-inset-bottom,0px))] z-50 mx-auto max-w-md rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface-elevated)] p-3 shadow-lg">
-      <p className="text-sm text-[var(--text-primary)]">
+    <div className="surface-card fixed inset-x-3 bottom-[calc(5.5rem+env(safe-area-inset-bottom,0px))] z-50 mx-auto max-w-md rounded-[var(--radius-card)] p-3">
+      <p className="text-sm leading-relaxed text-[var(--text-primary)]">
         Er is een nieuwe versie beschikbaar.
       </p>
-      <button
+      <Button
         type="button"
-        className="mt-2 inline-flex min-h-[40px] items-center justify-center rounded-[var(--radius-control)] bg-[var(--interactive-primary)] px-3 py-2 text-sm font-medium text-[var(--interactive-primary-text)]"
-        onClick={() => waitingWorker.postMessage({ type: "SKIP_WAITING" })}
+        size="sm"
+        className="mt-3"
+        onClick={() => {
+          allowReloadRef.current = true;
+          waitingWorker.postMessage({ type: "SKIP_WAITING" });
+        }}
       >
         Nu updaten
-      </button>
+      </Button>
     </div>
   );
 }

@@ -11,8 +11,10 @@ import {
   getCurrentStreak,
   getTopEmotion,
 } from "@/lib/checkin-insights";
-import Link from "next/link";
 import { ArrowRight, Flame } from "lucide-react";
+import { LinkButton } from "@/components/ui/LinkButton";
+import { Card } from "@/components/ui/Card";
+import Link from "next/link";
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -42,7 +44,7 @@ export function DashboardLocal() {
     <div className="dashboard-calm-shell min-h-full pb-28 md:pb-10">
       <div className="w-full">
         <header className="mb-7 md:mb-8">
-          <div className="glass-card rounded-[var(--radius-card)] p-5 sm:p-6">
+          <Card variant="glass">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-[var(--text-soft)]">
@@ -62,19 +64,13 @@ export function DashboardLocal() {
               </div>
 
               {hasTodayEntry ? (
-                <Link
-                  href={`/entries/${todayEntry.id}`}
-                  className="inline-flex min-h-[44px] items-center gap-1.5 rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface-elevated)] px-4 py-2.5 text-[14px] font-medium text-[var(--text-primary)] transition-colors duration-200 hover:bg-[var(--interactive-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
-                >
+                <LinkButton href={`/entries/${todayEntry.id}`} variant="secondary" className="gap-1.5 px-4 py-2.5 text-[14px]">
                   Bekijk vandaag <ArrowRight className="h-4 w-4" aria-hidden />
-                </Link>
+                </LinkButton>
               ) : (
-                <Link
-                  href="/checkin"
-                  className="inline-flex min-h-[44px] items-center rounded-[var(--radius-control)] bg-[var(--accent)] px-4 py-2.5 text-[14px] font-medium text-white shadow-[var(--shadow-elevation)] transition-colors duration-200 hover:brightness-[1.04] active:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
-                >
+                <LinkButton href="/checkin" className="px-4 py-2.5 text-[14px]">
                   Start check-in
-                </Link>
+                </LinkButton>
               )}
             </div>
 
@@ -91,13 +87,13 @@ export function DashboardLocal() {
                 ))}
                 <Link
                   href="/analytics"
-                  className="inline-flex items-center rounded-full border border-[var(--surface-border)] bg-[var(--surface-elevated)] px-3 py-1 font-medium text-[var(--text-primary)] transition-colors duration-200 hover:bg-[var(--interactive-hover)]"
+                  className="inline-flex items-center rounded-full border border-[var(--surface-border)] bg-[var(--surface-elevated)] px-3 py-1 font-medium text-[var(--text-primary)] transition-colors duration-[var(--motion-base)] hover:bg-[var(--interactive-hover)]"
                 >
                   Bekijk trends
                 </Link>
               </div>
             )}
-          </div>
+          </Card>
 
           {preferences == null && (
             <div className="glass-panel mt-3 rounded-[var(--radius-control)] px-4 py-2.5">

@@ -5,6 +5,7 @@ import {
   applyThemePreference,
   persistThemePreference,
   readStoredThemePreference,
+  THEME_MEDIA_QUERY,
   type ThemePreference,
 } from "@/core/theme/theme";
 
@@ -17,7 +18,7 @@ export function useThemePreference() {
   }, [preference]);
 
   useEffect(() => {
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const media = window.matchMedia(THEME_MEDIA_QUERY);
     const handleChange = () => {
       if (preference === "system") {
         applyThemePreference("system");

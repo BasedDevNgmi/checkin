@@ -34,7 +34,7 @@ export function Heatmap({ dayData, weeks = 16 }: HeatmapProps) {
   return (
     <div className="glass-card rounded-[var(--radius-card)] p-5">
       <h3 className="text-[15px] font-semibold text-[var(--text-primary)]">Activiteit</h3>
-      <p className="mt-1 text-xs text-[var(--text-soft)]">Check-in heatmap</p>
+      <p className="mt-1 text-xs text-[var(--text-muted)]">Check-in heatmap</p>
       <div className="mt-4 overflow-x-auto pb-1">
         <svg width={svgWidth} height={svgHeight} aria-label="Check-in heatmap">
           {dayLabels.map((label, i) =>

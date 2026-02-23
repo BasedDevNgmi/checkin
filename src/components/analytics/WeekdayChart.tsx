@@ -46,7 +46,7 @@ export function WeekdayChart({ data }: WeekdayChartProps) {
   return (
     <div className="glass-card rounded-[var(--radius-card)] p-5">
       <h3 className="text-[15px] font-semibold text-[var(--text-primary)]">Energie per dag</h3>
-      <p className="mt-1 text-xs text-[var(--text-soft)]">Gemiddelde per weekdag</p>
+      <p className="mt-1 text-xs text-[var(--text-muted)]">Gemiddelde per weekdag</p>
       <div className="mt-4 h-40">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>

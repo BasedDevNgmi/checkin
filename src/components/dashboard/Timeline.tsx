@@ -1,12 +1,13 @@
 "use client";
 
-import { useId, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useId, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { EASE_SMOOTH } from "@/lib/motion";
 import { EMOTION_OPTIONS, type CheckInRow } from "@/types/checkin";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { textInputBase } from "@/components/ui/formControlStyles";
+import { SegmentedControl } from "@/components/ui/SegmentedControl";
 
 const EMOJI_MAP: Map<string, string> = new Map(EMOTION_OPTIONS.map((e) => [e.id, e.emoji]));
 
@@ -87,13 +88,17 @@ function getRangeStart(preset: DateRangePreset): number | null {
 
 const STAGGER_DELAY = 0.04;
 const STAGGER_DURATION = 0.3;
+const INITIAL_VISIBLE_ITEMS = 48;
+const VISIBLE_ITEMS_STEP = 32;
 
 export function Timeline({ checkins }: TimelineProps) {
   const reduceMotion = useReducedMotion();
   const [query, setQuery] = useState("");
+  const deferredQuery = useDeferredValue(query);
   const [emotionFilter, setEmotionFilter] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState<DateRangePreset>("all");
   const [showFilters, setShowFilters] = useState(false);
+  const [visibleItems, setVisibleItems] = useState(INITIAL_VISIBLE_ITEMS);
   const filtersPanelId = useId();
 
   const allEmotions = useMemo(() => {
@@ -112,20 +117,21 @@ export function Timeline({ checkins }: TimelineProps) {
   const rangeStart = getRangeStart(dateRange);
 
   const filtered = useMemo(() => {
+    const normalizedQuery = deferredQuery.trim().toLowerCase();
     return checkins.filter((entry) => {
       if (rangeStart != null) {
         const created = new Date(entry.created_at).getTime();
         if (created < rangeStart) return false;
       }
       const matchesEmotion = emotionFilter ? entry.emotions?.includes(emotionFilter) : true;
-      const matchesQuery = query
+      const matchesQuery = normalizedQuery
         ? `${entry.thoughts ?? ""} ${(entry.behavior_meta?.activity_now ?? "")}`
             .toLowerCase()
-            .includes(query.toLowerCase())
+            .includes(normalizedQuery)
         : true;
       return matchesEmotion && matchesQuery;
     });
-  }, [checkins, emotionFilter, query, rangeStart]);
+  }, [checkins, deferredQuery, emotionFilter, rangeStart]);
 
   const groupedByDay = useMemo(() => {
     const groups = new Map<string, CheckInRow[]>();
@@ -138,36 +144,43 @@ export function Timeline({ checkins }: TimelineProps) {
     return [...groups.entries()];
   }, [filtered]);
 
+  const visibleGroups = useMemo(() => {
+    let remaining = visibleItems;
+    const groups: Array<[string, CheckInRow[]]> = [];
+    for (const [dayKey, entries] of groupedByDay) {
+      if (remaining <= 0) break;
+      const dayEntries = entries.slice(0, remaining);
+      if (dayEntries.length === 0) continue;
+      groups.push([dayKey, dayEntries]);
+      remaining -= dayEntries.length;
+    }
+    return groups;
+  }, [groupedByDay, visibleItems]);
+
   const groupsWithStaggerIndex = useMemo(() => {
     let index = 0;
-    return groupedByDay.map(([dayKey, entries]) => {
+    return visibleGroups.map(([dayKey, entries]) => {
       const items = entries.map((entry) => ({ entry, staggerIndex: index++ }));
       return { dayKey, items };
     });
-  }, [groupedByDay]);
+  }, [visibleGroups]);
+  const hasMoreItems = filtered.length > visibleItems;
+
+  useEffect(() => {
+    setVisibleItems(INITIAL_VISIBLE_ITEMS);
+  }, [deferredQuery, emotionFilter, dateRange]);
 
   if (checkins.length === 0) return null;
 
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="glass-panel inline-flex rounded-[var(--radius-control)] p-0.5" aria-label="Periode">
-          {DATE_RANGE_OPTIONS.map(({ value, label }) => (
-            <button
-              key={value}
-              type="button"
-              onClick={() => setDateRange(value)}
-              className={`rounded-[var(--radius-small)] px-3 py-1.5 text-[13px] font-medium transition-colors duration-200 ${
-                dateRange === value
-                  ? "bg-[var(--surface-elevated)] text-[var(--text-primary)]"
-                  : "text-[var(--text-soft)] hover:text-[var(--text-primary)]"
-              }`}
-              aria-pressed={dateRange === value}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+        <SegmentedControl
+          value={dateRange}
+          onChange={setDateRange}
+          options={DATE_RANGE_OPTIONS}
+          ariaLabel="Periode"
+        />
         <button
           type="button"
           onClick={() => setShowFilters((v) => !v)}
@@ -253,82 +266,95 @@ export function Timeline({ checkins }: TimelineProps) {
           </p>
         </div>
       ) : (
-        <ul className="space-y-6">
-          {groupsWithStaggerIndex.map(({ dayKey, items }) => (
-            <li key={dayKey}>
-              <p className="mb-3 mt-1 first:mt-0 text-[12px] font-medium text-[var(--text-soft)]">
-                {dayDividerLabel(dayKey)}
-              </p>
-              <ul className="space-y-3">
-                {items.map(({ entry: c, staggerIndex }) => (
-                  <motion.li
-                    key={c.id}
-                    initial={reduceMotion ? false : { opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: STAGGER_DURATION,
-                      delay: reduceMotion ? 0 : staggerIndex * STAGGER_DELAY,
-                      ease: EASE_SMOOTH,
-                    }}
-                  >
-                    <Link
-                      href={`/entries/${c.id}`}
-                      className="glass-card block rounded-[var(--radius-card)] px-4 py-4 sm:px-5 transition-colors duration-200 hover:border-[var(--surface-border-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
+        <>
+          <ul className="space-y-6">
+            {groupsWithStaggerIndex.map(({ dayKey, items }) => (
+              <li key={dayKey}>
+                <p className="mb-3 mt-1 first:mt-0 text-[12px] font-medium text-[var(--text-soft)]">
+                  {dayDividerLabel(dayKey)}
+                </p>
+                <ul className="space-y-3">
+                  {items.map(({ entry: c, staggerIndex }) => (
+                    <motion.li
+                      key={c.id}
+                      initial={reduceMotion ? false : { opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: STAGGER_DURATION,
+                        delay: reduceMotion ? 0 : Math.min(staggerIndex, 12) * STAGGER_DELAY,
+                        ease: EASE_SMOOTH,
+                      }}
                     >
-                      <div className="flex items-center justify-between gap-3">
-                        <p suppressHydrationWarning className="text-[13px] font-medium text-[var(--text-muted)]">
-                          {formatDate(c.created_at)}
-                        </p>
-                        {c.energy_level != null && (
-                          <div className="flex items-center gap-2 shrink-0">
-                            <div className="h-1 w-12 rounded-full bg-[var(--interactive-hover)] overflow-hidden">
-                              <div
-                                className="h-full rounded-full transition-all"
-                                style={{
-                                  width: `${c.energy_level}%`,
-                                  backgroundColor: energyColor(c.energy_level),
-                                }}
-                              />
+                      <Link
+                        href={`/entries/${c.id}`}
+                        className="glass-card block rounded-[var(--radius-card)] px-4 py-4 sm:px-5 transition-colors duration-200 hover:border-[var(--surface-border-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <p suppressHydrationWarning className="text-[13px] font-medium text-[var(--text-muted)]">
+                            {formatDate(c.created_at)}
+                          </p>
+                          {c.energy_level != null && (
+                            <div className="flex items-center gap-2 shrink-0">
+                              <div className="h-1 w-12 rounded-full bg-[var(--interactive-hover)] overflow-hidden">
+                                <div
+                                  className="h-full rounded-full transition-all"
+                                  style={{
+                                    width: `${c.energy_level}%`,
+                                    backgroundColor: energyColor(c.energy_level),
+                                  }}
+                                />
+                              </div>
+                              <span className="text-[12px] tabular-nums font-medium" style={{ color: energyColor(c.energy_level) }}>
+                                {c.energy_level}%
+                              </span>
                             </div>
-                            <span className="text-[12px] tabular-nums font-medium" style={{ color: energyColor(c.energy_level) }}>
-                              {c.energy_level}%
-                            </span>
+                          )}
+                        </div>
+
+                        {c.thoughts ? (
+                          <p className="mt-2 line-clamp-2 text-[15px] font-medium leading-snug text-[var(--text-primary)]">
+                            {c.thoughts}
+                          </p>
+                        ) : (
+                          <p className="mt-2 text-[15px] font-medium text-[var(--text-primary)]">
+                            Check-in
+                          </p>
+                        )}
+
+                        {c.emotions && c.emotions.length > 0 && (
+                          <div className="mt-3 flex flex-wrap gap-1.5">
+                            {c.emotions.map((emotion) => (
+                              <span
+                                key={emotion}
+                                className="inline-flex items-center gap-1 rounded-full border border-[var(--surface-border)] bg-[var(--interactive-hover)] px-2.5 py-0.5 text-[12px] font-medium text-[var(--text-muted)]"
+                              >
+                                {EMOJI_MAP.get(emotion) && (
+                                  <span aria-hidden>{EMOJI_MAP.get(emotion)}</span>
+                                )}
+                                {emotion}
+                              </span>
+                            ))}
                           </div>
                         )}
-                      </div>
-
-                      {c.thoughts ? (
-                        <p className="mt-2 line-clamp-2 text-[15px] font-medium leading-snug text-[var(--text-primary)]">
-                          {c.thoughts}
-                        </p>
-                      ) : (
-                        <p className="mt-2 text-[15px] font-medium text-[var(--text-primary)]">
-                          Check-in
-                        </p>
-                      )}
-
-                      {c.emotions && c.emotions.length > 0 && (
-                        <div className="mt-3 flex flex-wrap gap-1.5">
-                          {c.emotions.map((emotion) => (
-                            <span
-                              key={emotion}
-                              className="inline-flex items-center gap-1 rounded-full border border-[var(--surface-border)] bg-[var(--interactive-hover)] px-2.5 py-0.5 text-[12px] font-medium text-[var(--text-muted)]"
-                            >
-                              {EMOJI_MAP.get(emotion) && (
-                                <span aria-hidden>{EMOJI_MAP.get(emotion)}</span>
-                              )}
-                              {emotion}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </Link>
-                  </motion.li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ul>
+                      </Link>
+                    </motion.li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+          {hasMoreItems && (
+            <div className="pt-2 text-center">
+              <button
+                type="button"
+                onClick={() => setVisibleItems((current) => current + VISIBLE_ITEMS_STEP)}
+                className="inline-flex min-h-[40px] items-center justify-center rounded-[var(--radius-control)] border border-[var(--surface-border)] bg-[var(--surface-elevated)] px-3.5 py-2 text-[13px] font-medium text-[var(--text-primary)] transition-colors duration-200 hover:bg-[var(--interactive-hover)]"
+              >
+                Meer laden
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

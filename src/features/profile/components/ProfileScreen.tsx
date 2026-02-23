@@ -4,6 +4,7 @@ import { useMindJournal } from "@/features/app/useMindJournal";
 import { SettingsPanel } from "@/features/settings/components/SettingsPanel";
 import { SignOutButton } from "@/components/SignOutButton";
 import { listCheckIns, restoreCheckIns } from "@/lib/checkin";
+import { Card } from "@/components/ui/Card";
 
 export function ProfileScreen() {
   const {
@@ -29,9 +30,9 @@ export function ProfileScreen() {
         <h2 id="account-heading" className="text-[17px] font-semibold text-[var(--text-primary)] mb-4">
           Account
         </h2>
-        <div className="glass-card rounded-[var(--radius-card)] p-4">
+        <Card variant="glass" padding="sm">
           <SignOutButton />
-        </div>
+        </Card>
       </section>
     </div>
   );

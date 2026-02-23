@@ -25,7 +25,7 @@ export function OfflineBanner() {
 
   return (
     <div
-      className="flex items-center justify-center gap-2 border-b border-[var(--surface-border)] bg-[var(--surface)] py-2 px-4 text-[13px] font-medium text-[var(--text-primary)]"
+      className="surface-card flex items-center justify-center gap-2 border-x-0 border-t-0 rounded-none py-2 px-4 text-[13px] font-medium text-[var(--text-primary)]"
       role="status"
       aria-live="polite"
     >

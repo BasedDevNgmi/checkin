@@ -44,7 +44,7 @@ export function BehaviorRing({ data }: BehaviorRingProps) {
   return (
     <div className="glass-card rounded-[var(--radius-card)] p-5">
       <h3 className="text-[15px] font-semibold text-[var(--text-primary)]">Gedrag</h3>
-      <p className="mt-1 text-xs text-[var(--text-soft)]">Bewust vs. automatisch</p>
+      <p className="mt-1 text-xs text-[var(--text-muted)]">Bewust vs. automatisch</p>
       <div className="mt-4 flex items-center gap-4">
         <div className="h-36 w-36 shrink-0">
           <ResponsiveContainer width="100%" height="100%">

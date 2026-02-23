@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { FormMessage } from "@/components/ui/FormMessage";
+import { Card } from "@/components/ui/Card";
 
 interface ForgotPasswordPanelProps {
   email: string;
@@ -22,7 +23,7 @@ export function ForgotPasswordPanel({
   onBackToLogin,
 }: ForgotPasswordPanelProps) {
   return (
-    <div className="glass-card space-y-5 rounded-[var(--radius-card)] p-5 sm:p-6">
+    <Card variant="glass" className="space-y-5">
       <h1 className="text-[22px] font-semibold text-[var(--text-primary)] text-center">
         Wachtwoord vergeten?
       </h1>
@@ -47,6 +48,6 @@ export function ForgotPasswordPanel({
           Terug naar inloggen
         </Button>
       </form>
-    </div>
+    </Card>
   );
 }

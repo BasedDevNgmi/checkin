@@ -15,16 +15,40 @@ type IdleWindow = Window & {
   cancelIdleCallback?: (handle: number) => void;
 };
 
+const prefetchedRoutes = new Set<string>();
+
+type NetworkNavigator = Navigator & {
+  connection?: {
+    saveData?: boolean;
+    effectiveType?: string;
+  };
+};
+
+function canPrefetch() {
+  const networkNavigator = navigator as NetworkNavigator;
+  const connection = networkNavigator.connection;
+  if (connection?.saveData) return false;
+  if (connection?.effectiveType && /2g/.test(connection.effectiveType)) return false;
+  return true;
+}
+
 export function useNavPrefetch(hrefs: readonly string[]) {
   const router = useRouter();
 
   useEffect(() => {
+    if (!canPrefetch()) return;
+
     let cancelled = false;
     const idleWindow = window as IdleWindow;
+    const uniqueHrefs = hrefs.filter((href) => !prefetchedRoutes.has(href));
+    if (uniqueHrefs.length === 0) return;
 
     const prefetchAll = () => {
       if (cancelled) return;
-      hrefs.forEach((href) => router.prefetch(href));
+      uniqueHrefs.forEach((href) => {
+        router.prefetch(href);
+        prefetchedRoutes.add(href);
+      });
     };
 
     // Idle prefetch keeps navigation snappy without competing with first paint.

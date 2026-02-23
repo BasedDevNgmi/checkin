@@ -7,16 +7,23 @@ import { trackEvent } from "@/core/telemetry/events";
 export function BackgroundSyncBridge() {
   useEffect(() => {
     let active = true;
+    let flushing = false;
 
     const flushNow = async (trigger: "online" | "service_worker_ready" | "sync_event") => {
-      const result = await flushQueuedCheckins();
-      if (active && result.processed > 0) {
-        trackEvent("checkin_saved", {
-          mode: "background_sync_flush",
-          trigger,
-          processed: result.processed,
-          remaining: result.remaining,
-        });
+      if (flushing) return;
+      flushing = true;
+      try {
+        const result = await flushQueuedCheckins();
+        if (active && result.processed > 0) {
+          trackEvent("checkin_saved", {
+            mode: "background_sync_flush",
+            trigger,
+            processed: result.processed,
+            remaining: result.remaining,
+          });
+        }
+      } finally {
+        flushing = false;
       }
     };
 

@@ -1,31 +1,82 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { motion, useReducedMotion } from "framer-motion";
-import { EASE_SMOOTH } from "@/lib/motion";
+import { EASE_SMOOTH, MOTION_DURATION } from "@/lib/motion";
 import type { CheckInRow } from "@/types/checkin";
 import { EnergyChart } from "@/components/dashboard/EnergyChart";
-import { WeekdayChart } from "@/components/analytics/WeekdayChart";
-import { EmotionBars } from "@/components/analytics/EmotionBars";
-import { BehaviorRing } from "@/components/analytics/BehaviorRing";
-import { Heatmap } from "@/components/analytics/Heatmap";
-import { BodyPartBars } from "@/components/analytics/BodyPartBars";
-import Link from "next/link";
 import { Flame, TrendingUp, Sparkles, ChevronRight } from "lucide-react";
 import { useAnalyticsModel } from "@/features/analytics/lib/useAnalyticsModel";
+import { useEffect, useRef, type ReactNode } from "react";
+import { SegmentedControl } from "@/components/ui/SegmentedControl";
+import { LinkButton } from "@/components/ui/LinkButton";
 
 interface AnalyticsViewProps {
   checkins: CheckInRow[];
 }
 
-const periods = [
-  { label: "7d", value: 7 },
-  { label: "30d", value: 30 },
-  { label: "90d", value: 90 },
-] as const;
+const WeekdayChart = dynamic(
+  () => import("@/components/analytics/WeekdayChart").then((m) => m.WeekdayChart),
+  { ssr: false }
+);
+const EmotionBars = dynamic(
+  () => import("@/components/analytics/EmotionBars").then((m) => m.EmotionBars),
+  { ssr: false }
+);
+const BehaviorRing = dynamic(
+  () => import("@/components/analytics/BehaviorRing").then((m) => m.BehaviorRing),
+  { ssr: false }
+);
+const Heatmap = dynamic(
+  () => import("@/components/analytics/Heatmap").then((m) => m.Heatmap),
+  { ssr: false }
+);
+const BodyPartBars = dynamic(
+  () => import("@/components/analytics/BodyPartBars").then((m) => m.BodyPartBars),
+  { ssr: false }
+);
+
+function DeferredSection({
+  children,
+  placeholder,
+}: {
+  children: ReactNode;
+  placeholder: ReactNode;
+}) {
+  const anchorRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    if (isVisible) return;
+    const node = anchorRef.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "160px 0px" }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [isVisible]);
+
+  return (
+    <div ref={anchorRef}>
+      {isVisible ? (
+        children
+      ) : (
+        placeholder
+      )}
+    </div>
+  );
+}
 
 export function AnalyticsView({ checkins }: AnalyticsViewProps) {
-  const [period, setPeriod] = useState<(typeof periods)[number]["value"]>(30);
+  const [period, setPeriod] = useState<7 | 30 | 90>(30);
   const reduceMotion = useReducedMotion();
   const [now] = useState(() => new Date());
   const {
@@ -57,12 +108,9 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
           <p className="mt-2 max-w-sm mx-auto text-[13px] text-[var(--text-muted)]">
             Na je eerste check-ins zie je hier energie, patronen, emoties en persoonlijke inzichten.
           </p>
-          <Link
-            href="/checkin"
-            className="mt-6 inline-flex min-h-[44px] items-center gap-2 rounded-[var(--radius-control)] bg-[var(--accent)] px-5 py-2.5 text-[15px] font-medium text-white shadow-[var(--shadow-elevation)] transition hover:brightness-[1.04] active:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
-          >
+          <LinkButton href="/checkin" className="mt-6 gap-2">
             Eerste check-in doen <ChevronRight className="h-4 w-4" />
-          </Link>
+          </LinkButton>
         </section>
       </div>
     );
@@ -76,30 +124,23 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
           <h1 className="text-[1.35rem] font-semibold text-[var(--text-primary)] tracking-tight">Inzichten</h1>
           <p className="text-xs text-[var(--text-muted)]">Patronen in energie, emoties en gedrag</p>
         </div>
-        <div className="glass-panel inline-flex rounded-[var(--radius-card)] p-0.5">
-          {periods.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              onClick={() => setPeriod(option.value)}
-              className={`rounded-[var(--radius-control)] px-3 py-1.5 text-[13px] font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)] ${
-                option.value === period
-                  ? "bg-[var(--surface-elevated)] text-[var(--text-primary)] shadow-[var(--shadow-elevation)]"
-                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
-              }`}
-              aria-pressed={option.value === period}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
+        <SegmentedControl
+          value={period}
+          onChange={setPeriod}
+          options={[
+            { value: 7, label: "7d" },
+            { value: 30, label: "30d" },
+            { value: 90, label: "90d" },
+          ]}
+          ariaLabel="Periode selecteren"
+        />
       </div>
 
       {/* Stat cards */}
       <motion.div
         initial={reduceMotion ? false : { opacity: 0, y: 4 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, ease: EASE_SMOOTH }}
+        transition={{ duration: MOTION_DURATION.enter, ease: EASE_SMOOTH }}
         className="grid gap-3 grid-cols-2 lg:grid-cols-4"
       >
         <div className="glass-card rounded-[var(--radius-card)] p-4">
@@ -154,17 +195,36 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
       />
 
       {/* Weekday + Heatmap row */}
-      <div className="grid gap-4 lg:grid-cols-2">
-        <WeekdayChart data={weekdayData} />
-        <Heatmap dayData={heatmapDayData} weeks={Math.min(Math.ceil(period / 7) + 2, 16)} />
-      </div>
+      <DeferredSection
+        placeholder={(
+          <div className="grid gap-4 lg:grid-cols-2" aria-hidden>
+            <div className="glass-card h-[220px] animate-pulse rounded-[var(--radius-card)] bg-[var(--interactive-hover)]" />
+            <div className="glass-card h-[220px] animate-pulse rounded-[var(--radius-card)] bg-[var(--interactive-hover)]" />
+          </div>
+        )}
+      >
+        <div className="grid gap-4 lg:grid-cols-2">
+          <WeekdayChart data={weekdayData} />
+          <Heatmap dayData={heatmapDayData} weeks={Math.min(Math.ceil(period / 7) + 2, 16)} />
+        </div>
+      </DeferredSection>
 
       {/* Emotions + Body + Behavior row */}
-      <div className="grid gap-4 lg:grid-cols-3">
-        <EmotionBars data={emotionData} />
-        <BodyPartBars data={bodyPartData} />
-        <BehaviorRing data={behaviorData} />
-      </div>
+      <DeferredSection
+        placeholder={(
+          <div className="grid gap-4 lg:grid-cols-3" aria-hidden>
+            <div className="glass-card h-[200px] animate-pulse rounded-[var(--radius-card)] bg-[var(--interactive-hover)]" />
+            <div className="glass-card h-[200px] animate-pulse rounded-[var(--radius-card)] bg-[var(--interactive-hover)]" />
+            <div className="glass-card h-[200px] animate-pulse rounded-[var(--radius-card)] bg-[var(--interactive-hover)]" />
+          </div>
+        )}
+      >
+        <div className="grid gap-4 lg:grid-cols-3">
+          <EmotionBars data={emotionData} />
+          <BodyPartBars data={bodyPartData} />
+          <BehaviorRing data={behaviorData} />
+        </div>
+      </DeferredSection>
 
       {/* Generated insights */}
       {generatedInsights.length > 0 && (
@@ -172,7 +232,7 @@ export function AnalyticsView({ checkins }: AnalyticsViewProps) {
           initial={reduceMotion ? false : { opacity: 0, y: 4 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.4, ease: EASE_SMOOTH }}
+          transition={{ duration: MOTION_DURATION.emphasis, ease: EASE_SMOOTH }}
           className="glass-card rounded-[var(--radius-card)] p-5"
         >
           <div className="flex items-center gap-2">

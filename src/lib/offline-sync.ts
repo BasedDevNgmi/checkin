@@ -3,6 +3,7 @@
 import type { CheckInFormState } from "@/types/checkin";
 
 const QUEUE_KEY = "inchecken-sync-queue-v1";
+const MAX_QUEUE_ITEMS = 120;
 
 export type CheckinSyncOperation =
   | { id: string; type: "save"; payload: CheckInFormState; createdAt: number }
@@ -38,9 +39,25 @@ function writeQueue(queue: CheckinSyncOperation[]) {
   window.localStorage.setItem(QUEUE_KEY, JSON.stringify(queue));
 }
 
+function compactQueue(queue: CheckinSyncOperation[], incoming: QueueOperationInput) {
+  if (incoming.type === "save") return queue;
+  return queue.filter((item) => {
+    if (item.type === "save") return true;
+    if (item.targetId !== incoming.targetId) return true;
+    if (incoming.type === "update") {
+      return item.type === "delete";
+    }
+    return false;
+  });
+}
+
 export function queueOperation(operation: QueueOperationInput) {
-  const queue = readQueue();
+  const queue = compactQueue(readQueue(), operation);
   queue.push({ ...operation, id: randomId(), createdAt: Date.now() } as CheckinSyncOperation);
+  if (queue.length > MAX_QUEUE_ITEMS) {
+    writeQueue(queue.slice(queue.length - MAX_QUEUE_ITEMS));
+    return;
+  }
   writeQueue(queue);
 }
 

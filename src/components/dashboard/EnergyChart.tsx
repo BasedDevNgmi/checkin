@@ -45,7 +45,7 @@ export function EnergyChart({
   return (
     <div className="rounded-[var(--radius-card)] border border-[var(--surface-border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-elevation)]">
       <h3 className="text-[15px] font-semibold text-[var(--text-primary)]">{title}</h3>
-      <p className="mt-1 text-xs text-[var(--text-soft)]">{subtitle}</p>
+      <p className="mt-1 text-xs text-[var(--text-muted)]">{subtitle}</p>
       <div className="mt-4 h-48 sm:h-56">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={filtered} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>

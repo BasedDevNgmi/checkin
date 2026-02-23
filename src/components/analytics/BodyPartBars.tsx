@@ -37,7 +37,7 @@ export function BodyPartBars({ data }: BodyPartBarsProps) {
   return (
     <div className="glass-card rounded-[var(--radius-card)] p-5">
       <h3 className="text-[15px] font-semibold text-[var(--text-primary)]">Lichaam</h3>
-      <p className="mt-1 text-xs text-[var(--text-soft)]">Meest genoemde lichaamsdelen</p>
+      <p className="mt-1 text-xs text-[var(--text-muted)]">Meest genoemde lichaamsdelen</p>
       <div className="mt-4 space-y-2.5">
         {data.map((d) => (
           <div key={d.part} className="flex items-center gap-3">

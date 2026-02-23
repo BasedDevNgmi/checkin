@@ -53,6 +53,24 @@ type DirectCheckinOperation =
   | { type: "delete"; targetId: string };
 
 const isBrowser = typeof window !== "undefined";
+let flushInFlight: Promise<{ processed: number; remaining: number }> | null = null;
+
+function shouldRetryQueuedError(errorMessage: string) {
+  const normalized = errorMessage.toLowerCase();
+  if (
+    normalized.includes("not logged") ||
+    normalized.includes("niet ingelogd") ||
+    normalized.includes("permission") ||
+    normalized.includes("forbidden") ||
+    normalized.includes("unauthorized") ||
+    normalized.includes("jwt") ||
+    normalized.includes("invalid") ||
+    normalized.includes("violat")
+  ) {
+    return false;
+  }
+  return true;
+}
 
 function toDbPayload(payload: CheckInFormState) {
   const sanitized = sanitizeCheckInPayload(payload);
@@ -132,7 +150,7 @@ async function runWithOfflineFallback(
 
   const errorMessage = await executeOperation(user.id, operation);
   if (errorMessage) {
-    if (isBrowser) {
+    if (isBrowser && shouldRetryQueuedError(errorMessage)) {
       return queueAndTrack(operation, eventName, "queued_retry");
     }
     return { ok: false, error: errorMessage };
@@ -186,17 +204,28 @@ async function processQueuedOperation(operation: CheckinSyncOperation) {
   } = await supabase.auth.getUser();
   if (!user) return false;
   const errorMessage = await executeOperation(user.id, operation);
-  return errorMessage === null;
+  if (errorMessage == null) return true;
+  // Drop permanent errors so the queue can make forward progress.
+  return !shouldRetryQueuedError(errorMessage);
 }
 
 export async function flushQueuedCheckins() {
-  const result = await flushQueue(processQueuedOperation);
-  if (result.processed > 0) {
-    trackEvent("checkin_saved", {
-      mode: "queue_flushed",
-      processed: result.processed,
-      remaining: result.remaining,
-    });
+  if (flushInFlight) return flushInFlight;
+  flushInFlight = (async () => {
+    const result = await flushQueue(processQueuedOperation);
+    if (result.processed > 0) {
+      trackEvent("checkin_saved", {
+        mode: "queue_flushed",
+        processed: result.processed,
+        remaining: result.remaining,
+      });
+    }
+    return result;
+  })();
+
+  try {
+    return await flushInFlight;
+  } finally {
+    flushInFlight = null;
   }
-  return result;
 }

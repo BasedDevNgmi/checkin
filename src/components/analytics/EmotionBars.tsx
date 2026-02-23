@@ -28,7 +28,7 @@ export function EmotionBars({ data }: EmotionBarsProps) {
   return (
     <div className="glass-card rounded-[var(--radius-card)] p-5">
       <h3 className="text-[15px] font-semibold text-[var(--text-primary)]">Emoties</h3>
-      <p className="mt-1 text-xs text-[var(--text-soft)]">Frequentie &amp; gemiddelde energie</p>
+      <p className="mt-1 text-xs text-[var(--text-muted)]">Frequentie &amp; gemiddelde energie</p>
       <div className="mt-4 space-y-3">
         {data.map((d) => (
           <div key={d.emotion} className="flex items-center gap-3">

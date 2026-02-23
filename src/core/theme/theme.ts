@@ -2,6 +2,7 @@ export type ThemePreference = "system" | "light" | "dark";
 export type ResolvedTheme = "light" | "dark";
 
 export const THEME_STORAGE_KEY = "inchecken-theme-preference";
+export const THEME_MEDIA_QUERY = "(prefers-color-scheme: dark)";
 
 export function isThemePreference(value: string | null): value is ThemePreference {
   return value === "system" || value === "light" || value === "dark";
@@ -16,7 +17,7 @@ export function resolveThemePreference(preference: ThemePreference, isDarkSystem
 
 export function getSystemPrefersDark(): boolean {
   if (typeof window === "undefined") return false;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  return window.matchMedia(THEME_MEDIA_QUERY).matches;
 }
 
 export function readStoredThemePreference(): ThemePreference {

@@ -10,6 +10,7 @@ import { useThemePreference } from "@/core/theme/useThemePreference";
 import { selectBase } from "@/components/ui/formControlStyles";
 import { FormMessage } from "@/components/ui/FormMessage";
 import { PwaControls } from "@/features/settings/components/PwaControls";
+import { Card } from "@/components/ui/Card";
 
 interface SettingsPanelProps {
   preferences: UserPreferences | null;
@@ -110,7 +111,7 @@ export function SettingsPanel({
         <p className="text-[13px] text-[var(--text-muted)]">Beheer je profiel en voorkeuren</p>
       </div>
 
-      <div className="glass-card space-y-6 rounded-[var(--radius-card)] p-5 sm:p-6">
+      <Card variant="glass" className="space-y-6">
         <div className="grid gap-4 sm:grid-cols-2">
           <Input
             label="Naam"
@@ -183,7 +184,7 @@ export function SettingsPanel({
         </div>
 
         <PwaControls />
-      </div>
+      </Card>
 
       <input
         ref={fileInputRef}

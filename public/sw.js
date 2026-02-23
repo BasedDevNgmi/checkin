@@ -1,4 +1,4 @@
-const VERSION = "v6";
+const VERSION = "v7";
 const APP_SHELL_CACHE = `inchecken-shell-${VERSION}`;
 const ASSET_CACHE = `inchecken-assets-${VERSION}`;
 const APP_SHELL_ROUTES = ["/offline", "/login"];
@@ -15,13 +15,17 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
+    (async () => {
+      const keys = await caches.keys();
+      await Promise.all(
         keys
           .filter((key) => ![APP_SHELL_CACHE, ASSET_CACHE].includes(key))
           .map((key) => caches.delete(key))
-      )
-    )
+      );
+      if (self.registration.navigationPreload) {
+        await self.registration.navigationPreload.enable();
+      }
+    })()
   );
   self.clients.claim();
 });
@@ -39,6 +43,29 @@ async function trimCache(cacheName, maxEntries) {
   await Promise.all(keys.slice(0, keys.length - maxEntries).map((key) => cache.delete(key)));
 }
 
+async function staleWhileRevalidate(request, event) {
+  const cache = await caches.open(ASSET_CACHE);
+  const cached = await cache.match(request);
+
+  const refreshPromise = fetch(request)
+    .then(async (response) => {
+      if (response.ok) {
+        await cache.put(request, response.clone());
+        await trimCache(ASSET_CACHE, ASSET_MAX_ENTRIES);
+      }
+      return response;
+    })
+    .catch(() => null);
+
+  if (cached) {
+    event.waitUntil(refreshPromise);
+    return cached;
+  }
+
+  const fresh = await refreshPromise;
+  return fresh ?? Response.error();
+}
+
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   const url = new URL(event.request.url);
@@ -48,8 +75,12 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(
       (async () => {
         try {
+          const preload = await event.preloadResponse;
+          if (preload) return preload;
           return await fetch(event.request);
         } catch {
+          const cachedPage = await caches.match(event.request);
+          if (cachedPage) return cachedPage;
           const offlinePage = await caches.match("/offline");
           return offlinePage ?? new Response("Offline", { status: 503 });
         }
@@ -66,26 +97,7 @@ self.addEventListener("fetch", (event) => {
     destination === "image";
   if (!isStaticAsset) return;
 
-  event.respondWith(
-    (async () => {
-      const cached = await caches.match(event.request);
-      if (cached) return cached;
-
-      try {
-        const response = await fetch(event.request);
-        if (response.ok) {
-          const cache = await caches.open(ASSET_CACHE);
-          cache.put(event.request, response.clone());
-          await trimCache(ASSET_CACHE, ASSET_MAX_ENTRIES);
-        }
-        return response;
-      } catch {
-        // Never return HTML fallback for JS/CSS/image/font requests.
-        // Doing so can break hydration and leave the app on a skeleton.
-        return Response.error();
-      }
-    })()
-  );
+  event.respondWith(staleWhileRevalidate(event.request, event));
 });
 
 self.addEventListener("push", (event) => {

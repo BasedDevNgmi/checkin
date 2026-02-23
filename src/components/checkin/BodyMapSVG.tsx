@@ -41,7 +41,7 @@ export function BodyMapSVG({ selectedParts, onTogglePart }: BodyMapSVGProps) {
             stroke={isSelected ? "var(--accent)" : "var(--text-soft)"}
             strokeOpacity={isSelected ? 0.8 : 0.35}
             strokeWidth={3}
-            className="cursor-pointer transition-all duration-200"
+            className="cursor-pointer transition-[fill,fill-opacity,stroke,stroke-opacity,stroke-width] duration-[var(--motion-base)] focus-visible:outline-none focus-visible:stroke-[var(--focus-ring)] focus-visible:stroke-[4]"
             style={{ pointerEvents: "all" }}
             onClick={() => onTogglePart(id)}
             onKeyDown={(e) => {

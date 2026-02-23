@@ -13,8 +13,8 @@ function LogoIcon({ className }: { className?: string }) {
     >
       <defs>
         <radialGradient id="logo-fill" cx="50%" cy="40%" r="60%">
-          <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.12" />
-          <stop offset="100%" stopColor="var(--accent)" stopOpacity="0.04" />
+          <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.16" />
+          <stop offset="100%" stopColor="var(--accent)" stopOpacity="0.05" />
         </radialGradient>
       </defs>
       <circle
@@ -42,10 +42,10 @@ export function BrandLogo({ compact = false }: BrandLogoProps) {
   return (
     <div className="inline-flex items-center gap-2.5">
       <span className="flex h-8 w-8 shrink-0 items-center justify-center">
-        <LogoIcon className="h-6 w-6" />
+        <LogoIcon className="h-6 w-6 transition-transform duration-[var(--motion-base)]" />
       </span>
       {!compact ? (
-        <span className="text-[17px] font-semibold tracking-[-0.03em] text-[var(--text-primary)]">
+        <span className="text-[17px] font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
           Inchecken
         </span>
       ) : null}
